@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+
+# 原始資料集（31MB，公開可取得；其 SHA256 記錄在 src/common.py 與 run_manifest.json，
+# 完整性由 01_prepare_data.py 開場驗證）
+data/raw/*.csv
+
+# FAISS 索引為衍生產物，由 03_build_corpus.py 從 train 重建
+data/corpus/*.bin
+
+.DS_Store

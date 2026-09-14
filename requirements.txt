@@ -1,0 +1,18 @@
+# 版本與 2026-09-15 實際執行環境一致；完整指紋（含 model digest、量化等級、硬體）
+# 由 src/00_probe_env.py 落地到 runs/<RUN>/run_manifest.json。
+pandas==2.3.3
+numpy==2.2.6
+scikit-learn==1.7.2
+scipy==1.15.3
+sentence-transformers==6.0.1
+faiss-cpu==1.15.0
+optuna==5.0.0
+transformers==5.17.0
+matplotlib==3.10.9
+ollama
+
+# torch：務必安裝 CUDA 版，不要用預設的 CPU wheel。
+# 舊環境裝的是 torch==2.14.0+cpu，導致 DistilBERT 微調在 CPU 上跑了 2.84 小時，
+# 且本機的 RTX 2070 完全沒被用到。安裝方式（CUDA 12.1）：
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+torch==2.14.0
