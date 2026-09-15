@@ -269,27 +269,48 @@ def _pid_alive(pid: int) -> bool:
 def single_instance(tag: str) -> None:
     """確保同一支腳本不會同時跑兩份。
 
-    2026-09-16 踩到過：兩個程序同時執行 04_augment.py 的 embedding 階段，
-    在同一張 GPU 上造成 `CUDA error: an illegal memory access was encountered`，
-    兩個程序一起崩潰。同時寫同一個 JSONL 也會有資料競爭 —— 各自的 done_ids
-    只在啟動時讀一次，之後兩邊會重複跑同一批樣本。
+    2026-09-16 踩到過兩個問題，這個實作同時修掉：
+
+    1. 同時寫同一個 JSONL 會有資料競爭 —— 各自的 done_ids 只在啟動時讀一次，
+       之後兩邊會重複跑同一批樣本。
+    2. 先「檢查再寫入」不是原子操作。第一版就是這樣寫的，結果 joblib 的 worker
+       （見 04_augment.py 的 n_jobs 註解）與主程序幾乎同時取鎖，後寫的覆蓋前寫的，
+       兩個都繼續執行，鎖形同失效。這裡改用 O_CREAT|O_EXCL 原子建檔。
     """
     import atexit
 
     lock_dir = RUNS / ".locks"
     lock_dir.mkdir(parents=True, exist_ok=True)
     path = lock_dir / f"{tag}.lock"
+    mine = str(os.getpid())
 
-    if path.exists():
+    for _ in range(2):
         try:
-            old_pid = int(path.read_text(encoding="utf-8").strip())
-        except Exception:  # noqa: BLE001
-            old_pid = 0
-        if old_pid and old_pid != os.getpid() and _pid_alive(old_pid):
-            die(f"已有另一份 {tag} 正在執行（PID {old_pid}）——拒絕同時執行。\n"
-                f"  同時跑兩份會造成 GPU 記憶體衝突與 JSONL 資料競爭。\n"
-                f"  若確認該程序已不存在，請手動刪除：{path}")
+            fd = os.open(str(path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            try:
+                holder = int(path.read_text(encoding="utf-8").strip())
+            except Exception:  # noqa: BLE001
+                holder = 0
+            if holder and holder != os.getpid() and _pid_alive(holder):
+                die(f"已有另一份 {tag} 正在執行（PID {holder}）——拒絕同時執行。\n"
+                    f"  同時跑兩份會造成 JSONL 資料競爭與 GPU 記憶體衝突。\n"
+                    f"  若確認該程序已不存在，請手動刪除：{path}")
+            path.unlink(missing_ok=True)   # 持有者已死，清掉殘留鎖後重試
+            continue
+        else:
+            with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                fh.write(mine)
 
-    path.write_text(str(os.getpid()), encoding="utf-8")
-    atexit.register(lambda: path.unlink(missing_ok=True))
-    log(f"取得執行鎖 {tag}（PID {os.getpid()}）")
+            def _release() -> None:
+                try:
+                    if path.exists() and path.read_text(encoding="utf-8").strip() == mine:
+                        path.unlink()      # 只刪自己的鎖，不碰別人的
+                except Exception:  # noqa: BLE001
+                    pass
+
+            atexit.register(_release)
+            log(f"取得執行鎖 {tag}（PID {mine}）")
+            return
+
+    die(f"無法取得執行鎖 {tag}，請檢查 {path}")

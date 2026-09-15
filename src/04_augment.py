@@ -278,9 +278,12 @@ def label_preservation_check(train: pd.DataFrame, aug: pd.DataFrame) -> dict:
     from sklearn.linear_model import LogisticRegression
     from sklearn.pipeline import make_pipeline
 
+    # n_jobs=1 是刻意的：Windows 上 n_jobs=-1 會讓 joblib/loky spawn 十多個 worker，
+    # worker 取用系統 PATH 上的 python（本機為 anaconda）並 re-import 主模組，
+    # 其中一個會把本腳本當主程式重新執行並搶走執行鎖。此處單執行緒已足夠快。
     clf = make_pipeline(
         TfidfVectorizer(max_features=50000, ngram_range=(1, 2), sublinear_tf=True),
-        LogisticRegression(max_iter=2000, n_jobs=-1),
+        LogisticRegression(max_iter=2000, n_jobs=1),
     )
     clf.fit(train["statement"], train["label_id"])
     pred = clf.predict(aug["statement"])

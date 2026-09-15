@@ -82,7 +82,7 @@ def run_sklearn(kind: str, train: pd.DataFrame, test: pd.DataFrame, seed: int) -
         feat_infer = time.perf_counter() - t1
 
     t2 = time.perf_counter()
-    clf = LogisticRegression(max_iter=2000, n_jobs=-1, random_state=seed)
+    clf = LogisticRegression(max_iter=2000, n_jobs=1, random_state=seed)
     clf.fit(Xtr, train["label_id"])
     fit_time = time.perf_counter() - t2
 
