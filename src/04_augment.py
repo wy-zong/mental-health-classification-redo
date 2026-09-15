@@ -185,7 +185,12 @@ def main() -> None:
     if staged:
         from sentence_transformers import SentenceTransformer
 
-        model = SentenceTransformer("all-MiniLM-L6-v2")
+        # 刻意指定 CPU：在 GPU 上跑這一步會拋
+        # `CUDA error: an illegal memory access was encountered`（torch 2.14.0+cu126
+        # ＋ RTX 2070 / sm_75 ＋ sentence-transformers 6.0.1），分批與縮小 batch 都無效，
+        # 而同一張卡上 03_build_corpus 的 encode、矩陣運算、DistilBERT 微調都正常，
+        # 所以問題侷限在這個組合。這一步整輪只跑一次、又不是瓶頸，用 CPU 換穩定。
+        model = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
         model.max_seq_length = 512
         def enc(xs: list[str]) -> np.ndarray:
             """分批編碼。一次送上萬筆會讓 GPU 記憶體壓力過大；2026-09-16 曾在

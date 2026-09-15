@@ -53,6 +53,6 @@
     "train_self_accuracy": 0.9635
   },
   "output_rows": 9105,
-  "output_sha256": "e50d8f8115baf7b68784074cdf8136d117b45d9a94f3713b5c5eb330c99c1674",
-  "built_at": "2026-09-15 21:01:57+0800"
+  "output_sha256": "f4b15a7ea28d51915975ab3a680394acb635b2345c968a77b3f6c12feae95221",
+  "built_at": "2026-09-16 01:03:26+0800"
 }
