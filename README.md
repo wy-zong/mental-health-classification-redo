@@ -109,3 +109,30 @@ bash run_pipeline.sh
 
 實測驗證：強制砍掉執行中的程序後，80 筆已落地結果完整保留，續跑精準接上剩餘 20 筆；
 竄改指令指紋後續跑被正確拒絕。
+
+## 已知環境行為（不是問題）
+
+每次執行腳本會看到**兩個** python 程序，這是正常的：
+
+```
+PID_A | .venv\Scripts\python.exe  <script>     launcher shim（272KB、1 執行緒、幾乎 0 CPU）
+PID_B | anaconda3\envs\new_mj\python.exe <script>   真正執行程式碼的程序
+```
+
+本專案沿用的 `.venv` 是以 anaconda 的 python 建立的（`sys.base_prefix` 指向
+`anaconda3/envs/new_mj`），因此 venv 的 `python.exe` 只是轉發器。
+**這不是「同一個腳本被跑了兩份」**，用任何最簡腳本都能重現同樣的兩個程序。
+
+（2026-09-16 曾誤把這個現象當成並發 bug 追查許久。判斷「某現象是否異常」之前，
+先用一個無關的最簡腳本做對照，只需幾十秒。）
+
+## 已知限制
+
+`04_augment.py` 的相似度計算刻意在 CPU 上執行。在 GPU 上該步驟會拋
+`CUDA error: an illegal memory access was encountered`
+（torch 2.14.0+cu126 ＋ RTX 2070 / sm_75 ＋ sentence-transformers 6.0.1）。
+已排除 GPU 故障（矩陣運算與 GPU→CPU 搬移均正常）、資料異常（無空字串，
+超長文本會被 tokenizer 截斷）、批次過大（分批與縮小 batch 均無效），
+且同一張卡上 `03_build_corpus` 能成功 encode 15,101 筆。
+該步驟整輪僅執行一次且非瓶頸，改用 CPU 換取穩定（約 8 分鐘），
+輸出與 GPU 版完全一致。
