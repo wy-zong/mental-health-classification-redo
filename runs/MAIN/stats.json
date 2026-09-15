@@ -1,0 +1,92 @@
+{
+  "run": "MAIN",
+  "correctness_convention": "strict（無效回應計為答錯）",
+  "multiple_comparison_correction": "Holm–Bonferroni",
+  "n_comparisons": 4,
+  "comparisons": {
+    "S0_vs_S1": {
+      "question": "prompt 最佳化本身的效果（無 RAG 干擾）",
+      "n_paired": 2496,
+      "accuracy_S0": 0.3918,
+      "accuracy_S1": 0.6414,
+      "delta_pp": 24.96,
+      "mcnemar": {
+        "n01": 709,
+        "n10": 86,
+        "n_discordant": 795,
+        "p_value": 1.030540280527846e-122,
+        "p_value_holm": 0.0
+      },
+      "bootstrap": {
+        "mean_diff": 0.2496,
+        "ci95_low": 0.22957,
+        "ci95_high": 0.26963,
+        "n_boot": 10000
+      },
+      "significant_after_holm": true
+    },
+    "S0_vs_S2a": {
+      "question": "RAG 本身的效果（指令固定為基準）",
+      "n_paired": 2496,
+      "accuracy_S0": 0.3918,
+      "accuracy_S2a": 0.488,
+      "delta_pp": 9.615,
+      "mcnemar": {
+        "n01": 373,
+        "n10": 133,
+        "n_discordant": 506,
+        "p_value": 2.2635858863173016e-27,
+        "p_value_holm": 0.0
+      },
+      "bootstrap": {
+        "mean_diff": 0.09615,
+        "ci95_low": 0.07893,
+        "ci95_high": 0.11378,
+        "n_boot": 10000
+      },
+      "significant_after_holm": true
+    },
+    "S1_vs_S2b": {
+      "question": "已最佳化指令再加上 RAG 的增益",
+      "n_paired": 2496,
+      "accuracy_S1": 0.6414,
+      "accuracy_S2b": 0.6166,
+      "delta_pp": -2.484,
+      "mcnemar": {
+        "n01": 290,
+        "n10": 352,
+        "n_discordant": 642,
+        "p_value": 0.015997121483970703,
+        "p_value_holm": 0.015997
+      },
+      "bootstrap": {
+        "mean_diff": -0.02484,
+        "ci95_low": -0.04487,
+        "ci95_high": -0.00481,
+        "n_boot": 10000
+      },
+      "significant_after_holm": true
+    },
+    "S2a_vs_S2b": {
+      "question": "最佳化在有 RAG 時還剩多少作用",
+      "n_paired": 2496,
+      "accuracy_S2a": 0.488,
+      "accuracy_S2b": 0.6166,
+      "delta_pp": 12.861,
+      "mcnemar": {
+        "n01": 422,
+        "n10": 101,
+        "n_discordant": 523,
+        "p_value": 1.2115726928223688e-47,
+        "p_value_holm": 0.0
+      },
+      "bootstrap": {
+        "mean_diff": 0.12861,
+        "ci95_low": 0.11138,
+        "ci95_high": 0.14583,
+        "n_boot": 10000
+      },
+      "significant_after_holm": true
+    }
+  }
+}

@@ -1,0 +1,430 @@
+{
+  "run": "MAIN",
+  "conditions": {
+    "S0": {
+      "n": 2496,
+      "invalid_count": 5,
+      "invalid_rate": 0.002,
+      "invalid_reasons": {
+        "no_label": 5
+      },
+      "strict": {
+        "n": 2496,
+        "accuracy": 0.3918,
+        "macro_f1": 0.3389,
+        "per_class": {
+          "Normal": {
+            "precision": 0.7794,
+            "recall": 0.351,
+            "f1": 0.484,
+            "support": 624
+          },
+          "Depression": {
+            "precision": 0.3152,
+            "recall": 0.3061,
+            "f1": 0.3106,
+            "support": 624
+          },
+          "Anxiety": {
+            "precision": 0.3504,
+            "recall": 0.8782,
+            "f1": 0.5009,
+            "support": 624
+          },
+          "Bipolar": {
+            "precision": 0.5,
+            "recall": 0.0321,
+            "f1": 0.0602,
+            "support": 624
+          }
+        }
+      },
+      "valid_only": {
+        "n": 2491,
+        "accuracy": 0.3926,
+        "macro_f1": 0.3394,
+        "per_class": {
+          "Normal": {
+            "precision": 0.7794,
+            "recall": 0.3521,
+            "f1": 0.485,
+            "support": 622
+          },
+          "Depression": {
+            "precision": 0.3152,
+            "recall": 0.3076,
+            "f1": 0.3113,
+            "support": 621
+          },
+          "Anxiety": {
+            "precision": 0.3504,
+            "recall": 0.8782,
+            "f1": 0.5009,
+            "support": 624
+          },
+          "Bipolar": {
+            "precision": 0.5,
+            "recall": 0.0321,
+            "f1": 0.0602,
+            "support": 624
+          }
+        }
+      },
+      "confusion_strict": {
+        "Normal": {
+          "Normal": 219,
+          "Depression": 270,
+          "Anxiety": 133,
+          "Bipolar": 0,
+          "INVALID": 2
+        },
+        "Depression": {
+          "Normal": 10,
+          "Depression": 191,
+          "Anxiety": 402,
+          "Bipolar": 18,
+          "INVALID": 3
+        },
+        "Anxiety": {
+          "Normal": 21,
+          "Depression": 53,
+          "Anxiety": 548,
+          "Bipolar": 2,
+          "INVALID": 0
+        },
+        "Bipolar": {
+          "Normal": 31,
+          "Depression": 92,
+          "Anxiety": 481,
+          "Bipolar": 20,
+          "INVALID": 0
+        }
+      },
+      "cost": {
+        "total_seconds": 414.8,
+        "mean_seconds": 0.166,
+        "mean_prompt_tokens": 207.2,
+        "mean_output_tokens": 2.0
+      }
+    },
+    "S1": {
+      "n": 2496,
+      "invalid_count": 13,
+      "invalid_rate": 0.0052,
+      "invalid_reasons": {
+        "no_label": 12,
+        "multi_number": 1
+      },
+      "strict": {
+        "n": 2496,
+        "accuracy": 0.6414,
+        "macro_f1": 0.6361,
+        "per_class": {
+          "Normal": {
+            "precision": 0.7178,
+            "recall": 0.6154,
+            "f1": 0.6626,
+            "support": 624
+          },
+          "Depression": {
+            "precision": 0.4926,
+            "recall": 0.8045,
+            "f1": 0.6111,
+            "support": 624
+          },
+          "Anxiety": {
+            "precision": 0.7207,
+            "recall": 0.7772,
+            "f1": 0.7479,
+            "support": 624
+          },
+          "Bipolar": {
+            "precision": 0.8984,
+            "recall": 0.3686,
+            "f1": 0.5227,
+            "support": 624
+          }
+        }
+      },
+      "valid_only": {
+        "n": 2483,
+        "accuracy": 0.6448,
+        "macro_f1": 0.6378,
+        "per_class": {
+          "Normal": {
+            "precision": 0.7178,
+            "recall": 0.6224,
+            "f1": 0.6667,
+            "support": 617
+          },
+          "Depression": {
+            "precision": 0.4926,
+            "recall": 0.8084,
+            "f1": 0.6122,
+            "support": 621
+          },
+          "Anxiety": {
+            "precision": 0.7207,
+            "recall": 0.7785,
+            "f1": 0.7485,
+            "support": 623
+          },
+          "Bipolar": {
+            "precision": 0.8984,
+            "recall": 0.3698,
+            "f1": 0.5239,
+            "support": 622
+          }
+        }
+      },
+      "confusion_strict": {
+        "Normal": {
+          "Normal": 384,
+          "Depression": 187,
+          "Anxiety": 39,
+          "Bipolar": 7,
+          "INVALID": 7
+        },
+        "Depression": {
+          "Normal": 20,
+          "Depression": 502,
+          "Anxiety": 83,
+          "Bipolar": 16,
+          "INVALID": 3
+        },
+        "Anxiety": {
+          "Normal": 65,
+          "Depression": 70,
+          "Anxiety": 485,
+          "Bipolar": 3,
+          "INVALID": 1
+        },
+        "Bipolar": {
+          "Normal": 66,
+          "Depression": 260,
+          "Anxiety": 66,
+          "Bipolar": 230,
+          "INVALID": 2
+        }
+      },
+      "cost": {
+        "total_seconds": 461.8,
+        "mean_seconds": 0.185,
+        "mean_prompt_tokens": 250.2,
+        "mean_output_tokens": 2.7
+      }
+    },
+    "S2a": {
+      "n": 2496,
+      "invalid_count": 6,
+      "invalid_rate": 0.0024,
+      "invalid_reasons": {
+        "no_label": 6
+      },
+      "strict": {
+        "n": 2496,
+        "accuracy": 0.488,
+        "macro_f1": 0.4309,
+        "per_class": {
+          "Normal": {
+            "precision": 0.8118,
+            "recall": 0.3317,
+            "f1": 0.471,
+            "support": 624
+          },
+          "Depression": {
+            "precision": 0.5452,
+            "recall": 0.6282,
+            "f1": 0.5838,
+            "support": 624
+          },
+          "Anxiety": {
+            "precision": 0.3966,
+            "recall": 0.9311,
+            "f1": 0.5562,
+            "support": 624
+          },
+          "Bipolar": {
+            "precision": 0.7451,
+            "recall": 0.0609,
+            "f1": 0.1126,
+            "support": 624
+          }
+        }
+      },
+      "valid_only": {
+        "n": 2490,
+        "accuracy": 0.4892,
+        "macro_f1": 0.4315,
+        "per_class": {
+          "Normal": {
+            "precision": 0.8118,
+            "recall": 0.3323,
+            "f1": 0.4715,
+            "support": 623
+          },
+          "Depression": {
+            "precision": 0.5452,
+            "recall": 0.6323,
+            "f1": 0.5855,
+            "support": 620
+          },
+          "Anxiety": {
+            "precision": 0.3966,
+            "recall": 0.9326,
+            "f1": 0.5565,
+            "support": 623
+          },
+          "Bipolar": {
+            "precision": 0.7451,
+            "recall": 0.0609,
+            "f1": 0.1126,
+            "support": 624
+          }
+        }
+      },
+      "confusion_strict": {
+        "Normal": {
+          "Normal": 207,
+          "Depression": 204,
+          "Anxiety": 209,
+          "Bipolar": 3,
+          "INVALID": 1
+        },
+        "Depression": {
+          "Normal": 15,
+          "Depression": 392,
+          "Anxiety": 203,
+          "Bipolar": 10,
+          "INVALID": 4
+        },
+        "Anxiety": {
+          "Normal": 9,
+          "Depression": 33,
+          "Anxiety": 581,
+          "Bipolar": 0,
+          "INVALID": 1
+        },
+        "Bipolar": {
+          "Normal": 24,
+          "Depression": 90,
+          "Anxiety": 472,
+          "Bipolar": 38,
+          "INVALID": 0
+        }
+      },
+      "cost": {
+        "total_seconds": 1657.7,
+        "mean_seconds": 0.664,
+        "mean_prompt_tokens": 807.8,
+        "mean_output_tokens": 2.0
+      }
+    },
+    "S2b": {
+      "n": 2496,
+      "invalid_count": 5,
+      "invalid_rate": 0.002,
+      "invalid_reasons": {
+        "no_label": 5
+      },
+      "strict": {
+        "n": 2496,
+        "accuracy": 0.6166,
+        "macro_f1": 0.605,
+        "per_class": {
+          "Normal": {
+            "precision": 0.7015,
+            "recall": 0.3654,
+            "f1": 0.4805,
+            "support": 624
+          },
+          "Depression": {
+            "precision": 0.4944,
+            "recall": 0.774,
+            "f1": 0.6034,
+            "support": 624
+          },
+          "Anxiety": {
+            "precision": 0.6408,
+            "recall": 0.8462,
+            "f1": 0.7293,
+            "support": 624
+          },
+          "Bipolar": {
+            "precision": 0.8219,
+            "recall": 0.4808,
+            "f1": 0.6067,
+            "support": 624
+          }
+        }
+      },
+      "valid_only": {
+        "n": 2491,
+        "accuracy": 0.6178,
+        "macro_f1": 0.6055,
+        "per_class": {
+          "Normal": {
+            "precision": 0.7015,
+            "recall": 0.366,
+            "f1": 0.481,
+            "support": 623
+          },
+          "Depression": {
+            "precision": 0.4944,
+            "recall": 0.7765,
+            "f1": 0.6041,
+            "support": 622
+          },
+          "Anxiety": {
+            "precision": 0.6408,
+            "recall": 0.8489,
+            "f1": 0.7303,
+            "support": 622
+          },
+          "Bipolar": {
+            "precision": 0.8219,
+            "recall": 0.4808,
+            "f1": 0.6067,
+            "support": 624
+          }
+        }
+      },
+      "confusion_strict": {
+        "Normal": {
+          "Normal": 228,
+          "Depression": 261,
+          "Anxiety": 114,
+          "Bipolar": 20,
+          "INVALID": 1
+        },
+        "Depression": {
+          "Normal": 23,
+          "Depression": 483,
+          "Anxiety": 81,
+          "Bipolar": 35,
+          "INVALID": 2
+        },
+        "Anxiety": {
+          "Normal": 16,
+          "Depression": 68,
+          "Anxiety": 528,
+          "Bipolar": 10,
+          "INVALID": 2
+        },
+        "Bipolar": {
+          "Normal": 58,
+          "Depression": 165,
+          "Anxiety": 101,
+          "Bipolar": 300,
+          "INVALID": 0
+        }
+      },
+      "cost": {
+        "total_seconds": 1610.2,
+        "mean_seconds": 0.645,
+        "mean_prompt_tokens": 850.7,
+        "mean_output_tokens": 2.1
+      }
+    }
+  }
+}

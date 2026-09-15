@@ -10,7 +10,9 @@
 很可能正是原研究擴增效果只有 +0.0009 的原因。
 
 三道關卡：
-  1. 含任何類別詞的改寫 -> 丟棄
+  1. **改寫引入了原文沒有的類別詞** -> 丟棄。注意是「引入」而非「含有」：
+     原文本身提到自己的診斷是真實的病患語言，把這種樣本剔掉會系統性排除
+     資訊量最高的一批，反而製造選擇偏誤。
   2. 與原文語意相似度過低（改寫跑題）-> 丟棄
   3. 標籤保持驗證：用 train 上訓練的分類器檢查改寫後是否仍判為同一類
      -> **只記錄、不丟棄**。分類器本身並不完美，拿它當篩子會系統性地
@@ -113,7 +115,9 @@ def main() -> None:
             if key in already:
                 continue
             prompt = f"{REWRITE_INSTRUCTION}\n\nText:\n{row.statement.strip()}"
-            resp = C.chat(prompt, options=REWRITE_OPTIONS)
+            # 每個變體換一個 seed，否則固定 seed 會讓同一筆的多個版本完全相同
+            resp = C.chat(prompt, options={**REWRITE_OPTIONS,
+                                           "seed": REWRITE_OPTIONS["seed"] + k})
             C.append_jsonl(raw_path, {
                 "gen_key": key,
                 "source_id": row.id,
@@ -141,11 +145,12 @@ def main() -> None:
         "generated": len(records),
         "empty": 0,
         "boilerplate_prefix": 0,
-        "dropped_label_word": 0,
+        "dropped_introduced_label_word": 0,
         "dropped_low_similarity": 0,
         "kept": 0,
     }
     label_word_hits = {label: 0 for label in C.LABELS}
+    preserved_label_words = {label: 0 for label in C.LABELS}
     other_label_hits = 0
 
     staged: list[dict] = []
@@ -156,13 +161,20 @@ def main() -> None:
             stats["empty"] += 1
             continue
 
-        hits = label_words_in(text)
-        if hits:
-            for h in hits:
+        # 只有「改寫引入了原文沒有的類別詞」才算污染。原文本身就提到自己的診斷
+        # （"my depression got worse"）是真實的病患語言，把這種樣本丟掉會系統性
+        # 排除掉資訊量最高的一批，反而製造選擇偏誤。
+        orig_hits = set(label_words_in(rec["original"]))
+        new_hits = set(label_words_in(text))
+        for h in new_hits & orig_hits:
+            preserved_label_words[h] += 1
+        introduced = new_hits - orig_hits
+        if introduced:
+            for h in introduced:
                 label_word_hits[h] += 1
-            if any(h != rec["status"] for h in hits):
+            if any(h != rec["status"] for h in introduced):
                 other_label_hits += 1
-            stats["dropped_label_word"] += 1
+            stats["dropped_introduced_label_word"] += 1
             continue
 
         staged.append({**rec, "text": text})
@@ -212,8 +224,10 @@ def main() -> None:
         "source_rows": int(len(train)),
         "filters": stats,
         "retention_rate": round(stats["kept"] / stats["generated"], 4) if stats["generated"] else 0,
-        "label_word_occurrences": label_word_hits,
-        "generations_containing_other_class_word": other_label_hits,
+        "label_words_introduced_by_rewrite": label_word_hits,
+        "label_words_already_in_source": preserved_label_words,
+        "introduced_other_class_word": other_label_hits,
+        "filter_rule": "只丟棄改寫引入的類別詞；原文本身含有的不視為污染",
         "min_similarity_threshold": MIN_SIMILARITY,
         "similarity": {
             "mean": round(float(np.mean(sims)), 4) if len(sims) else None,
@@ -228,8 +242,9 @@ def main() -> None:
 
     C.log(f"  生成 {stats['generated']:,} → 保留 {stats['kept']:,}"
           f"（保留率 {report['retention_rate']:.1%}）")
-    C.log(f"  含類別詞而丟棄：{stats['dropped_label_word']:,}"
-          f"（其中含他類詞 {other_label_hits:,}）")
+    C.log(f"  改寫引入類別詞而丟棄：{stats['dropped_introduced_label_word']:,}"
+          f"（其中引入他類詞 {other_label_hits:,}）")
+    C.log(f"  原文本就含類別詞（保留，不視為污染）：{sum(preserved_label_words.values()):,}")
     C.log(f"  相似度過低而丟棄：{stats['dropped_low_similarity']:,}")
     C.log(f"  樣板開頭出現：{stats['boilerplate_prefix']:,}")
     if preservation.get("status") == "ok":

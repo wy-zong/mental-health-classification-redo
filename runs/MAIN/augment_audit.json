@@ -1,0 +1,58 @@
+{
+  "instruction": "Rewrite the following text in different words while preserving its original meaning, tone, and emotional content. Output only the rewritten text.",
+  "instruction_mentions_class_names": false,
+  "options": {
+    "temperature": 0.7,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 1024
+  },
+  "n_paraphrases": 2,
+  "source_split": "train",
+  "source_rows": 5996,
+  "filters": {
+    "generated": 11992,
+    "empty": 0,
+    "boilerplate_prefix": 2319,
+    "dropped_introduced_label_word": 1205,
+    "dropped_low_similarity": 1682,
+    "kept": 9105
+  },
+  "retention_rate": 0.7593,
+  "label_words_introduced_by_rewrite": {
+    "Normal": 189,
+    "Depression": 257,
+    "Anxiety": 728,
+    "Bipolar": 94
+  },
+  "label_words_already_in_source": {
+    "Normal": 323,
+    "Depression": 1198,
+    "Anxiety": 1977,
+    "Bipolar": 1076
+  },
+  "introduced_other_class_word": 691,
+  "filter_rule": "只丟棄改寫引入的類別詞；原文本身含有的不視為污染",
+  "min_similarity_threshold": 0.5,
+  "similarity": {
+    "mean": 0.7015,
+    "p05": 0.3006
+  },
+  "label_preservation": {
+    "status": "ok",
+    "classifier": "TF-IDF(1-2gram) + LogisticRegression, fitted on train",
+    "note": "僅供量化，未用於篩選擴增資料",
+    "n": 9105,
+    "preserved_rate": 0.7305,
+    "per_class": {
+      "Normal": 0.9254,
+      "Depression": 0.2913,
+      "Anxiety": 0.8262,
+      "Bipolar": 0.8964
+    },
+    "train_self_accuracy": 0.9635
+  },
+  "output_rows": 9105,
+  "output_sha256": "e50d8f8115baf7b68784074cdf8136d117b45d9a94f3713b5c5eb330c99c1674",
+  "built_at": "2026-09-15 21:01:57+0800"
+}
