@@ -1,0 +1,51 @@
+{
+  "run": "MAIN",
+  "created_at": "2026-09-15 09:14:57+0800",
+  "model": {
+    "model_name": "llama3.1",
+    "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "size_bytes": 4920753328,
+    "quantization_level": "Q4_K_M",
+    "parameter_size": "8.0B",
+    "family": "llama",
+    "weights_blob_digest": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29"
+  },
+  "generation_options": {
+    "temperature": 0.0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 16,
+    "top_p": 1.0
+  },
+  "hardware": {
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.10.18",
+    "processor": "Intel64 Family 6 Model 165 Stepping 2, GenuineIntel",
+    "torch_cuda_available": true,
+    "gpu_name": "NVIDIA GeForce RTX 2070",
+    "gpu_count": 1,
+    "gpu_total_memory_gb": 8.0,
+    "cuda_version": "12.6",
+    "nvidia_smi": "NVIDIA GeForce RTX 2070, 576.02, 8192 MiB"
+  },
+  "packages": {
+    "pandas": "2.3.3",
+    "numpy": "2.2.6",
+    "sklearn": "1.7.2",
+    "scipy": "1.15.3",
+    "sentence_transformers": "6.0.1",
+    "faiss": "1.15.0",
+    "optuna": "5.0.0",
+    "transformers": "5.17.0",
+    "torch": "2.14.0+cu126",
+    "ollama": "<no __version__>",
+    "matplotlib": "3.10.9"
+  },
+  "labels": [
+    "Normal",
+    "Depression",
+    "Anxiety",
+    "Bipolar"
+  ],
+  "raw_dataset_sha256": "67274f52dec3b0155aec4d7d1ff31d2a92b0e9b383ab917614591cd168cc2474"
+}

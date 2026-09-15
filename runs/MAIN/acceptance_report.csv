@@ -1,0 +1,35 @@
+step,check,status,detail
+01,切分稽核檔存在,PASS,
+01,四集合兩兩逐字互斥,PASS,6 組比較
+01,已執行逐字去重,PASS,"移除 1,140 筆重複"
+01,已執行近似去重（非 SKIPPED）,PASS,門檻 0.9，摺疊 375 筆
+01,切分後無跨集合近似重複,PASS,最大相似度 0.8966 < 門檻 0.9
+01,train.csv hash 未變,PASS,"5,996 筆"
+01,val_search.csv hash 未變,PASS,400 筆
+01,val_confirm.csv hash 未變,PASS,"1,100 筆"
+01,test.csv hash 未變,PASS,"2,496 筆"
+00,run_manifest.json 存在,PASS,
+00,量化等級已探測（非佔位值）,PASS,Q4_K_M
+00,權重 blob digest 已探測,PASS,667b0c1932bc6ffc593e…
+00,num_ctx 已明確指定,PASS,4096
+00,torch 可用 CUDA,PASS,NVIDIA GeForce RTX 2070
+03,語料庫 noaug 僅來自 train,PASS,train
+03,語料庫 noaug 與評估集無重複,PASS,"{'val_search': 0, 'val_confirm': 0, 'test': 0}"
+03,語料庫 noaug 索引 hash 未變,PASS,
+03,語料庫 noaug 已記錄截斷筆數,PASS,330 筆（5.504%）
+03,語料庫 aug,SKIP,尚未建立
+04,擴增稽核,SKIP,尚未執行
+05,最佳化 norag,SKIP,尚未執行
+05,最佳化 rag_aug,SKIP,尚未執行
+05,最佳化結果,SKIP,兩種模式都尚未執行
+06,S0 筆數完整,FAIL,"2,256/2496"
+06,S0 100% 記錄 raw_response,PASS,
+06,S0 無重複 id,PASS,
+06,S0 模型 digest 與 manifest 一致,PASS,
+06,S0 基準指令未被竄改,PASS,
+06,條件 S1,SKIP,尚未執行
+06,條件 S2a,SKIP,尚未執行
+06,條件 S2b,SKIP,尚未執行
+06,條件 S3a,SKIP,尚未執行
+06,條件 S3b,SKIP,尚未執行
+06,條件 S4,SKIP,尚未執行

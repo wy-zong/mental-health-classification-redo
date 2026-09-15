@@ -1,0 +1,17 @@
+{
+  "condition": "S0",
+  "instruction_kind": "simple",
+  "instruction_sha256": "bb3bf159e8ab91be5139e3c324ea5cc2d6bf3770392dae39bb5a5420249cde30",
+  "rag_corpus": null,
+  "corpus_sha256": null,
+  "top_k": null,
+  "test_split_sha256": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466",
+  "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+  "generation_options": {
+    "temperature": 0.0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 16,
+    "top_p": 1.0
+  }
+}

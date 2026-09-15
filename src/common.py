@@ -231,3 +231,23 @@ def import_faiss():
             f"  faiss.__file__ = {getattr(faiss, '__file__', '<namespace package>')}"
         )
     return faiss
+
+
+# ---------------------------------------------------------------- 模組載入
+
+def load_module(name: str):
+    """載入同目錄下以數字開頭的腳本當模組（例如 02_prompts）。
+
+    流程腳本刻意以編號命名以標示執行順序，但這種檔名不是合法的 Python 識別字，
+    無法用 import 陳述式載入。
+    """
+    import importlib.util
+
+    path = Path(__file__).resolve().parent / f"{name}.py"
+    if not path.exists():
+        die(f"找不到模組 {name}：{path}")
+    spec = importlib.util.spec_from_file_location(name.replace("-", "_"), path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module

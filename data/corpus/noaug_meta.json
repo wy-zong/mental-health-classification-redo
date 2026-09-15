@@ -1,0 +1,19 @@
+{
+  "name": "noaug",
+  "source": "train",
+  "n_docs": 5996,
+  "embedding_model": "all-MiniLM-L6-v2",
+  "max_seq_length": 512,
+  "normalized": true,
+  "metric": "cosine (IndexFlatIP on normalized vectors)",
+  "truncated_docs": 330,
+  "truncated_pct": 5.504,
+  "entry_format": "<statement> true_label is <status>",
+  "index_sha256": "5234eb1df2ebc9cb3834b062a9968d4dcc1e11d3655cde42430fdfe57c7b1c44",
+  "exact_overlap_with_eval_splits": {
+    "val_search": 0,
+    "val_confirm": 0,
+    "test": 0
+  },
+  "built_at": "2026-09-15 09:20:28+0800"
+}

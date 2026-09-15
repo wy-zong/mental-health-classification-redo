@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import argparse
 import importlib
+import json
+import os
 import platform
 import subprocess
 import sys
@@ -71,6 +73,29 @@ def probe_hardware() -> dict:
     return info
 
 
+def probe_weights_digest(model: str) -> str | None:
+    """取模型權重 blob 的 sha256（不是 manifest digest）。
+
+    兩者都是合法識別碼但指的東西不同：API /api/tags 回傳的是整份 manifest 的摘要，
+    而 manifest 內 mediaType 含 "model" 的那一層才是 4.58 GB 權重檔本身的 sha256。
+    舊 repo 的 R1FIX 記錄的是後者（667b0c19…），這裡兩個都留，才能跨 run 對照。
+    """
+    root = Path(os.environ.get("OLLAMA_MODELS", Path.home() / ".ollama" / "models"))
+    tag = model if ":" in model else f"{model}:latest"
+    name, _, version = tag.partition(":")
+    manifest = root / "manifests" / "registry.ollama.ai" / "library" / name / version
+    if not manifest.exists():
+        return None
+    try:
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return None
+    for layer in data.get("layers", []):
+        if "model" in layer.get("mediaType", ""):
+            return layer.get("digest", "").removeprefix("sha256:") or None
+    return None
+
+
 def probe_model(model: str) -> dict:
     """探測 LLM 的實際身分：digest 與量化等級。
 
@@ -113,6 +138,8 @@ def probe_model(model: str) -> dict:
         info["parameter_size"] = getattr(details, "parameter_size", None)
         info["family"] = getattr(details, "family", None)
 
+    info["weights_blob_digest"] = probe_weights_digest(model)
+
     if not info.get("quantization_level"):
         C.die("探測不到量化等級 —— 不接受未知的模型設定，請檢查 Ollama 版本")
     if not info.get("digest"):
@@ -142,8 +169,9 @@ def main() -> None:
     }
 
     m = manifest["model"]
-    C.log(f"  模型 {m['model_name']}：{m.get('parameter_size')} / "
-          f"{m.get('quantization_level')}  digest={str(m.get('digest'))[:20]}…")
+    C.log(f"  模型 {m['model_name']}：{m.get('parameter_size')} / {m.get('quantization_level')}")
+    C.log(f"    manifest digest = {str(m.get('digest'))[:24]}…")
+    C.log(f"    權重 blob digest = {str(m.get('weights_blob_digest'))[:24]}…")
     hw = manifest["hardware"]
     C.log(f"  硬體：{hw.get('gpu_name', 'CPU only')}"
           + (f"（{hw['gpu_total_memory_gb']} GB）" if hw.get("gpu_total_memory_gb") else ""))

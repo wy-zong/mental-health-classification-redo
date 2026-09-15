@@ -11,3 +11,4 @@ data/raw/*.csv
 data/corpus/*.bin
 
 .DS_Store
+runs/*/augment_raw.jsonl
