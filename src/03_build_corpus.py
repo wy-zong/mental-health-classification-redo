@@ -74,6 +74,8 @@ def main() -> None:
     ap.add_argument("--run", default="MAIN", help="擴增資料的來源 run")
     args = ap.parse_args()
 
+    C.single_instance(f"corpus_{args.source}")
+
     faiss = C.import_faiss()
     name = SOURCE_TO_NAME[args.source]
     CORPUS_DIR.mkdir(parents=True, exist_ok=True)

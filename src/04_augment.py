@@ -83,6 +83,8 @@ def main() -> None:
     ap.add_argument("--progress-every", type=int, default=200)
     args = ap.parse_args()
 
+    C.single_instance("augment")
+
     run_dir = C.RUNS / args.run
     run_dir.mkdir(parents=True, exist_ok=True)
 
@@ -185,10 +187,17 @@ def main() -> None:
 
         model = SentenceTransformer("all-MiniLM-L6-v2")
         model.max_seq_length = 512
-        enc = lambda xs: np.asarray(  # noqa: E731
-            model.encode(xs, batch_size=64, convert_to_numpy=True,
-                         normalize_embeddings=True, show_progress_bar=False),
-            dtype="float32")
+        def enc(xs: list[str]) -> np.ndarray:
+            """分批編碼。一次送上萬筆會讓 GPU 記憶體壓力過大；2026-09-16 曾在
+            這一行遇到 CUDA illegal memory access（當時另有一個程序同時佔用 GPU）。"""
+            out = []
+            for i in range(0, len(xs), 512):
+                out.append(np.asarray(
+                    model.encode(xs[i:i + 512], batch_size=32, convert_to_numpy=True,
+                                 normalize_embeddings=True, show_progress_bar=False),
+                    dtype="float32"))
+            return np.vstack(out)
+
         sims = (enc([s["original"] for s in staged]) * enc([s["text"] for s in staged])).sum(1)
     else:
         sims = np.array([])

@@ -107,6 +107,8 @@ def main() -> None:
                     help="進入階段二的候選數")
     args = ap.parse_args()
 
+    C.single_instance(f"optimize_{args.mode}")
+
     cfg = MODES[args.mode]
     run_dir = C.RUNS / args.run
     run_dir.mkdir(parents=True, exist_ok=True)

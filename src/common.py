@@ -251,3 +251,45 @@ def load_module(name: str):
     assert spec.loader is not None
     spec.loader.exec_module(module)
     return module
+
+
+# ---------------------------------------------------------------- 單一執行實例
+
+def _pid_alive(pid: int) -> bool:
+    import subprocess
+
+    try:
+        out = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/NH"],
+                             capture_output=True, text=True, timeout=15)
+        return str(pid) in out.stdout
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def single_instance(tag: str) -> None:
+    """確保同一支腳本不會同時跑兩份。
+
+    2026-09-16 踩到過：兩個程序同時執行 04_augment.py 的 embedding 階段，
+    在同一張 GPU 上造成 `CUDA error: an illegal memory access was encountered`，
+    兩個程序一起崩潰。同時寫同一個 JSONL 也會有資料競爭 —— 各自的 done_ids
+    只在啟動時讀一次，之後兩邊會重複跑同一批樣本。
+    """
+    import atexit
+
+    lock_dir = RUNS / ".locks"
+    lock_dir.mkdir(parents=True, exist_ok=True)
+    path = lock_dir / f"{tag}.lock"
+
+    if path.exists():
+        try:
+            old_pid = int(path.read_text(encoding="utf-8").strip())
+        except Exception:  # noqa: BLE001
+            old_pid = 0
+        if old_pid and old_pid != os.getpid() and _pid_alive(old_pid):
+            die(f"已有另一份 {tag} 正在執行（PID {old_pid}）——拒絕同時執行。\n"
+                f"  同時跑兩份會造成 GPU 記憶體衝突與 JSONL 資料競爭。\n"
+                f"  若確認該程序已不存在，請手動刪除：{path}")
+
+    path.write_text(str(os.getpid()), encoding="utf-8")
+    atexit.register(lambda: path.unlink(missing_ok=True))
+    log(f"取得執行鎖 {tag}（PID {os.getpid()}）")

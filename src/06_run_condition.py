@@ -86,6 +86,8 @@ def main() -> None:
     ap.add_argument("--progress-every", type=int, default=50)
     args = ap.parse_args()
 
+    C.single_instance(f"cond_{args.condition}")
+
     cond = CONDITIONS[args.condition]
     run_dir = C.RUNS / args.run
     prompts = C.load_module("02_prompts")

@@ -184,6 +184,8 @@ def main() -> None:
                     help="要跑的資料版本，逗號分隔")
     args = ap.parse_args()
 
+    C.single_instance("baselines")
+
     run_dir = C.RUNS / args.run
     out_path = run_dir / "baselines.json"
     results = C.load_json(out_path) or {"run": args.run, "variants": {}}

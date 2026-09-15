@@ -13,6 +13,9 @@
 # 已完成條件的指紋檢查就會全部擋下 —— 那不是保護失效，是保護正確生效，
 # 但代價是整輪實驗得重來。要重建請先自行清空 data/splits 或 data/corpus。
 set -e
+set -o pipefail   # 沒有這行，任何 `python ... | grep` 都會讓 grep 的 exit 0 掩蓋 python 的崩潰
+                  # 2026-09-16 就是這樣讓一次 CUDA 崩潰被誤判成「執行成功」
+trap 'echo "########## 中止：上一個步驟失敗（exit $?）##########" >&2' ERR
 cd "$(dirname "$0")/src"
 
 RUN="${RUN:-MAIN}"
