@@ -2,7 +2,7 @@
   "run": "MAIN",
   "correctness_convention": "strict（無效回應計為答錯）",
   "multiple_comparison_correction": "Holm–Bonferroni",
-  "n_comparisons": 4,
+  "n_comparisons": 9,
   "comparisons": {
     "S0_vs_S1": {
       "question": "prompt 最佳化本身的效果（無 RAG 干擾）",
@@ -57,7 +57,7 @@
         "n10": 352,
         "n_discordant": 642,
         "p_value": 0.015997121483970703,
-        "p_value_holm": 0.015997
+        "p_value_holm": 0.063988
       },
       "bootstrap": {
         "mean_diff": -0.02484,
@@ -65,7 +65,7 @@
         "ci95_high": -0.00481,
         "n_boot": 10000
       },
-      "significant_after_holm": true
+      "significant_after_holm": false
     },
     "S2a_vs_S2b": {
       "question": "最佳化在有 RAG 時還剩多少作用",
@@ -84,6 +84,111 @@
         "mean_diff": 0.12861,
         "ci95_low": 0.11138,
         "ci95_high": 0.14583,
+        "n_boot": 10000
+      },
+      "significant_after_holm": true
+    },
+    "S2a_vs_S3a": {
+      "question": "擴增語料庫的純效果（指令固定）",
+      "n_paired": 2496,
+      "accuracy_S2a": 0.488,
+      "accuracy_S3a": 0.4848,
+      "delta_pp": -0.321,
+      "mcnemar": {
+        "n01": 136,
+        "n10": 144,
+        "n_discordant": 280,
+        "p_value": 0.6757814111963587,
+        "p_value_holm": 1.0
+      },
+      "bootstrap": {
+        "mean_diff": -0.00321,
+        "ci95_low": -0.01603,
+        "ci95_high": 0.01002,
+        "n_boot": 10000
+      },
+      "significant_after_holm": false
+    },
+    "S2b_vs_S3b": {
+      "question": "擴增語料庫在最佳化指令下的效果",
+      "n_paired": 2496,
+      "accuracy_S2b": 0.6166,
+      "accuracy_S3b": 0.619,
+      "delta_pp": 0.24,
+      "mcnemar": {
+        "n01": 208,
+        "n10": 202,
+        "n_discordant": 410,
+        "p_value": 0.8049971524657481,
+        "p_value_holm": 1.0
+      },
+      "bootstrap": {
+        "mean_diff": 0.0024,
+        "ci95_low": -0.01362,
+        "ci95_high": 0.01843,
+        "n_boot": 10000
+      },
+      "significant_after_holm": false
+    },
+    "S3a_vs_S4": {
+      "question": "針對擴增設定重搜指令的效果",
+      "n_paired": 2496,
+      "accuracy_S3a": 0.4848,
+      "accuracy_S4": 0.621,
+      "delta_pp": 13.622,
+      "mcnemar": {
+        "n01": 436,
+        "n10": 96,
+        "n_discordant": 532,
+        "p_value": 9.633929404570611e-53,
+        "p_value_holm": 0.0
+      },
+      "bootstrap": {
+        "mean_diff": 0.13622,
+        "ci95_low": 0.11939,
+        "ci95_high": 0.15345,
+        "n_boot": 10000
+      },
+      "significant_after_holm": true
+    },
+    "S3b_vs_S4": {
+      "question": "指令最佳化能否跨設定遷移 vs 重新搜尋",
+      "n_paired": 2496,
+      "accuracy_S3b": 0.619,
+      "accuracy_S4": 0.621,
+      "delta_pp": 0.2,
+      "mcnemar": {
+        "n01": 26,
+        "n10": 21,
+        "n_discordant": 47,
+        "p_value": 0.5600646295802106,
+        "p_value_holm": 1.0
+      },
+      "bootstrap": {
+        "mean_diff": 0.002,
+        "ci95_low": -0.00361,
+        "ci95_high": 0.00761,
+        "n_boot": 10000
+      },
+      "significant_after_holm": false
+    },
+    "S0_vs_S4": {
+      "question": "完整管線相對於樸素基準的總增益",
+      "n_paired": 2496,
+      "accuracy_S0": 0.3918,
+      "accuracy_S4": 0.621,
+      "delta_pp": 22.917,
+      "mcnemar": {
+        "n01": 724,
+        "n10": 152,
+        "n_discordant": 876,
+        "p_value": 6.2297383177303735e-90,
+        "p_value_holm": 0.0
+      },
+      "bootstrap": {
+        "mean_diff": 0.22917,
+        "ci95_low": 0.20793,
+        "ci95_high": 0.2504,
         "n_boot": 10000
       },
       "significant_after_holm": true
