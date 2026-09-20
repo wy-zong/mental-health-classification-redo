@@ -1,0 +1,16 @@
+{
+  "run": "PAPER_RAG_TOPK1_EXISTING",
+  "condition": "rag_aug_paper_topk1",
+  "condition_description": "aug RAG；論文 Table VIII 原始分類 prompt；top_k=1",
+  "n": 2496,
+  "invalid_count": 141,
+  "invalid_rate": 0.056490384615384616,
+  "strict_accuracy": 0.750801282051282,
+  "valid_only_accuracy": 0.7957537154989385,
+  "correct_count": 1874,
+  "prompt_id": "paper_table_viii_rag",
+  "prompt_sha256": "759af970814b6d8015240176f57aa8228f81e213359f5826e03ab8115b07088e",
+  "top_k": 1,
+  "test_split_sha256": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466",
+  "corpus_meta_sha256": "2b99650c0fdc7f0c042958e3c24d3068fef8e7dd42853d18d3876e7e8ee2f6aa"
+}

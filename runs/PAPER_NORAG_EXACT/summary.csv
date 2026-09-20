@@ -1,0 +1,2 @@
+﻿run,condition,condition_description,n,correct_count,invalid_count,invalid_rate,strict_accuracy,valid_only_accuracy,prompt_id,prompt_sha256,requested_top_k,top_k,retrieval_used,test_split_sha256
+PAPER_NORAG_EXACT,norag_paper_exact,LLM-only；論文 Table VIII 原始分類 prompt；無 RAG、無 top_k,2496,1777,89,0.03565705128205128,0.7119391025641025,0.7382633984212713,paper_table_viii_norag_exact,16eb1cc04ad6b9aded193f164ecdc344687ded72260a62c86e34325e7f09330f,1,,False,7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466

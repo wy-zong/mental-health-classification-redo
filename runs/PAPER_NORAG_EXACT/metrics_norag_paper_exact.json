@@ -1,0 +1,17 @@
+{
+  "run": "PAPER_NORAG_EXACT",
+  "condition": "norag_paper_exact",
+  "condition_description": "LLM-only；論文 Table VIII 原始分類 prompt；無 RAG、無 top_k",
+  "n": 2496,
+  "correct_count": 1777,
+  "invalid_count": 89,
+  "invalid_rate": 0.03565705128205128,
+  "strict_accuracy": 0.7119391025641025,
+  "valid_only_accuracy": 0.7382633984212713,
+  "prompt_id": "paper_table_viii_norag_exact",
+  "prompt_sha256": "16eb1cc04ad6b9aded193f164ecdc344687ded72260a62c86e34325e7f09330f",
+  "requested_top_k": 1,
+  "top_k": null,
+  "retrieval_used": false,
+  "test_split_sha256": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466"
+}

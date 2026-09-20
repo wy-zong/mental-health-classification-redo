@@ -1,0 +1,7 @@
+{
+  "run": "PAPER_NORAG_EXACT",
+  "completed_at": "2026-09-20 00:09:07+0800",
+  "n_test": 2496,
+  "requested_top_k": 1,
+  "retrieval_used": false
+}

@@ -1,0 +1,19 @@
+{
+  "name": "aug",
+  "source": "train+aug",
+  "n_docs": 15101,
+  "embedding_model": "all-MiniLM-L6-v2",
+  "max_seq_length": 512,
+  "normalized": true,
+  "metric": "cosine (IndexFlatIP on normalized vectors)",
+  "truncated_docs": 577,
+  "truncated_pct": 3.821,
+  "entry_format": "<statement> true_label is <status>",
+  "index_sha256": "8fe2c3698f025d02003ab2d858d8f953581860498d74a9bf65733eebed229513",
+  "exact_overlap_with_eval_splits": {
+    "val_search": 0,
+    "val_confirm": 0,
+    "test": 0
+  },
+  "built_at": "2026-09-15 21:03:24+0800"
+}

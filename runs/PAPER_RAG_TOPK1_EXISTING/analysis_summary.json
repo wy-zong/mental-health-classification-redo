@@ -1,0 +1,42 @@
+{
+  "run": "PAPER_RAG_TOPK1_EXISTING",
+  "n_paired": 2496,
+  "same_prompt": true,
+  "top_k": 1,
+  "corpus_comparison": {
+    "noaug": {
+      "n": 2496,
+      "correct": 1864,
+      "invalid": 170,
+      "retrieved_label_correct": 1958,
+      "retrieved_label_accuracy": 0.7844551282051282,
+      "mean_retrieval_similarity": 0.6003725859276855,
+      "invalid_reasons": {
+        "no_label": 170
+      }
+    },
+    "aug": {
+      "n": 2496,
+      "correct": 1874,
+      "invalid": 141,
+      "retrieved_label_correct": 1934,
+      "retrieved_label_accuracy": 0.7748397435897436,
+      "mean_retrieval_similarity": 0.6158315071549553,
+      "invalid_reasons": {
+        "no_label": 141
+      }
+    }
+  },
+  "paired_outcomes": {
+    "both_correct": 1772,
+    "both_wrong": 530,
+    "aug_only_correct": 102,
+    "noaug_only_correct": 92
+  },
+  "invalid_transitions": {
+    "valid_to_valid": 2313,
+    "invalid_to_invalid": 128,
+    "invalid_to_valid": 42,
+    "valid_to_invalid": 13
+  }
+}

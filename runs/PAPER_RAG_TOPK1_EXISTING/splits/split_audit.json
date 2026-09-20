@@ -1,0 +1,202 @@
+{
+  "seed": 42,
+  "split_ratios": {
+    "train": 0.6,
+    "val_search": 0.04,
+    "val_confirm": 0.11,
+    "test": 0.25
+  },
+  "raw_dataset": {
+    "path": "Combined Data.csv",
+    "sha256": "67274f52dec3b0155aec4d7d1ff31d2a92b0e9b383ab917614591cd168cc2474"
+  },
+  "raw_rows": 53043,
+  "dropped_other_classes": {
+    "rows": 14523,
+    "classes": [
+      "Personality disorder",
+      "Stress",
+      "Suicidal"
+    ]
+  },
+  "dedup": {
+    "rows_before": 38365,
+    "exact_duplicate_rows_removed": 1140,
+    "label_conflicting_texts": 10,
+    "label_conflicting_rows_removed": 34,
+    "rows_after": 37215
+  },
+  "per_class_after_exact_dedup": {
+    "Normal": 16020,
+    "Depression": 15083,
+    "Anxiety": 3611,
+    "Bipolar": 2501
+  },
+  "near_dedup": {
+    "threshold": 0.9,
+    "embedding_model": "all-MiniLM-L6-v2",
+    "max_seq_length": 512,
+    "metric": "cosine",
+    "rows_before": 37215,
+    "similar_pairs_found": 596,
+    "groups_with_multiple_members": 273,
+    "rows_collapsed_same_label": 375,
+    "label_conflicting_groups": 12,
+    "label_conflicting_rows_removed": 26,
+    "rows_after": 36814,
+    "conflict_examples": [
+      {
+        "labels": [
+          "Anxiety",
+          "Normal"
+        ],
+        "n_members": 4,
+        "sample_text": "oh my god why are you so nervous"
+      },
+      {
+        "labels": [
+          "Depression",
+          "Normal"
+        ],
+        "n_members": 2,
+        "sample_text": "can't wait"
+      },
+      {
+        "labels": [
+          "Anxiety",
+          "Bipolar"
+        ],
+        "n_members": 2,
+        "sample_text": "CBD Oil Has anyone tried CBD oil to help with their anxiety? My meds don't seem to be keeping my anxiety in check and my doctor already has me on the max amount"
+      },
+      {
+        "labels": [
+          "Anxiety",
+          "Depression"
+        ],
+        "n_members": 2,
+        "sample_text": "Support and advice greatly needed (26 year old female) sorry for the long post… I’ve been on anti depressants for about the last 12 years of my life. I was alwa"
+      },
+      {
+        "labels": [
+          "Anxiety",
+          "Depression"
+        ],
+        "n_members": 2,
+        "sample_text": "Seroquel gives me bad trips? I have major depressive disorder and social anxiety  I take  400mg seroquel for sleep and have a weird side effect , when I take it"
+      },
+      {
+        "labels": [
+          "Anxiety",
+          "Depression"
+        ],
+        "n_members": 2,
+        "sample_text": "Can someone relate or am I broken? I need to premise this with saying that I recognise that I drink as it is the only time I don't feel anxious anymore, and it'"
+      },
+      {
+        "labels": [
+          "Anxiety",
+          "Depression"
+        ],
+        "n_members": 2,
+        "sample_text": "Is this depression &amp; anxiety? I’ve been really struggling for 3+ years now. My symptoms are down mood, EXTREME exhaustion no matter how\nmuch I sleep, feelin"
+      },
+      {
+        "labels": [
+          "Anxiety",
+          "Depression"
+        ],
+        "n_members": 2,
+        "sample_text": "I can't even wash my hands when no one will see that I did it   Hello! Today, I (18M) fully realized that I cannot function properly as a human being, unless I'"
+      },
+      {
+        "labels": [
+          "Anxiety",
+          "Depression"
+        ],
+        "n_members": 2,
+        "sample_text": "is it normal to be terrified of irrational things I get so scared at night and not even of normal stuff. Like I feel like a normal person would be scared of an "
+      },
+      {
+        "labels": [
+          "Anxiety",
+          "Depression"
+        ],
+        "n_members": 2,
+        "sample_text": "My friend's depression Every time my friend got depressed, he wouldn't talk to anyone. I was able to help him when I was close, but now he lives much further aw"
+      }
+    ]
+  },
+  "per_class_after_dedup": {
+    "Normal": 15803,
+    "Depression": 14940,
+    "Anxiety": 3573,
+    "Bipolar": 2498
+  },
+  "per_class": 2498,
+  "per_class_split_sizes": {
+    "train": 1499,
+    "val_search": 100,
+    "val_confirm": 275,
+    "test": 624
+  },
+  "exact_overlaps": {
+    "train|val_search": 0,
+    "train|val_confirm": 0,
+    "train|test": 0,
+    "val_search|val_confirm": 0,
+    "val_search|test": 0,
+    "val_confirm|test": 0
+  },
+  "split_files": {
+    "train": {
+      "rows": 5996,
+      "sha256": "221f1a2ffd881c782229b86ecfdb8235ecdd776c65fd8864009d3418dd7a5484"
+    },
+    "val_search": {
+      "rows": 400,
+      "sha256": "fc9c39e42216100fca8ae2bdf221cf9e237aa4179d2a15527794c267e97c1acc"
+    },
+    "val_confirm": {
+      "rows": 1100,
+      "sha256": "25d3a2d608258d5892e0693aac93e947efdccfe41098493d28357bc7d87c7953"
+    },
+    "test": {
+      "rows": 2496,
+      "sha256": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466"
+    }
+  },
+  "near_duplicate_scan": {
+    "reference_set": "train",
+    "metric": "cosine",
+    "embedding_model": "all-MiniLM-L6-v2",
+    "max_seq_length": 512,
+    "val_search": {
+      "n": 400,
+      "max_cosine_to_train": 0.8966130614280701,
+      "mean_cosine_to_train": 0.6192610263824463,
+      "count_ge_threshold": 0,
+      "count_ge_0.95": 0,
+      "count_ge_0.90": 0,
+      "count_ge_0.80": 25
+    },
+    "val_confirm": {
+      "n": 1100,
+      "max_cosine_to_train": 0.8926197290420532,
+      "mean_cosine_to_train": 0.6171191334724426,
+      "count_ge_threshold": 0,
+      "count_ge_0.95": 0,
+      "count_ge_0.90": 0,
+      "count_ge_0.80": 58
+    },
+    "test": {
+      "n": 2496,
+      "max_cosine_to_train": 0.8932771682739258,
+      "mean_cosine_to_train": 0.6169816255569458,
+      "count_ge_threshold": 0,
+      "count_ge_0.95": 0,
+      "count_ge_0.90": 0,
+      "count_ge_0.80": 121
+    }
+  }
+}

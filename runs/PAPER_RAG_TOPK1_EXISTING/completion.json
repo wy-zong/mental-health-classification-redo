@@ -1,0 +1,10 @@
+{
+  "run": "PAPER_RAG_TOPK1_EXISTING",
+  "completed_at": "2026-09-19 14:23:14+0800",
+  "conditions": [
+    "rag_noaug_paper_topk1",
+    "rag_aug_paper_topk1"
+  ],
+  "top_k": 1,
+  "n_test_each": 2496
+}
