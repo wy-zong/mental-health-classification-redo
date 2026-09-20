@@ -1,0 +1,116 @@
+{
+  "created_at_utc": "2026-09-20T18:58:33.569406+00:00",
+  "script": "src/plot_paper_confusion_matrices.py",
+  "source_plot_function": "C:/Users/wuc120/Code/prompt最佳化.py::evaluate_confusion_matrix",
+  "plot_method": {
+    "display": "sklearn.metrics.ConfusionMatrixDisplay",
+    "cmap": "Blues",
+    "values_format": "d",
+    "figure_size_inches": [
+      8,
+      6
+    ],
+    "labels": [
+      "Normal",
+      "Depression",
+      "Anxiety",
+      "Bipolar",
+      "INVALID"
+    ],
+    "x_label": "Predicted Label",
+    "y_label": "True Label",
+    "x_tick_rotation": 45,
+    "invalid_policy": "Any prediction not in the four valid labels is plotted as INVALID.",
+    "interactive_show": false
+  },
+  "experiments": [
+    {
+      "key": "paper_norag_exact",
+      "experiment": "PAPER_NORAG_EXACT",
+      "title": "PAPER_NORAG_EXACT - Table VIII prompt (LLM-only)",
+      "prediction_file": "runs\\PAPER_NORAG_EXACT\\predictions_norag_paper_exact.jsonl",
+      "prediction_file_sha256": "d8cf9932469d15182c7398b3497253dc48714252fcb2ceccf5172c8723801b35",
+      "n": 2496,
+      "strict_accuracy": 0.7119391025641025,
+      "correct": 1777,
+      "invalid": 89,
+      "invalid_rate": 0.03565705128205128,
+      "valid_only_accuracy": 0.7382633984212713,
+      "per_class_accuracy": {
+        "Normal": 0.7211538461538461,
+        "Depression": 0.6217948717948718,
+        "Anxiety": 0.8621794871794872,
+        "Bipolar": 0.6426282051282052,
+        "INVALID": 0.0
+      },
+      "confusion_matrix_csv": "confusion_paper_norag_exact.csv",
+      "figure": "confusion_paper_norag_exact.png"
+    },
+    {
+      "key": "paper_norag_prompt2",
+      "experiment": "PAPER_NORAG_PROMPT2",
+      "title": "PAPER_NORAG_PROMPT2 - custom prompt (LLM-only)",
+      "prediction_file": "runs\\PAPER_NORAG_PROMPT2\\predictions_norag_prompt2.jsonl",
+      "prediction_file_sha256": "38e178d78c9925e37d794e827385fb11b13e5875cd4624396da55c0859e82ebf",
+      "n": 2496,
+      "strict_accuracy": 0.3786057692307692,
+      "correct": 945,
+      "invalid": 1128,
+      "invalid_rate": 0.4519230769230769,
+      "valid_only_accuracy": 0.6907894736842105,
+      "per_class_accuracy": {
+        "Normal": 0.16185897435897437,
+        "Depression": 0.3108974358974359,
+        "Anxiety": 0.6714743589743589,
+        "Bipolar": 0.3701923076923077,
+        "INVALID": 0.0
+      },
+      "confusion_matrix_csv": "confusion_paper_norag_prompt2.csv",
+      "figure": "confusion_paper_norag_prompt2.png"
+    },
+    {
+      "key": "paper_rag_noaug",
+      "experiment": "PAPER_RAG_TOPK1_EXISTING/noaug",
+      "title": "PAPER_RAG_TOPK1_EXISTING - noaug RAG (top_k=1)",
+      "prediction_file": "runs\\PAPER_RAG_TOPK1_EXISTING\\predictions_rag_noaug_paper_topk1.jsonl",
+      "prediction_file_sha256": "b0c14345d7b0b14faef06dde356b4260bb53c5050c7a2e94c430d2fbc6fef729",
+      "n": 2496,
+      "strict_accuracy": 0.7467948717948718,
+      "correct": 1864,
+      "invalid": 170,
+      "invalid_rate": 0.06810897435897435,
+      "valid_only_accuracy": 0.8013757523645744,
+      "per_class_accuracy": {
+        "Normal": 0.7067307692307693,
+        "Depression": 0.5641025641025641,
+        "Anxiety": 0.8862179487179487,
+        "Bipolar": 0.8301282051282052,
+        "INVALID": 0.0
+      },
+      "confusion_matrix_csv": "confusion_paper_rag_noaug.csv",
+      "figure": "confusion_paper_rag_noaug.png"
+    },
+    {
+      "key": "paper_rag_aug",
+      "experiment": "PAPER_RAG_TOPK1_EXISTING/aug",
+      "title": "PAPER_RAG_TOPK1_EXISTING - augmented RAG (top_k=1)",
+      "prediction_file": "runs\\PAPER_RAG_TOPK1_EXISTING\\predictions_rag_aug_paper_topk1.jsonl",
+      "prediction_file_sha256": "34be69618d7691082e12b264b329448170989a12949a986600837d5219fe1ec1",
+      "n": 2496,
+      "strict_accuracy": 0.750801282051282,
+      "correct": 1874,
+      "invalid": 141,
+      "invalid_rate": 0.056490384615384616,
+      "valid_only_accuracy": 0.7957537154989385,
+      "per_class_accuracy": {
+        "Normal": 0.7163461538461539,
+        "Depression": 0.5897435897435898,
+        "Anxiety": 0.8830128205128205,
+        "Bipolar": 0.8141025641025641,
+        "INVALID": 0.0
+      },
+      "confusion_matrix_csv": "confusion_paper_rag_aug.csv",
+      "figure": "confusion_paper_rag_aug.png"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "condition": "norag_paper_exact",
+    "description": "LLM-only；論文 Table VIII 原始分類 prompt；無 RAG、無 top_k",
+    "n": 2496,
+    "correct_count": 1777,
+    "invalid_count": 89,
+    "invalid_rate": 0.03565705128205128,
+    "strict_accuracy": 0.7119391025641025,
+    "valid_only_accuracy": 0.7382633984212713,
+    "prompt_sha256": "16eb1cc04ad6b9aded193f164ecdc344687ded72260a62c86e34325e7f09330f",
+    "test_split_sha256": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466",
+    "top_k": null,
+    "retrieval_used": false
+  },
+  {
+    "condition": "norag_prompt2",
+    "description": "LLM-only；使用者確認的兩段式 prompt；無 RAG、無 top_k",
+    "n": 2496,
+    "correct_count": 945,
+    "invalid_count": 1128,
+    "invalid_rate": 0.4519230769230769,
+    "strict_accuracy": 0.3786057692307692,
+    "valid_only_accuracy": 0.6907894736842105,
+    "prompt_sha256": "4a05b61148d0078ccceef147c5a0f0b5af7a42ff86103dd3761e4eb71a56f6a4",
+    "test_split_sha256": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466",
+    "top_k": null,
+    "retrieval_used": false
+  },
+  {
+    "condition": "rag_noaug_paper_topk1",
+    "description": "noaug RAG；論文 Table VIII 原始分類 prompt；top_k=1",
+    "n": 2496,
+    "correct_count": 1864,
+    "invalid_count": 170,
+    "invalid_rate": 0.06810897435897435,
+    "strict_accuracy": 0.7467948717948718,
+    "valid_only_accuracy": 0.8013757523645744,
+    "prompt_sha256": "759af970814b6d8015240176f57aa8228f81e213359f5826e03ab8115b07088e",
+    "test_split_sha256": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466",
+    "top_k": 1,
+    "retrieval_used": null
+  },
+  {
+    "condition": "rag_aug_paper_topk1",
+    "description": "aug RAG；論文 Table VIII 原始分類 prompt；top_k=1",
+    "n": 2496,
+    "correct_count": 1874,
+    "invalid_count": 141,
+    "invalid_rate": 0.056490384615384616,
+    "strict_accuracy": 0.750801282051282,
+    "valid_only_accuracy": 0.7957537154989385,
+    "prompt_sha256": "759af970814b6d8015240176f57aa8228f81e213359f5826e03ab8115b07088e",
+    "test_split_sha256": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466",
+    "top_k": 1,
+    "retrieval_used": null
+  }
+]

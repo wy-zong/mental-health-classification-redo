@@ -1,0 +1,2 @@
+﻿run,condition,condition_description,n,correct_count,invalid_count,invalid_rate,strict_accuracy,valid_only_accuracy,prompt_id,prompt_sha256,requested_top_k,top_k,retrieval_used,test_split_sha256
+PAPER_NORAG_PROMPT2,norag_prompt2,LLM-only；使用者確認的兩段式 prompt；無 RAG、無 top_k,2496,945,1128,0.4519230769230769,0.3786057692307692,0.6907894736842105,user_confirmed_custom_norag_prompt,4a05b61148d0078ccceef147c5a0f0b5af7a42ff86103dd3761e4eb71a56f6a4,1,,False,7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466

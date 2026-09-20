@@ -1,0 +1,7 @@
+{
+  "run": "PAPER_NORAG_PROMPT2",
+  "completed_at": "2026-09-20 20:58:58+0800",
+  "n_test": 2496,
+  "requested_top_k": 1,
+  "retrieval_used": false
+}

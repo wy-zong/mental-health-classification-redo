@@ -1,0 +1,5 @@
+﻿key,experiment,n,strict_accuracy,correct,invalid,invalid_rate,valid_only_accuracy,figure,confusion_matrix_csv
+paper_norag_exact,PAPER_NORAG_EXACT,2496,0.7119391025641025,1777,89,0.03565705128205128,0.7382633984212713,confusion_paper_norag_exact.png,confusion_paper_norag_exact.csv
+paper_norag_prompt2,PAPER_NORAG_PROMPT2,2496,0.3786057692307692,945,1128,0.4519230769230769,0.6907894736842105,confusion_paper_norag_prompt2.png,confusion_paper_norag_prompt2.csv
+paper_rag_noaug,PAPER_RAG_TOPK1_EXISTING/noaug,2496,0.7467948717948718,1864,170,0.06810897435897435,0.8013757523645744,confusion_paper_rag_noaug.png,confusion_paper_rag_noaug.csv
+paper_rag_aug,PAPER_RAG_TOPK1_EXISTING/aug,2496,0.750801282051282,1874,141,0.056490384615384616,0.7957537154989385,confusion_paper_rag_aug.png,confusion_paper_rag_aug.csv

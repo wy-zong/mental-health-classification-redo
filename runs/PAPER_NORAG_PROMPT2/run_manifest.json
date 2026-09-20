@@ -1,0 +1,41 @@
+{
+  "run": "PAPER_NORAG_PROMPT2",
+  "experiment": "user_confirmed_custom_llm_only_prompt",
+  "created_at": "2026-09-20 20:37:55+0800",
+  "python": "3.10.18",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "git_revision": "773e7df1ad54d15f2b43165e6854f5041cbe0f57",
+  "model": {
+    "model_name": "llama3.1",
+    "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "weights_blob_digest": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+    "size_bytes": 4920753328
+  },
+  "llm_generation_options": {
+    "temperature": 0.0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 16,
+    "top_p": 1.0
+  },
+  "prompt_source": "user-confirmed prompt",
+  "prompt_template": "Classify the {text} into one of {valid_labels}. Please only output one of the following labels: {valid_labels}. ",
+  "valid_labels_text": "[Normal, Depression, Anxiety, Bipolar]",
+  "prompt_sha256": "4a05b61148d0078ccceef147c5a0f0b5af7a42ff86103dd3761e4eb71a56f6a4",
+  "prompt_id": "user_confirmed_custom_norag_prompt",
+  "requested_top_k": 1,
+  "top_k": null,
+  "retrieval_used": false,
+  "tpe_used": false,
+  "test": {
+    "path": "splits/test.csv",
+    "n": 2496,
+    "sha256": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466",
+    "label_counts": {
+      "Anxiety": 624,
+      "Bipolar": 624,
+      "Normal": 624,
+      "Depression": 624
+    }
+  }
+}

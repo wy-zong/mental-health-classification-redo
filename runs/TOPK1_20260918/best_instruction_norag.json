@@ -1,0 +1,325 @@
+{
+  "mode": "norag",
+  "instruction": "You are assessing social media posts for mental health research. Read the text and determine the author's mental health state.\n\n0 = Normal (no signs of mental health difficulty)\n1 = Depression (persistent low mood, hopelessness, loss of interest)\n2 = Anxiety (excessive worry, fear, restlessness, panic)\n3 = Bipolar (mood swings between elevated/manic and depressive states)\n\nRespond with only the number.",
+  "instruction_sha256": "d5e232e66982743efa6387618818adb2a0692404ac9c7d80cc08ae90448860e0",
+  "candidate_id": "clinical-described-direct-simple",
+  "dims": {
+    "task_framing": "clinical",
+    "label_presentation": "described",
+    "reasoning": "direct",
+    "format_rule": "simple"
+  },
+  "identical_to_baseline": false,
+  "stage1": {
+    "split": "val_search",
+    "n": 400,
+    "n_candidates": 36,
+    "scores": {
+      "plain-bare-direct-simple": {
+        "n": 400,
+        "correct": 145,
+        "invalid": 3,
+        "accuracy": 0.3625,
+        "invalid_rate": 0.0075
+      },
+      "plain-bare-direct-emphatic": {
+        "n": 400,
+        "correct": 169,
+        "invalid": 1,
+        "accuracy": 0.4225,
+        "invalid_rate": 0.0025
+      },
+      "plain-bare-brief-simple": {
+        "n": 400,
+        "correct": 155,
+        "invalid": 3,
+        "accuracy": 0.3875,
+        "invalid_rate": 0.0075
+      },
+      "plain-bare-brief-emphatic": {
+        "n": 400,
+        "correct": 173,
+        "invalid": 1,
+        "accuracy": 0.4325,
+        "invalid_rate": 0.0025
+      },
+      "plain-described-direct-simple": {
+        "n": 400,
+        "correct": 220,
+        "invalid": 2,
+        "accuracy": 0.55,
+        "invalid_rate": 0.005
+      },
+      "plain-described-direct-emphatic": {
+        "n": 400,
+        "correct": 197,
+        "invalid": 1,
+        "accuracy": 0.4925,
+        "invalid_rate": 0.0025
+      },
+      "plain-described-brief-simple": {
+        "n": 400,
+        "correct": 213,
+        "invalid": 2,
+        "accuracy": 0.5325,
+        "invalid_rate": 0.005
+      },
+      "plain-described-brief-emphatic": {
+        "n": 400,
+        "correct": 201,
+        "invalid": 1,
+        "accuracy": 0.5025,
+        "invalid_rate": 0.0025
+      },
+      "plain-contrastive-direct-simple": {
+        "n": 400,
+        "correct": 145,
+        "invalid": 2,
+        "accuracy": 0.3625,
+        "invalid_rate": 0.005
+      },
+      "plain-contrastive-direct-emphatic": {
+        "n": 400,
+        "correct": 158,
+        "invalid": 1,
+        "accuracy": 0.395,
+        "invalid_rate": 0.0025
+      },
+      "plain-contrastive-brief-simple": {
+        "n": 400,
+        "correct": 147,
+        "invalid": 3,
+        "accuracy": 0.3675,
+        "invalid_rate": 0.0075
+      },
+      "plain-contrastive-brief-emphatic": {
+        "n": 400,
+        "correct": 161,
+        "invalid": 1,
+        "accuracy": 0.4025,
+        "invalid_rate": 0.0025
+      },
+      "clinical-bare-direct-simple": {
+        "n": 400,
+        "correct": 208,
+        "invalid": 4,
+        "accuracy": 0.52,
+        "invalid_rate": 0.01
+      },
+      "clinical-bare-direct-emphatic": {
+        "n": 400,
+        "correct": 214,
+        "invalid": 1,
+        "accuracy": 0.535,
+        "invalid_rate": 0.0025
+      },
+      "clinical-bare-brief-simple": {
+        "n": 400,
+        "correct": 213,
+        "invalid": 7,
+        "accuracy": 0.5325,
+        "invalid_rate": 0.0175
+      },
+      "clinical-bare-brief-emphatic": {
+        "n": 400,
+        "correct": 217,
+        "invalid": 0,
+        "accuracy": 0.5425,
+        "invalid_rate": 0.0
+      },
+      "clinical-described-direct-simple": {
+        "n": 400,
+        "correct": 250,
+        "invalid": 3,
+        "accuracy": 0.625,
+        "invalid_rate": 0.0075
+      },
+      "clinical-described-direct-emphatic": {
+        "n": 400,
+        "correct": 238,
+        "invalid": 1,
+        "accuracy": 0.595,
+        "invalid_rate": 0.0025
+      },
+      "clinical-described-brief-simple": {
+        "n": 400,
+        "correct": 253,
+        "invalid": 5,
+        "accuracy": 0.6325,
+        "invalid_rate": 0.0125
+      },
+      "clinical-described-brief-emphatic": {
+        "n": 400,
+        "correct": 238,
+        "invalid": 0,
+        "accuracy": 0.595,
+        "invalid_rate": 0.0
+      },
+      "clinical-contrastive-direct-simple": {
+        "n": 400,
+        "correct": 214,
+        "invalid": 3,
+        "accuracy": 0.535,
+        "invalid_rate": 0.0075
+      },
+      "clinical-contrastive-direct-emphatic": {
+        "n": 400,
+        "correct": 229,
+        "invalid": 1,
+        "accuracy": 0.5725,
+        "invalid_rate": 0.0025
+      },
+      "clinical-contrastive-brief-simple": {
+        "n": 400,
+        "correct": 213,
+        "invalid": 9,
+        "accuracy": 0.5325,
+        "invalid_rate": 0.0225
+      },
+      "clinical-contrastive-brief-emphatic": {
+        "n": 400,
+        "correct": 225,
+        "invalid": 1,
+        "accuracy": 0.5625,
+        "invalid_rate": 0.0025
+      },
+      "analytical-bare-direct-simple": {
+        "n": 400,
+        "correct": 208,
+        "invalid": 4,
+        "accuracy": 0.52,
+        "invalid_rate": 0.01
+      },
+      "analytical-bare-direct-emphatic": {
+        "n": 400,
+        "correct": 200,
+        "invalid": 1,
+        "accuracy": 0.5,
+        "invalid_rate": 0.0025
+      },
+      "analytical-bare-brief-simple": {
+        "n": 400,
+        "correct": 211,
+        "invalid": 9,
+        "accuracy": 0.5275,
+        "invalid_rate": 0.0225
+      },
+      "analytical-bare-brief-emphatic": {
+        "n": 400,
+        "correct": 198,
+        "invalid": 2,
+        "accuracy": 0.495,
+        "invalid_rate": 0.005
+      },
+      "analytical-described-direct-simple": {
+        "n": 400,
+        "correct": 233,
+        "invalid": 2,
+        "accuracy": 0.5825,
+        "invalid_rate": 0.005
+      },
+      "analytical-described-direct-emphatic": {
+        "n": 400,
+        "correct": 200,
+        "invalid": 1,
+        "accuracy": 0.5,
+        "invalid_rate": 0.0025
+      },
+      "analytical-described-brief-simple": {
+        "n": 400,
+        "correct": 227,
+        "invalid": 5,
+        "accuracy": 0.5675,
+        "invalid_rate": 0.0125
+      },
+      "analytical-described-brief-emphatic": {
+        "n": 400,
+        "correct": 197,
+        "invalid": 1,
+        "accuracy": 0.4925,
+        "invalid_rate": 0.0025
+      },
+      "analytical-contrastive-direct-simple": {
+        "n": 400,
+        "correct": 211,
+        "invalid": 4,
+        "accuracy": 0.5275,
+        "invalid_rate": 0.01
+      },
+      "analytical-contrastive-direct-emphatic": {
+        "n": 400,
+        "correct": 195,
+        "invalid": 1,
+        "accuracy": 0.4875,
+        "invalid_rate": 0.0025
+      },
+      "analytical-contrastive-brief-simple": {
+        "n": 400,
+        "correct": 217,
+        "invalid": 15,
+        "accuracy": 0.5425,
+        "invalid_rate": 0.0375
+      },
+      "analytical-contrastive-brief-emphatic": {
+        "n": 400,
+        "correct": 201,
+        "invalid": 2,
+        "accuracy": 0.5025,
+        "invalid_rate": 0.005
+      }
+    }
+  },
+  "stage2": {
+    "split": "val_confirm",
+    "n": 1100,
+    "finalists": [
+      "clinical-described-brief-simple",
+      "clinical-described-direct-simple",
+      "clinical-described-direct-emphatic",
+      "clinical-described-brief-emphatic",
+      "analytical-described-direct-simple"
+    ],
+    "scores": {
+      "clinical-described-direct-simple": {
+        "n": 1100,
+        "correct": 737,
+        "invalid": 5,
+        "accuracy": 0.67,
+        "invalid_rate": 0.004545454545454545
+      },
+      "clinical-described-direct-emphatic": {
+        "n": 1100,
+        "correct": 651,
+        "invalid": 0,
+        "accuracy": 0.5918181818181818,
+        "invalid_rate": 0.0
+      },
+      "clinical-described-brief-simple": {
+        "n": 1100,
+        "correct": 725,
+        "invalid": 2,
+        "accuracy": 0.6590909090909091,
+        "invalid_rate": 0.0018181818181818182
+      },
+      "clinical-described-brief-emphatic": {
+        "n": 1100,
+        "correct": 648,
+        "invalid": 0,
+        "accuracy": 0.5890909090909091,
+        "invalid_rate": 0.0
+      },
+      "analytical-described-direct-simple": {
+        "n": 1100,
+        "correct": 648,
+        "invalid": 1,
+        "accuracy": 0.5890909090909091,
+        "invalid_rate": 0.0009090909090909091
+      }
+    }
+  },
+  "selected_accuracy_val_confirm": 0.67,
+  "top_k": null,
+  "corpus": null,
+  "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+  "selected_at": "2026-09-16 01:43:01+0800"
+}

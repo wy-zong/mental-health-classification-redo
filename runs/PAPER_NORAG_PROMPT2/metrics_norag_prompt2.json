@@ -1,0 +1,17 @@
+{
+  "run": "PAPER_NORAG_PROMPT2",
+  "condition": "norag_prompt2",
+  "condition_description": "LLM-only；使用者確認的兩段式 prompt；無 RAG、無 top_k",
+  "n": 2496,
+  "correct_count": 945,
+  "invalid_count": 1128,
+  "invalid_rate": 0.4519230769230769,
+  "strict_accuracy": 0.3786057692307692,
+  "valid_only_accuracy": 0.6907894736842105,
+  "prompt_id": "user_confirmed_custom_norag_prompt",
+  "prompt_sha256": "4a05b61148d0078ccceef147c5a0f0b5af7a42ff86103dd3761e4eb71a56f6a4",
+  "requested_top_k": 1,
+  "top_k": null,
+  "retrieval_used": false,
+  "test_split_sha256": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466"
+}

@@ -1,0 +1,17 @@
+{
+  "condition": "S2b",
+  "instruction_kind": "optimized_norag",
+  "instruction_sha256": "d5e232e66982743efa6387618818adb2a0692404ac9c7d80cc08ae90448860e0",
+  "rag_corpus": "noaug",
+  "corpus_sha256": "5234eb1df2ebc9cb3834b062a9968d4dcc1e11d3655cde42430fdfe57c7b1c44",
+  "top_k": 1,
+  "test_split_sha256": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466",
+  "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+  "generation_options": {
+    "temperature": 0.0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 16,
+    "top_p": 1.0
+  }
+}
