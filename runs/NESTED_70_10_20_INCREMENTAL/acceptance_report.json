@@ -1,0 +1,92 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "pass": 17,
+  "fail": 0,
+  "checks": [
+    {
+      "check": "split_counts",
+      "status": "PASS",
+      "detail": "{'train': 6994, 'val': 1000, 'test': 1998}"
+    },
+    {
+      "check": "old_train_preserved",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "val_subset_old_val",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "test_subset_old_test",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "new_train_added_count",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "split_exact_disjoint",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "split_near_disjoint",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "new_augmented_count",
+      "status": "PASS",
+      "detail": "1996"
+    },
+    {
+      "check": "new_sources_exactly_two",
+      "status": "PASS",
+      "detail": "{2: 998}"
+    },
+    {
+      "check": "noaug_count",
+      "status": "PASS",
+      "detail": "6994"
+    },
+    {
+      "check": "noaug_top_k",
+      "status": "PASS",
+      "detail": "1"
+    },
+    {
+      "check": "noaug_index_count",
+      "status": "PASS",
+      "detail": "6994"
+    },
+    {
+      "check": "noaug_no_eval_overlap",
+      "status": "PASS",
+      "detail": "{'val': 0, 'test': 0}"
+    },
+    {
+      "check": "aug_count",
+      "status": "PASS",
+      "detail": "18095"
+    },
+    {
+      "check": "aug_top_k",
+      "status": "PASS",
+      "detail": "1"
+    },
+    {
+      "check": "aug_index_count",
+      "status": "PASS",
+      "detail": "18095"
+    },
+    {
+      "check": "aug_no_eval_overlap",
+      "status": "PASS",
+      "detail": "{'val': 0, 'test': 0}"
+    }
+  ]
+}

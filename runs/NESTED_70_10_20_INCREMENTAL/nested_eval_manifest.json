@@ -1,0 +1,103 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "created_at": "2026-09-21 06:47:08+0800",
+  "python": "3.10.18",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "git_revision": "2e08e8431b8540377de089c3946585cf8c64227f",
+  "model": {
+    "model_name": "llama3.1",
+    "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "weights_blob_digest": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+    "size_bytes": 4920753328
+  },
+  "llm_generation_options": {
+    "temperature": 0.0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 16,
+    "top_p": 1.0
+  },
+  "report_document": "CHBR-D-26-01681_R1.docx",
+  "test": {
+    "path": "splits/test.csv",
+    "n": 1998,
+    "sha256": "f5ec6983dec361b01ba1ee2e1700ce7c2e59234deea349a58261fc03751bbd09",
+    "label_counts": {
+      "Anxiety": 500,
+      "Bipolar": 500,
+      "Depression": 499,
+      "Normal": 499
+    }
+  },
+  "top_k": 1,
+  "prompts": {
+    "norag": {
+      "id": "paper_table_viii_norag_exact",
+      "sha256": "16eb1cc04ad6b9aded193f164ecdc344687ded72260a62c86e34325e7f09330f",
+      "template": "Classify the text into one of {valid_labels}. Now classify this text: {text}. Please only output one of the following labels: {valid_labels}. Do not output anything else."
+    },
+    "rag": {
+      "id": "paper_table_viii_rag",
+      "sha256": "759af970814b6d8015240176f57aa8228f81e213359f5826e03ab8115b07088e",
+      "template": "Classify the text into one of {valid_labels}. Below is some related reference content that might help you classify the new text: {reference_context}. Now classify this text: {text}. Please only output one of the following labels: {valid_labels}. Do not output anything else."
+    }
+  },
+  "corpora": {
+    "noaug": {
+      "run": "NESTED_70_10_20_INCREMENTAL",
+      "name": "noaug",
+      "source": "existing_corpus_plus_nested_train_added",
+      "n_docs": 6994,
+      "base_n_docs": 5996,
+      "added_doc_count": 998,
+      "added_source_rows": 998,
+      "added_augmented_rows": 0,
+      "embedding_model": "all-MiniLM-L6-v2",
+      "max_seq_length": 512,
+      "normalized": true,
+      "metric": "cosine (IndexFlatIP on normalized vectors)",
+      "top_k": 1,
+      "exact_overlap_with_eval_splits": {
+        "val": 0,
+        "test": 0
+      },
+      "base_index_sha256": "5234eb1df2ebc9cb3834b062a9968d4dcc1e11d3655cde42430fdfe57c7b1c44",
+      "base_docs_sha256": "6318bc22d67a09189c5bf7814fd77edc1a74bbb01ff6757589e05e23f3bbd7eb",
+      "added_doc_ids_sha256": "68e812dfa9bd796e2957e3cd5bc5e38d851be38dd16d6c9cd0c52ea97659d274",
+      "index_sha256": "361c4c4b981fff9e5bec980de7080160357234588ad89fa3a22440d199dd21e6",
+      "docs_sha256": "ddb8ed73bf2348e3c130f08990580d98f1c5dd29ddf919d5cc68dae8e8b38037",
+      "created_at": "2026-09-21 06:26:50+0800",
+      "meta_sha256": "b6e905d336578ea0678237d4ed4a6b4c3e615431509ca1d68e8d5dbcf5c1f134",
+      "index_sha256_actual": "361c4c4b981fff9e5bec980de7080160357234588ad89fa3a22440d199dd21e6",
+      "docs_sha256_actual": "ddb8ed73bf2348e3c130f08990580d98f1c5dd29ddf919d5cc68dae8e8b38037"
+    },
+    "aug": {
+      "run": "NESTED_70_10_20_INCREMENTAL",
+      "name": "aug",
+      "source": "existing_aug_corpus_plus_nested_train_added_augmented",
+      "n_docs": 18095,
+      "base_n_docs": 15101,
+      "added_doc_count": 2994,
+      "added_source_rows": 998,
+      "added_augmented_rows": 1996,
+      "embedding_model": "all-MiniLM-L6-v2",
+      "max_seq_length": 512,
+      "normalized": true,
+      "metric": "cosine (IndexFlatIP on normalized vectors)",
+      "top_k": 1,
+      "exact_overlap_with_eval_splits": {
+        "val": 0,
+        "test": 0
+      },
+      "base_index_sha256": "8fe2c3698f025d02003ab2d858d8f953581860498d74a9bf65733eebed229513",
+      "base_docs_sha256": "b4d040baf23af1501bdfc5cc2f0c43b0f9f118a6483c357a60a4fab7cd82d1b9",
+      "added_doc_ids_sha256": "563ada7798cbac5e0764b46c900e144d49704e79c6305b40e2dbab5a4b3681a9",
+      "index_sha256": "9de3ce6d10b13bc037df5fe0bed3f130144ce02a081fea3589ccc6dd367efa2e",
+      "docs_sha256": "ecd397ca3025c04d0cdabefd659570a4a964e3d26db0d2bdd5c8f37f99a894e2",
+      "created_at": "2026-09-21 06:26:51+0800",
+      "meta_sha256": "3e0330b52ea0df1cd375ed555f86df227a8a95f5c98538904b875520ec56b3cf",
+      "index_sha256_actual": "9de3ce6d10b13bc037df5fe0bed3f130144ce02a081fea3589ccc6dd367efa2e",
+      "docs_sha256_actual": "ecd397ca3025c04d0cdabefd659570a4a964e3d26db0d2bdd5c8f37f99a894e2"
+    }
+  }
+}

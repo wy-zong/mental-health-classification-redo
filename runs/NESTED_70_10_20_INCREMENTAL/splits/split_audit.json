@@ -1,0 +1,47 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "exact_overlaps": {
+    "train|val": 0,
+    "train|test": 0,
+    "val|test": 0
+  },
+  "near_duplicate_scan": {
+    "threshold": 0.9,
+    "embedding_model": "all-MiniLM-L6-v2",
+    "max_seq_length": 512,
+    "metric": "cosine on normalized vectors",
+    "pairs": {
+      "train|val": {
+        "reference_split": "train",
+        "query_split": "val",
+        "n": 1000,
+        "max_cosine": 0.8966132402420044,
+        "mean_cosine": 0.6252899169921875,
+        "count_ge_threshold": 0
+      },
+      "train|test": {
+        "reference_split": "train",
+        "query_split": "test",
+        "n": 1998,
+        "max_cosine": 0.8931509256362915,
+        "mean_cosine": 0.6228588223457336,
+        "count_ge_threshold": 0
+      },
+      "val|test": {
+        "reference_split": "val",
+        "query_split": "test",
+        "n": 1998,
+        "max_cosine": 0.8601320385932922,
+        "mean_cosine": 0.559648871421814,
+        "count_ge_threshold": 0
+      }
+    }
+  },
+  "nested_invariants": {
+    "old_train_rows": 5996,
+    "old_train_in_new_train": 5996,
+    "new_val_rows": 1000,
+    "new_test_rows": 1998,
+    "new_train_added_rows": 998
+  }
+}

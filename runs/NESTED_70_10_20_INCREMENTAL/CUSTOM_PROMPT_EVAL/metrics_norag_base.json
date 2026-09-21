@@ -1,0 +1,18 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "CUSTOM_PROMPT_EVAL",
+  "condition": "norag_base",
+  "corpus": null,
+  "n": 1998,
+  "correct_count": 1078,
+  "invalid_count": 551,
+  "invalid_rate": 0.2757757757757758,
+  "strict_accuracy": 0.5395395395395396,
+  "valid_only_accuracy": 0.7449896337249482,
+  "prompt_id": "user_base_llm_only_prompt",
+  "prompt_sha256": "139f899aa7797d948fa0eaf92b02305c6e092f0a1c9a8fc4c72eb24f52843a1a",
+  "prompt_template": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar].\nNow classify this text: {text}.\noutput only one of the following labels: [Normal, Depression, Anxiety, Bipolar].",
+  "top_k": null,
+  "test_split_sha256": "f5ec6983dec361b01ba1ee2e1700ce7c2e59234deea349a58261fc03751bbd09",
+  "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e"
+}

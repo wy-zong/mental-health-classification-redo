@@ -1,0 +1,15 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "condition": "nested_norag_paper_exact",
+  "n": 1998,
+  "correct_count": 1412,
+  "invalid_count": 76,
+  "invalid_rate": 0.03803803803803804,
+  "strict_accuracy": 0.7067067067067067,
+  "valid_only_accuracy": 0.7346514047866806,
+  "prompt_id": "paper_table_viii_norag_exact",
+  "prompt_sha256": "16eb1cc04ad6b9aded193f164ecdc344687ded72260a62c86e34325e7f09330f",
+  "top_k": null,
+  "test_split_sha256": "f5ec6983dec361b01ba1ee2e1700ce7c2e59234deea349a58261fc03751bbd09",
+  "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e"
+}

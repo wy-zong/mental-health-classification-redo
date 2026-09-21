@@ -1,0 +1,25 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "name": "noaug",
+  "source": "existing_corpus_plus_nested_train_added",
+  "n_docs": 6994,
+  "base_n_docs": 5996,
+  "added_doc_count": 998,
+  "added_source_rows": 998,
+  "added_augmented_rows": 0,
+  "embedding_model": "all-MiniLM-L6-v2",
+  "max_seq_length": 512,
+  "normalized": true,
+  "metric": "cosine (IndexFlatIP on normalized vectors)",
+  "top_k": 1,
+  "exact_overlap_with_eval_splits": {
+    "val": 0,
+    "test": 0
+  },
+  "base_index_sha256": "5234eb1df2ebc9cb3834b062a9968d4dcc1e11d3655cde42430fdfe57c7b1c44",
+  "base_docs_sha256": "6318bc22d67a09189c5bf7814fd77edc1a74bbb01ff6757589e05e23f3bbd7eb",
+  "added_doc_ids_sha256": "68e812dfa9bd796e2957e3cd5bc5e38d851be38dd16d6c9cd0c52ea97659d274",
+  "index_sha256": "361c4c4b981fff9e5bec980de7080160357234588ad89fa3a22440d199dd21e6",
+  "docs_sha256": "ddb8ed73bf2348e3c130f08990580d98f1c5dd29ddf919d5cc68dae8e8b38037",
+  "created_at": "2026-09-21 06:26:50+0800"
+}

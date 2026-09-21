@@ -1,0 +1,18 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "source_split": "train_added",
+  "source_rows": 998,
+  "output_rows": 1996,
+  "target_per_source": 2,
+  "output_sha256": "4cc7947fd0a4d73ba060c5c15095b0e28d4d9b8dac9e948039f7c1752b565ea3",
+  "rewrite_instruction": "Rewrite the following text in different words while preserving its original meaning, tone, and emotional content. Output only the rewritten text.",
+  "rewrite_instruction_sha256": "1c4c36cf95c8a47bd4409407a13071d2fd556b10908c6231ab19aaa78ba34e8f",
+  "rewrite_options": {
+    "temperature": 0.7,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 1024
+  },
+  "consistency_judge": "skipped_by_plan",
+  "existing_augmentation_reused_without_replenishing_old_sources": true
+}

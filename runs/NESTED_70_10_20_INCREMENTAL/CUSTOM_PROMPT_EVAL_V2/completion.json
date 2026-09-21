@@ -1,0 +1,13 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "CUSTOM_PROMPT_EVAL",
+  "completed_at": "2026-09-21 12:41:01+0800",
+  "conditions": [
+    "rag_noaug_optimized",
+    "rag_aug_optimized",
+    "rag_noaug_base",
+    "rag_aug_base"
+  ],
+  "top_k": 1,
+  "n_test": 1998
+}

@@ -1,0 +1,37 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "profile": "nested_70_10_20_incremental",
+  "last_stage": "verify",
+  "updated_at": "2026-09-21 06:34:55+0800",
+  "git_revision": "2e08e8431b8540377de089c3946585cf8c64227f",
+  "python": "3.10.18",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "model": {
+    "model_name": "llama3.1",
+    "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "weights_blob_digest": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+    "size_bytes": 4920753328
+  },
+  "llm_generation_options": {
+    "temperature": 0.0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 16,
+    "top_p": 1.0
+  },
+  "seed": 42,
+  "targets": {
+    "train": 6994,
+    "val": 1000,
+    "test": 1998
+  },
+  "top_k": 1,
+  "embedding_model": "all-MiniLM-L6-v2",
+  "max_seq_length": 512,
+  "augmentation": {
+    "existing_corpus_reused": true,
+    "new_sources": 998,
+    "new_variants_per_source": 2,
+    "consistency_judge": "skipped_by_plan"
+  }
+}

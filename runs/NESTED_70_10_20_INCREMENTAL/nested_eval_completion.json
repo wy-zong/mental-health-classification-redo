@@ -1,0 +1,11 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "completed_at": "2026-09-21 07:14:33+0800",
+  "conditions": [
+    "nested_norag_paper_exact",
+    "nested_rag_aug_paper_topk1",
+    "nested_rag_noaug_paper_topk1"
+  ],
+  "top_k": 1,
+  "n_test": 1998
+}

@@ -1,0 +1,66 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "strategy": "nested_old_train_plus_998_added",
+  "seed": 42,
+  "ratios": {
+    "train": 0.7,
+    "val": 0.1,
+    "test": 0.2
+  },
+  "targets": {
+    "train": 6994,
+    "val": 1000,
+    "test": 1998
+  },
+  "counts": {
+    "train": 6994,
+    "val": 1000,
+    "test": 1998
+  },
+  "counts_by_label": {
+    "train": {
+      "Normal": 1749,
+      "Depression": 1749,
+      "Anxiety": 1748,
+      "Bipolar": 1748
+    },
+    "val": {
+      "Normal": 250,
+      "Depression": 250,
+      "Anxiety": 250,
+      "Bipolar": 250
+    },
+    "test": {
+      "Normal": 499,
+      "Depression": 499,
+      "Anxiety": 500,
+      "Bipolar": 500
+    }
+  },
+  "old_train_preserved": true,
+  "new_val_is_subset_of_old_val": true,
+  "new_test_is_subset_of_old_test": true,
+  "new_train_added_rows": 998,
+  "old_split_hashes": {
+    "train": "221f1a2ffd881c782229b86ecfdb8235ecdd776c65fd8864009d3418dd7a5484",
+    "val_search": "fc9c39e42216100fca8ae2bdf221cf9e237aa4179d2a15527794c267e97c1acc",
+    "val_confirm": "25d3a2d608258d5892e0693aac93e947efdccfe41098493d28357bc7d87c7953",
+    "test": "7b4478854862c0511a778f7e4d5084da17c4e4c852ec6fb11843d4a852b44466"
+  },
+  "raw_dataset_sha256": "67274f52dec3b0155aec4d7d1ff31d2a92b0e9b383ab917614591cd168cc2474",
+  "files": {
+    "train": {
+      "rows": 6994,
+      "sha256": "139f99775c867da173fee28784fd48448a718dec1ad16ac83f627566f421ba00"
+    },
+    "val": {
+      "rows": 1000,
+      "sha256": "c12da324facc457bd2ee2f298d11b70a3d87f85cd77a217078f28b4fcf0171f0"
+    },
+    "test": {
+      "rows": 1998,
+      "sha256": "f5ec6983dec361b01ba1ee2e1700ce7c2e59234deea349a58261fc03751bbd09"
+    }
+  },
+  "source_mapping_sha256": "950d2ee92b5bb5bd77238a89fd0d4bce2e8bfe7aa8f2e7028123361a56bd7a00"
+}

@@ -1,0 +1,9 @@
+{
+  "source_split": "train_added",
+  "source_rows": 998,
+  "target_per_source": 2,
+  "output_rows": 1996,
+  "all_sources_exactly_two": true,
+  "max_attempts_per_slot": 5,
+  "elapsed_s": 1.596
+}

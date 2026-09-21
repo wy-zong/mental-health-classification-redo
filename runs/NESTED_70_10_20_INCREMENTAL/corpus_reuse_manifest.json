@@ -1,0 +1,17 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "base_corpus_dir": "C:\\Users\\wuc120\\Code-v2\\data\\corpus",
+  "base_corpora": {
+    "noaug": {
+      "index_sha256": "5234eb1df2ebc9cb3834b062a9968d4dcc1e11d3655cde42430fdfe57c7b1c44",
+      "n_docs": 5996
+    },
+    "aug": {
+      "index_sha256": "8fe2c3698f025d02003ab2d858d8f953581860498d74a9bf65733eebed229513",
+      "n_docs": 15101
+    }
+  },
+  "nested_train_added_rows": 998,
+  "new_augmented_rows": 1996,
+  "top_k": 1
+}

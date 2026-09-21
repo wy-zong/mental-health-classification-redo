@@ -1,0 +1,18 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "CUSTOM_PROMPT_EVAL",
+  "condition": "rag_aug_base",
+  "corpus": "aug",
+  "n": 1998,
+  "correct_count": 1226,
+  "invalid_count": 396,
+  "invalid_rate": 0.1981981981981982,
+  "strict_accuracy": 0.6136136136136137,
+  "valid_only_accuracy": 0.7652933832709113,
+  "prompt_id": "user_base_rag_prompt",
+  "prompt_sha256": "b4db1632c9247a2ead8e9f90487050b6dcedadc38b66e483c580804da3555f03",
+  "prompt_template": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar].\nYou can refer to the following reference content for categorization: {reference_context}.\nNow classify this text: {text}.\noutput only one of the following labels: [Normal, Depression, Anxiety, Bipolar].",
+  "top_k": 1,
+  "test_split_sha256": "f5ec6983dec361b01ba1ee2e1700ce7c2e59234deea349a58261fc03751bbd09",
+  "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e"
+}

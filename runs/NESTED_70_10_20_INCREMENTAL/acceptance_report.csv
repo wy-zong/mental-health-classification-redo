@@ -1,0 +1,18 @@
+﻿check,status,detail
+split_counts,PASS,"{'train': 6994, 'val': 1000, 'test': 1998}"
+old_train_preserved,PASS,
+val_subset_old_val,PASS,
+test_subset_old_test,PASS,
+new_train_added_count,PASS,
+split_exact_disjoint,PASS,
+split_near_disjoint,PASS,
+new_augmented_count,PASS,1996
+new_sources_exactly_two,PASS,{2: 998}
+noaug_count,PASS,6994
+noaug_top_k,PASS,1
+noaug_index_count,PASS,6994
+noaug_no_eval_overlap,PASS,"{'val': 0, 'test': 0}"
+aug_count,PASS,18095
+aug_top_k,PASS,1
+aug_index_count,PASS,18095
+aug_no_eval_overlap,PASS,"{'val': 0, 'test': 0}"

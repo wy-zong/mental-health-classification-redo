@@ -1,0 +1,18 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "CUSTOM_PROMPT_EVAL",
+  "condition": "rag_noaug_base",
+  "corpus": "noaug",
+  "n": 1998,
+  "correct_count": 759,
+  "invalid_count": 1033,
+  "invalid_rate": 0.517017017017017,
+  "strict_accuracy": 0.37987987987987987,
+  "valid_only_accuracy": 0.7865284974093264,
+  "prompt_id": "user_base_rag_prompt_paper_format_confirmed",
+  "prompt_sha256": "55a20742cf931c8cb38347788119e967ef563a12823dbd0dc555f1266dbe4ea9",
+  "prompt_template": "Classify the text into one of {valid_labels}. refer to the following reference content: {reference_context}. Now classify this text: {text}. output only one of the following labels: {valid_labels}.",
+  "top_k": 1,
+  "test_split_sha256": "f5ec6983dec361b01ba1ee2e1700ce7c2e59234deea349a58261fc03751bbd09",
+  "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e"
+}
