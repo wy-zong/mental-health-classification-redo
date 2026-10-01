@@ -1,0 +1,194 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "CUSTOM_PROMPT_EVAL",
+  "script": "src/18_custom_prompt_error_analysis.py",
+  "seed": 42,
+  "rag_helped_C1wrong_C2right": {
+    "n": 372,
+    "C1_invalid": 233,
+    "C2_invalid": 0,
+    "C2_pred_equals_retrieved": 346,
+    "retrieved_label_correct": 346
+  },
+  "rag_hurt_C1right_C2wrong": {
+    "n": 216,
+    "C1_invalid": 0,
+    "C2_invalid": 156,
+    "C2_pred_equals_retrieved": 39,
+    "retrieved_label_correct": 137
+  },
+  "top_confusions": {
+    "C4": [
+      {
+        "code": "C4",
+        "condition": "rag_noaug_optimized",
+        "true_label": "Depression",
+        "pred_label": "INVALID",
+        "count": 61,
+        "share_of_errors": 0.125,
+        "share_of_true_class": 0.12224448897795591
+      },
+      {
+        "code": "C4",
+        "condition": "rag_noaug_optimized",
+        "true_label": "Normal",
+        "pred_label": "Anxiety",
+        "count": 58,
+        "share_of_errors": 0.11885245901639344,
+        "share_of_true_class": 0.11623246492985972
+      },
+      {
+        "code": "C4",
+        "condition": "rag_noaug_optimized",
+        "true_label": "Depression",
+        "pred_label": "Anxiety",
+        "count": 58,
+        "share_of_errors": 0.11885245901639344,
+        "share_of_true_class": 0.11623246492985972
+      },
+      {
+        "code": "C4",
+        "condition": "rag_noaug_optimized",
+        "true_label": "Depression",
+        "pred_label": "Bipolar",
+        "count": 58,
+        "share_of_errors": 0.11885245901639344,
+        "share_of_true_class": 0.11623246492985972
+      },
+      {
+        "code": "C4",
+        "condition": "rag_noaug_optimized",
+        "true_label": "Normal",
+        "pred_label": "Depression",
+        "count": 41,
+        "share_of_errors": 0.08401639344262295,
+        "share_of_true_class": 0.08216432865731463
+      }
+    ],
+    "C5": [
+      {
+        "code": "C5",
+        "condition": "rag_aug_optimized",
+        "true_label": "Depression",
+        "pred_label": "Anxiety",
+        "count": 70,
+        "share_of_errors": 0.14198782961460446,
+        "share_of_true_class": 0.1402805611222445
+      },
+      {
+        "code": "C5",
+        "condition": "rag_aug_optimized",
+        "true_label": "Normal",
+        "pred_label": "Anxiety",
+        "count": 66,
+        "share_of_errors": 0.13387423935091278,
+        "share_of_true_class": 0.13226452905811623
+      },
+      {
+        "code": "C5",
+        "condition": "rag_aug_optimized",
+        "true_label": "Depression",
+        "pred_label": "INVALID",
+        "count": 63,
+        "share_of_errors": 0.12778904665314403,
+        "share_of_true_class": 0.12625250501002003
+      },
+      {
+        "code": "C5",
+        "condition": "rag_aug_optimized",
+        "true_label": "Depression",
+        "pred_label": "Bipolar",
+        "count": 54,
+        "share_of_errors": 0.10953346855983773,
+        "share_of_true_class": 0.10821643286573146
+      },
+      {
+        "code": "C5",
+        "condition": "rag_aug_optimized",
+        "true_label": "Bipolar",
+        "pred_label": "Depression",
+        "count": 42,
+        "share_of_errors": 0.08519269776876268,
+        "share_of_true_class": 0.084
+      }
+    ]
+  },
+  "retrieval_copy_stats": [
+    {
+      "code": "C2",
+      "condition": "rag_noaug_base",
+      "n": 1998,
+      "retrieved_label_correct_rate": 0.7872872872872873,
+      "copy_rate_all": 0.6511511511511512,
+      "copy_rate_valid_only": 0.8334401024983985,
+      "accuracy": 0.6176176176176176,
+      "accuracy_when_retrieved_correct": 0.7145581691036237,
+      "accuracy_when_retrieved_wrong": 0.25882352941176473,
+      "n_retrieved_correct": 1573,
+      "n_retrieved_wrong": 425,
+      "copied_wrong_label_rate_when_retrieved_wrong": 0.4164705882352941,
+      "invalid_rate_when_retrieved_correct": 0.21424030514939607,
+      "invalid_rate_when_retrieved_wrong": 0.23529411764705882,
+      "median_top1_similarity": 0.633416473865509,
+      "median_top1_similarity_when_correct": 0.6692396998405457,
+      "median_top1_similarity_when_wrong": 0.5670669674873352
+    },
+    {
+      "code": "C3",
+      "condition": "rag_aug_base",
+      "n": 1998,
+      "retrieved_label_correct_rate": 0.7747747747747747,
+      "copy_rate_all": 0.6466466466466466,
+      "copy_rate_valid_only": 0.8064918851435705,
+      "accuracy": 0.6136136136136137,
+      "accuracy_when_retrieved_correct": 0.7151162790697675,
+      "accuracy_when_retrieved_wrong": 0.2644444444444444,
+      "n_retrieved_correct": 1548,
+      "n_retrieved_wrong": 450,
+      "copied_wrong_label_rate_when_retrieved_wrong": 0.4111111111111111,
+      "invalid_rate_when_retrieved_correct": 0.19832041343669252,
+      "invalid_rate_when_retrieved_wrong": 0.19777777777777777,
+      "median_top1_similarity": 0.6501032710075378,
+      "median_top1_similarity_when_correct": 0.6847503781318665,
+      "median_top1_similarity_when_wrong": 0.5875750780105591
+    },
+    {
+      "code": "C4",
+      "condition": "rag_noaug_optimized",
+      "n": 1998,
+      "retrieved_label_correct_rate": 0.7872872872872873,
+      "copy_rate_all": 0.8813813813813813,
+      "copy_rate_valid_only": 0.9278187565858799,
+      "accuracy": 0.7557557557557557,
+      "accuracy_when_retrieved_correct": 0.916083916083916,
+      "accuracy_when_retrieved_wrong": 0.1623529411764706,
+      "n_retrieved_correct": 1573,
+      "n_retrieved_wrong": 425,
+      "copied_wrong_label_rate_when_retrieved_wrong": 0.7529411764705882,
+      "invalid_rate_when_retrieved_correct": 0.050222504767959315,
+      "invalid_rate_when_retrieved_wrong": 0.04941176470588235,
+      "median_top1_similarity": 0.633416473865509,
+      "median_top1_similarity_when_correct": 0.653093695640564,
+      "median_top1_similarity_when_wrong": 0.5703745782375336
+    },
+    {
+      "code": "C5",
+      "condition": "rag_aug_optimized",
+      "n": 1998,
+      "retrieved_label_correct_rate": 0.7747747747747747,
+      "copy_rate_all": 0.8693693693693694,
+      "copy_rate_valid_only": 0.9099004714510215,
+      "accuracy": 0.7532532532532532,
+      "accuracy_when_retrieved_correct": 0.915374677002584,
+      "accuracy_when_retrieved_wrong": 0.19555555555555557,
+      "n_retrieved_correct": 1548,
+      "n_retrieved_wrong": 450,
+      "copied_wrong_label_rate_when_retrieved_wrong": 0.7111111111111111,
+      "invalid_rate_when_retrieved_correct": 0.04844961240310078,
+      "invalid_rate_when_retrieved_wrong": 0.03111111111111111,
+      "median_top1_similarity": 0.6501032710075378,
+      "median_top1_similarity_when_correct": 0.6700618863105774,
+      "median_top1_similarity_when_wrong": 0.594750165939331
+    }
+  ]
+}

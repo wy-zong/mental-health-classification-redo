@@ -1,0 +1,134 @@
+{
+  "created_at_utc": "2026-10-01T08:24:47.710731+00:00",
+  "script": "src/plot_paper_confusion_matrices.py --set custom15",
+  "source_experiment": "src/15_nested_custom_prompt_eval.py (CUSTOM_PROMPT_EVAL)",
+  "plot_method": {
+    "normalization": "row (each true-label row sums to 1)",
+    "color_scale": "Blues, shared vmin=0, vmax=1, one colorbar",
+    "rows": "True Label (4 classes)",
+    "columns": "Predicted Label, including INVALID",
+    "invalid_policy": "Any prediction not in the four valid labels is plotted as INVALID.",
+    "figures": [
+      "confusion_rownorm_C1-C5.png",
+      "confusion_rownorm_C1-C5.pdf"
+    ],
+    "interactive_show": false
+  },
+  "experiments": [
+    {
+      "code": "C1",
+      "condition": "norag_base",
+      "prediction_file": "runs/NESTED_70_10_20_INCREMENTAL/CUSTOM_PROMPT_EVAL/predictions_norag_base.jsonl",
+      "prediction_file_sha256": "168add8c8923363e7d852e1277fb1a48407fd9f2fe74fa7a68f7a00682961ae2",
+      "n": 1998,
+      "strict_accuracy": 0.5395395395395396,
+      "invalid": 551,
+      "per_class_recall": {
+        "Normal": 0.531062124248497,
+        "Depression": 0.43887775551102204,
+        "Anxiety": 0.706,
+        "Bipolar": 0.482
+      },
+      "per_class_invalid_rate": {
+        "Normal": 0.35671342685370744,
+        "Depression": 0.39879759519038077,
+        "Anxiety": 0.148,
+        "Bipolar": 0.2
+      },
+      "counts_csv": "confusion_C1_norag_base_counts.csv",
+      "rownorm_csv": "confusion_C1_norag_base_rownorm.csv"
+    },
+    {
+      "code": "C2",
+      "condition": "rag_noaug_base",
+      "prediction_file": "runs/NESTED_70_10_20_INCREMENTAL/CUSTOM_PROMPT_EVAL/predictions_rag_noaug_base.jsonl",
+      "prediction_file_sha256": "a9037252cd0698f4f029fd9bd7a5b9f50834435517f1606a9bbbe8d033c20bb9",
+      "n": 1998,
+      "strict_accuracy": 0.6176176176176176,
+      "invalid": 437,
+      "per_class_recall": {
+        "Normal": 0.4228456913827655,
+        "Depression": 0.5130260521042084,
+        "Anxiety": 0.842,
+        "Bipolar": 0.692
+      },
+      "per_class_invalid_rate": {
+        "Normal": 0.40080160320641284,
+        "Depression": 0.3046092184368738,
+        "Anxiety": 0.09,
+        "Bipolar": 0.08
+      },
+      "counts_csv": "confusion_C2_rag_noaug_base_counts.csv",
+      "rownorm_csv": "confusion_C2_rag_noaug_base_rownorm.csv"
+    },
+    {
+      "code": "C3",
+      "condition": "rag_aug_base",
+      "prediction_file": "runs/NESTED_70_10_20_INCREMENTAL/CUSTOM_PROMPT_EVAL/predictions_rag_aug_base.jsonl",
+      "prediction_file_sha256": "df0ed2db96499680f8ecefaf94e6901bccd0b27252556e7fe81c643a3669050a",
+      "n": 1998,
+      "strict_accuracy": 0.6136136136136137,
+      "invalid": 396,
+      "per_class_recall": {
+        "Normal": 0.4408817635270541,
+        "Depression": 0.5190380761523046,
+        "Anxiety": 0.844,
+        "Bipolar": 0.65
+      },
+      "per_class_invalid_rate": {
+        "Normal": 0.35671342685370744,
+        "Depression": 0.2745490981963928,
+        "Anxiety": 0.078,
+        "Bipolar": 0.084
+      },
+      "counts_csv": "confusion_C3_rag_aug_base_counts.csv",
+      "rownorm_csv": "confusion_C3_rag_aug_base_rownorm.csv"
+    },
+    {
+      "code": "C4",
+      "condition": "rag_noaug_optimized",
+      "prediction_file": "runs/NESTED_70_10_20_INCREMENTAL/CUSTOM_PROMPT_EVAL/predictions_rag_noaug_optimized.jsonl",
+      "prediction_file_sha256": "69bc3a5d30e949977daae48306413ef2272c12950c6917ecd354dc8c83f093f2",
+      "n": 1998,
+      "strict_accuracy": 0.7557557557557557,
+      "invalid": 100,
+      "per_class_recall": {
+        "Normal": 0.6713426853707415,
+        "Depression": 0.6232464929859719,
+        "Anxiety": 0.896,
+        "Bipolar": 0.832
+      },
+      "per_class_invalid_rate": {
+        "Normal": 0.05811623246492986,
+        "Depression": 0.12224448897795591,
+        "Anxiety": 0.006,
+        "Bipolar": 0.014
+      },
+      "counts_csv": "confusion_C4_rag_noaug_optimized_counts.csv",
+      "rownorm_csv": "confusion_C4_rag_noaug_optimized_rownorm.csv"
+    },
+    {
+      "code": "C5",
+      "condition": "rag_aug_optimized",
+      "prediction_file": "runs/NESTED_70_10_20_INCREMENTAL/CUSTOM_PROMPT_EVAL/predictions_rag_aug_optimized.jsonl",
+      "prediction_file_sha256": "10184602450f6a4283788d7b208a5df2467e1875b138d77295bac4165c834828",
+      "n": 1998,
+      "strict_accuracy": 0.7532532532532532,
+      "invalid": 89,
+      "per_class_recall": {
+        "Normal": 0.7074148296593187,
+        "Depression": 0.6052104208416834,
+        "Anxiety": 0.892,
+        "Bipolar": 0.808
+      },
+      "per_class_invalid_rate": {
+        "Normal": 0.04008016032064128,
+        "Depression": 0.12625250501002003,
+        "Anxiety": 0.002,
+        "Bipolar": 0.01
+      },
+      "counts_csv": "confusion_C5_rag_aug_optimized_counts.csv",
+      "rownorm_csv": "confusion_C5_rag_aug_optimized_rownorm.csv"
+    }
+  ]
+}
