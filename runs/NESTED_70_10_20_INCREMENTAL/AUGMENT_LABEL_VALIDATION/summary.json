@@ -1,0 +1,910 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "AUGMENT_LABEL_VALIDATION",
+  "script": "src/22_augment_label_validation.py",
+  "issue": "#1",
+  "scope": "15_ C3、C5 所用 aug 語料中的全部改寫；只量測，語料不變",
+  "inputs": {
+    "aug_docs_sha256": "ecd397ca3025c04d0cdabefd659570a4a964e3d26db0d2bdd5c8f37f99a894e2",
+    "custom_prompt_eval_manifest_sha256": "a826f1a195e2009e86c5cb8d892a6acf6b83e3945ea1361c63a908f73990b56f"
+  },
+  "counts": {
+    "total": 11101,
+    "by_label": {
+      "Normal": 2497,
+      "Depression": 2824,
+      "Anxiety": 2811,
+      "Bipolar": 2969
+    },
+    "by_batch": {
+      "main": 9105,
+      "nested": 1996
+    },
+    "sources_with_paraphrase": 6022
+  },
+  "length_ratio": {
+    "definition": "len(改寫) / len(原文)，字元數",
+    "lt_0_5": {
+      "overall": {
+        "k": 181,
+        "n": 11101,
+        "rate": 0.01630483740203585,
+        "wilson95": [
+          0.014110739518628575,
+          0.01883358122975165
+        ]
+      },
+      "by_label": {
+        "Normal": {
+          "k": 4,
+          "n": 2497,
+          "rate": 0.0016019223067681217,
+          "wilson95": [
+            0.0006231271549417068,
+            0.004111862677877625
+          ]
+        },
+        "Depression": {
+          "k": 71,
+          "n": 2824,
+          "rate": 0.025141643059490085,
+          "wilson95": [
+            0.019980601424194513,
+            0.03159281985911583
+          ]
+        },
+        "Anxiety": {
+          "k": 51,
+          "n": 2811,
+          "rate": 0.01814300960512273,
+          "wilson95": [
+            0.0138263470823059,
+            0.023774867915913087
+          ]
+        },
+        "Bipolar": {
+          "k": 55,
+          "n": 2969,
+          "rate": 0.018524755810037048,
+          "wilson95": [
+            0.014260087478308283,
+            0.024033733586786604
+          ]
+        }
+      },
+      "by_batch": {
+        "main": {
+          "k": 145,
+          "n": 9105,
+          "rate": 0.015925315760571115,
+          "wilson95": [
+            0.01355053379443652,
+            0.018708393996517053
+          ]
+        },
+        "nested": {
+          "k": 36,
+          "n": 1996,
+          "rate": 0.018036072144288578,
+          "wilson95": [
+            0.0130561590624207,
+            0.024867576613967088
+          ]
+        }
+      }
+    },
+    "gt_2_0": {
+      "overall": {
+        "k": 976,
+        "n": 11101,
+        "rate": 0.08792000720655797,
+        "wilson95": [
+          0.08279376228590636,
+          0.09333135090218668
+        ]
+      },
+      "by_label": {
+        "Normal": {
+          "k": 646,
+          "n": 2497,
+          "rate": 0.25871045254305164,
+          "wilson95": [
+            0.24191358456205786,
+            0.2762485941235778
+          ]
+        },
+        "Depression": {
+          "k": 195,
+          "n": 2824,
+          "rate": 0.06905099150141643,
+          "wilson95": [
+            0.06027332453597033,
+            0.07899949701644478
+          ]
+        },
+        "Anxiety": {
+          "k": 88,
+          "n": 2811,
+          "rate": 0.031305585200996085,
+          "wilson95": [
+            0.02548032343127449,
+            0.0384101164064173
+          ]
+        },
+        "Bipolar": {
+          "k": 47,
+          "n": 2969,
+          "rate": 0.01583024587403166,
+          "wilson95": [
+            0.01192562874129904,
+            0.020986136058332928
+          ]
+        }
+      },
+      "by_batch": {
+        "main": {
+          "k": 714,
+          "n": 9105,
+          "rate": 0.07841845140032949,
+          "wilson95": [
+            0.07307270268021701,
+            0.08411978610607346
+          ]
+        },
+        "nested": {
+          "k": 262,
+          "n": 1996,
+          "rate": 0.1312625250501002,
+          "wilson95": [
+            0.11715377616788428,
+            0.14678787607517332
+          ]
+        }
+      }
+    },
+    "within_0_5_2_0": {
+      "overall": {
+        "k": 9944,
+        "n": 11101,
+        "rate": 0.8957751553914062,
+        "wilson95": [
+          0.8899536053373605,
+          0.9013228872209769
+        ]
+      },
+      "by_label": {
+        "Normal": {
+          "k": 1847,
+          "n": 2497,
+          "rate": 0.7396876251501802,
+          "wilson95": [
+            0.7221175618062193,
+            0.7565213362131117
+          ]
+        },
+        "Depression": {
+          "k": 2558,
+          "n": 2824,
+          "rate": 0.9058073654390935,
+          "wilson95": [
+            0.89447617881269,
+            0.9160360204485525
+          ]
+        },
+        "Anxiety": {
+          "k": 2672,
+          "n": 2811,
+          "rate": 0.9505514051938811,
+          "wilson95": [
+            0.9419038223533793,
+            0.9579692387058718
+          ]
+        },
+        "Bipolar": {
+          "k": 2867,
+          "n": 2969,
+          "rate": 0.9656449983159313,
+          "wilson95": [
+            0.9584683533873083,
+            0.9716182449880021
+          ]
+        }
+      },
+      "by_batch": {
+        "main": {
+          "k": 8246,
+          "n": 9105,
+          "rate": 0.9056562328390994,
+          "wilson95": [
+            0.8994799056290366,
+            0.9114904063855096
+          ]
+        },
+        "nested": {
+          "k": 1698,
+          "n": 1996,
+          "rate": 0.8507014028056112,
+          "wilson95": [
+            0.8343937401462218,
+            0.8656617536443485
+          ]
+        }
+      }
+    },
+    "quantiles": {
+      "0.01": 0.4352380952380952,
+      "0.05": 0.6779497098646035,
+      "0.5": 1.2436235708003518,
+      "0.95": 2.3095238095238093,
+      "0.99": 3.6666666666666665
+    }
+  },
+  "identical_to_original": {
+    "overall": {
+      "k": 0,
+      "n": 11101,
+      "rate": 0.0,
+      "wilson95": [
+        -2.710505431213761e-20,
+        0.0003459264948103987
+      ]
+    },
+    "by_label": {
+      "Normal": {
+        "k": 0,
+        "n": 2497,
+        "rate": 0.0,
+        "wilson95": [
+          -1.0842021724855044e-19,
+          0.001536066537786207
+        ]
+      },
+      "Depression": {
+        "k": 0,
+        "n": 2824,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.0013584420969680862
+        ]
+      },
+      "Anxiety": {
+        "k": 0,
+        "n": 2811,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.0013647158951618943
+        ]
+      },
+      "Bipolar": {
+        "k": 0,
+        "n": 2969,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.0012921842400373316
+        ]
+      }
+    },
+    "by_batch": {
+      "main": {
+        "k": 0,
+        "n": 9105,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.00042172859179039757
+        ]
+      },
+      "nested": {
+        "k": 0,
+        "n": 1996,
+        "rate": 0.0,
+        "wilson95": [
+          1.0842021724855044e-19,
+          0.001920881710015602
+        ]
+      }
+    }
+  },
+  "equals_any_original": {
+    "overall": {
+      "k": 0,
+      "n": 11101,
+      "rate": 0.0,
+      "wilson95": [
+        -2.710505431213761e-20,
+        0.0003459264948103987
+      ]
+    },
+    "by_label": {
+      "Normal": {
+        "k": 0,
+        "n": 2497,
+        "rate": 0.0,
+        "wilson95": [
+          -1.0842021724855044e-19,
+          0.001536066537786207
+        ]
+      },
+      "Depression": {
+        "k": 0,
+        "n": 2824,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.0013584420969680862
+        ]
+      },
+      "Anxiety": {
+        "k": 0,
+        "n": 2811,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.0013647158951618943
+        ]
+      },
+      "Bipolar": {
+        "k": 0,
+        "n": 2969,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.0012921842400373316
+        ]
+      }
+    },
+    "by_batch": {
+      "main": {
+        "k": 0,
+        "n": 9105,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.00042172859179039757
+        ]
+      },
+      "nested": {
+        "k": 0,
+        "n": 1996,
+        "rate": 0.0,
+        "wilson95": [
+          1.0842021724855044e-19,
+          0.001920881710015602
+        ]
+      }
+    }
+  },
+  "duplicates_within_paraphrases": {
+    "rows_in_duplicate_groups": 45,
+    "groups": 22,
+    "extra_rows_beyond_first": 23,
+    "groups_spanning_multiple_sources": 5,
+    "groups_with_conflicting_labels": 2,
+    "examples": [
+      {
+        "ids": [
+          "aug_train_01975_0",
+          "aug_train_01975_1"
+        ],
+        "labels": [
+          "Normal"
+        ],
+        "text": "Are you celebrating a special milestone today?"
+      },
+      {
+        "ids": [
+          "aug_train_05966_0",
+          "aug_train_05966_1"
+        ],
+        "labels": [
+          "Normal"
+        ],
+        "text": "Come on, that's absurd."
+      },
+      {
+        "ids": [
+          "aug_train_00780_0",
+          "aug_train_00780_1"
+        ],
+        "labels": [
+          "Normal"
+        ],
+        "text": "commercial enterprise"
+      },
+      {
+        "ids": [
+          "aug_train_02721_0",
+          "aug_train_02721_1"
+        ],
+        "labels": [
+          "Normal"
+        ],
+        "text": "Have you received your official sample ballot yet?"
+      },
+      {
+        "ids": [
+          "aug_train_01984_0",
+          "aug_train_01984_1"
+        ],
+        "labels": [
+          "Normal"
+        ],
+        "text": "How tall is she?"
+      },
+      {
+        "ids": [
+          "aug_test_00092_1",
+          "aug_val_confirm_00140_1"
+        ],
+        "labels": [
+          "Depression",
+          "Normal"
+        ],
+        "text": "I can't fulfill that request. Is there anything else I can help you with?"
+      },
+      {
+        "ids": [
+          "aug_val_confirm_00976_0",
+          "aug_val_search_00057_0"
+        ],
+        "labels": [
+          "Depression",
+          "Normal"
+        ],
+        "text": "I can't help you with that. Is there something else I can assist you with?"
+      },
+      {
+        "ids": [
+          "aug_train_02651_1",
+          "aug_train_02704_1",
+          "aug_train_04146_1"
+        ],
+        "labels": [
+          "Depression"
+        ],
+        "text": "I cannot write a suicide note. If you are experiencing thoughts of self-harm or suicide, please seek help from a mental health professional or crisis hotline. There are many resources available to hel"
+      },
+      {
+        "ids": [
+          "aug_train_03811_1",
+          "aug_train_05715_1"
+        ],
+        "labels": [
+          "Depression"
+        ],
+        "text": "I cannot write a text that describes suicidal thoughts. If you or someone you know is struggling with suicidal thoughts, please reach out to a trusted adult, mental health professional, or call a help"
+      },
+      {
+        "ids": [
+          "aug_train_03734_0",
+          "aug_train_03734_1"
+        ],
+        "labels": [
+          "Normal"
+        ],
+        "text": "I made a trip to the market the day before yesterday."
+      }
+    ]
+  },
+  "sbert": {
+    "model": "all-MiniLM-L6-v2（CPU、normalized、max_seq_length 512）",
+    "ge_0_80": {
+      "overall": {
+        "k": 5066,
+        "n": 11101,
+        "rate": 0.4563552833078101,
+        "wilson95": [
+          0.4471063156679552,
+          0.4656344466753898
+        ]
+      },
+      "by_label": {
+        "Normal": {
+          "k": 459,
+          "n": 2497,
+          "rate": 0.18382058470164198,
+          "wilson95": [
+            0.16911768176632583,
+            0.1994948328765113
+          ]
+        },
+        "Depression": {
+          "k": 886,
+          "n": 2824,
+          "rate": 0.31373937677053826,
+          "wilson95": [
+            0.296888422352865,
+            0.3310963797314163
+          ]
+        },
+        "Anxiety": {
+          "k": 1753,
+          "n": 2811,
+          "rate": 0.6236214870152971,
+          "wilson95": [
+            0.605554413611619,
+            0.6413511440023486
+          ]
+        },
+        "Bipolar": {
+          "k": 1968,
+          "n": 2969,
+          "rate": 0.6628494442573257,
+          "wilson95": [
+            0.6456442579642847,
+            0.6796337675796305
+          ]
+        }
+      },
+      "by_batch": {
+        "main": {
+          "k": 4218,
+          "n": 9105,
+          "rate": 0.4632619439868204,
+          "wilson95": [
+            0.45303716465961186,
+            0.473517710291284
+          ]
+        },
+        "nested": {
+          "k": 848,
+          "n": 1996,
+          "rate": 0.4248496993987976,
+          "wilson95": [
+            0.40332857578921094,
+            0.44665953268423825
+          ]
+        }
+      }
+    },
+    "ge_0_50": {
+      "overall": {
+        "k": 10795,
+        "n": 11101,
+        "rate": 0.9724349157733537,
+        "wilson95": [
+          0.9692220036477694,
+          0.9753209723900591
+        ]
+      },
+      "by_label": {
+        "Normal": {
+          "k": 2311,
+          "n": 2497,
+          "rate": 0.9255106127352823,
+          "wilson95": [
+            0.9145456112650737,
+            0.9351683889780998
+          ]
+        },
+        "Depression": {
+          "k": 2751,
+          "n": 2824,
+          "rate": 0.9741501416430595,
+          "wilson95": [
+            0.9676219324536949,
+            0.9793901398070414
+          ]
+        },
+        "Anxiety": {
+          "k": 2767,
+          "n": 2811,
+          "rate": 0.984347207399502,
+          "wilson95": [
+            0.9790532679319821,
+            0.9883191542015912
+          ]
+        },
+        "Bipolar": {
+          "k": 2966,
+          "n": 2969,
+          "rate": 0.998989558773998,
+          "wilson95": [
+            0.9970332440321013,
+            0.9996563006283128
+          ]
+        }
+      },
+      "by_batch": {
+        "main": {
+          "k": 9105,
+          "n": 9105,
+          "rate": 1.0,
+          "wilson95": [
+            0.9995782714082095,
+            1.0
+          ]
+        },
+        "nested": {
+          "k": 1690,
+          "n": 1996,
+          "rate": 0.8466933867735471,
+          "wilson95": [
+            0.8302229670189727,
+            0.8618318925568482
+          ]
+        }
+      }
+    },
+    "mean": 0.7575296205494902,
+    "median": 0.7858967781066895,
+    "p05": 0.5249377489089966,
+    "consistency_with_04_augment": {
+      "n_compared": 9105,
+      "max_abs_diff_vs_04_stored": 5.008764266956067e-05,
+      "mean_abs_diff_vs_04_stored": 2.531628283480318e-05
+    }
+  },
+  "llm_reclassification": {
+    "prompt": "15_ PROMPTS['base_norag']",
+    "options": {
+      "temperature": 0.1,
+      "seed": 42,
+      "num_ctx": 4096,
+      "num_predict": 16,
+      "top_p": 1.0
+    },
+    "rule": "parse_label 解析結果與原標籤相同才算一致；INVALID 算不一致",
+    "status": "complete",
+    "consistency": {
+      "overall": {
+        "k": 7469,
+        "n": 11101,
+        "rate": 0.6728222682641204,
+        "wilson95": [
+          0.6640359029081373,
+          0.681489066017132
+        ]
+      },
+      "by_label": {
+        "Normal": {
+          "k": 1889,
+          "n": 2497,
+          "rate": 0.7565078093712455,
+          "wilson95": [
+            0.7392880882053758,
+            0.772939504411803
+          ]
+        },
+        "Depression": {
+          "k": 1843,
+          "n": 2824,
+          "rate": 0.6526203966005666,
+          "wilson95": [
+            0.6348628188846313,
+            0.6699633223733055
+          ]
+        },
+        "Anxiety": {
+          "k": 2259,
+          "n": 2811,
+          "rate": 0.8036286019210246,
+          "wilson95": [
+            0.7885330544076761,
+            0.8178954158758382
+          ]
+        },
+        "Bipolar": {
+          "k": 1478,
+          "n": 2969,
+          "rate": 0.4978107106769956,
+          "wilson95": [
+            0.47984022958003414,
+            0.5157868497042771
+          ]
+        }
+      },
+      "by_batch": {
+        "main": {
+          "k": 6140,
+          "n": 9105,
+          "rate": 0.6743547501372872,
+          "wilson95": [
+            0.664657437593877,
+            0.6839050019142026
+          ]
+        },
+        "nested": {
+          "k": 1329,
+          "n": 1996,
+          "rate": 0.6658316633266533,
+          "wilson95": [
+            0.644837110544833,
+            0.6861891300904224
+          ]
+        }
+      }
+    },
+    "invalid": {
+      "overall": {
+        "k": 666,
+        "n": 11101,
+        "rate": 0.05999459508152419,
+        "wilson95": [
+          0.05572732763791397,
+          0.06456628157997656
+        ]
+      },
+      "by_label": {
+        "Normal": {
+          "k": 189,
+          "n": 2497,
+          "rate": 0.07569082899479375,
+          "wilson95": [
+            0.06595555280211879,
+            0.0867296394259825
+          ]
+        },
+        "Depression": {
+          "k": 260,
+          "n": 2824,
+          "rate": 0.09206798866855524,
+          "wilson95": [
+            0.08195156141977118,
+            0.10329271995112628
+          ]
+        },
+        "Anxiety": {
+          "k": 75,
+          "n": 2811,
+          "rate": 0.026680896478121666,
+          "wilson95": [
+            0.02133872190348344,
+            0.03331496326088007
+          ]
+        },
+        "Bipolar": {
+          "k": 142,
+          "n": 2969,
+          "rate": 0.04782755136409565,
+          "wilson95": [
+            0.040718496018417386,
+            0.05610518693358672
+          ]
+        }
+      },
+      "by_batch": {
+        "main": {
+          "k": 528,
+          "n": 9105,
+          "rate": 0.05799011532125206,
+          "wilson95": [
+            0.0533731261640307,
+            0.06297992089091942
+          ]
+        },
+        "nested": {
+          "k": 138,
+          "n": 1996,
+          "rate": 0.06913827655310621,
+          "wilson95": [
+            0.058816497498663356,
+            0.08111532441577896
+          ]
+        }
+      }
+    },
+    "consistency_among_valid": {
+      "k": 7469,
+      "n": 10435,
+      "rate": 0.715764254911356,
+      "wilson95": [
+        0.7070318967367341,
+        0.7243378120319414
+      ]
+    },
+    "parse_reasons": {
+      "unique_label_word": 10435,
+      "no_label": 621,
+      "multi_label": 41,
+      "out_of_range_number": 4
+    },
+    "confusion_rows_original_cols_llm": {
+      "Normal": {
+        "Normal": 1889,
+        "Depression": 154,
+        "Anxiety": 252,
+        "Bipolar": 13,
+        "INVALID": 189
+      },
+      "Depression": {
+        "Normal": 215,
+        "Depression": 1843,
+        "Anxiety": 454,
+        "Bipolar": 52,
+        "INVALID": 260
+      },
+      "Anxiety": {
+        "Normal": 343,
+        "Depression": 128,
+        "Anxiety": 2259,
+        "Bipolar": 6,
+        "INVALID": 75
+      },
+      "Bipolar": {
+        "Normal": 377,
+        "Depression": 519,
+        "Anxiety": 453,
+        "Bipolar": 1478,
+        "INVALID": 142
+      }
+    }
+  },
+  "crosstab_llm_consistent_x_sbert_ge_0_80": {
+    "llm_consistent=True, sbert_ge_0_80=True": 3624,
+    "llm_consistent=True, sbert_ge_0_80=False": 3845,
+    "llm_consistent=False, sbert_ge_0_80=True": 1442,
+    "llm_consistent=False, sbert_ge_0_80=False": 2190
+  },
+  "hypothetical_filter": {
+    "note": "只是模擬；語料與 15_ 結果都沒有改動",
+    "before": {
+      "total": 11101,
+      "Normal": 2497,
+      "Depression": 2824,
+      "Anxiety": 2811,
+      "Bipolar": 2969
+    },
+    "each_rule_pass": {
+      "length_ratio_ok": {
+        "total": 9944,
+        "Normal": 1847,
+        "Depression": 2558,
+        "Anxiety": 2672,
+        "Bipolar": 2867
+      },
+      "not_identical_to_original": {
+        "total": 11101,
+        "Normal": 2497,
+        "Depression": 2824,
+        "Anxiety": 2811,
+        "Bipolar": 2969
+      },
+      "not_duplicate_extra": {
+        "total": 11078,
+        "Normal": 2479,
+        "Depression": 2819,
+        "Anxiety": 2811,
+        "Bipolar": 2969
+      },
+      "sbert_ge_0_80": {
+        "total": 5066,
+        "Normal": 459,
+        "Depression": 886,
+        "Anxiety": 1753,
+        "Bipolar": 1968
+      },
+      "llm_consistent": {
+        "total": 7469,
+        "Normal": 1889,
+        "Depression": 1843,
+        "Anxiety": 2259,
+        "Bipolar": 1478
+      }
+    },
+    "all_rules_pass": {
+      "total": 3496,
+      "Normal": 316,
+      "Depression": 579,
+      "Anxiety": 1451,
+      "Bipolar": 1150
+    }
+  },
+  "reference_tfidf_lr_retention_main_batch": {
+    "status": "ok",
+    "classifier": "TF-IDF(1-2gram) + LogisticRegression, fitted on train",
+    "note": "僅供量化，未用於篩選擴增資料",
+    "n": 9105,
+    "preserved_rate": 0.7305,
+    "per_class": {
+      "Normal": 0.9254,
+      "Depression": 0.2913,
+      "Anxiety": 0.8262,
+      "Bipolar": 0.8964
+    },
+    "train_self_accuracy": 0.9635
+  }
+}
