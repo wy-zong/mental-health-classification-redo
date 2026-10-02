@@ -1,0 +1,189 @@
+{
+  "raw_dataset": {
+    "path": "Combined Data.csv",
+    "sha256": "67274f52dec3b0155aec4d7d1ff31d2a92b0e9b383ab917614591cd168cc2474",
+    "rows": 53043
+  },
+  "classes": [
+    "Normal",
+    "Depression",
+    "Anxiety",
+    "Bipolar",
+    "Suicidal"
+  ],
+  "steps": [
+    {
+      "step": "取五類",
+      "rows": 49173,
+      "per_class": {
+        "Normal": 16351,
+        "Depression": 15404,
+        "Anxiety": 3888,
+        "Bipolar": 2877,
+        "Suicidal": 10653
+      }
+    },
+    {
+      "step": "去空值",
+      "rows": 49017,
+      "per_class": {
+        "Normal": 16343,
+        "Depression": 15404,
+        "Anxiety": 3841,
+        "Bipolar": 2777,
+        "Suicidal": 10652
+      }
+    },
+    {
+      "step": "剔除標籤互斥的同文",
+      "rows": 48961,
+      "per_class": {
+        "Normal": 16341,
+        "Depression": 15374,
+        "Anxiety": 3829,
+        "Bipolar": 2777,
+        "Suicidal": 10640
+      },
+      "conflicting_texts": 20,
+      "conflicting_texts_involving_suicidal": 11,
+      "suicidal_conflict_partner_counts": {
+        "Depression": 11,
+        "Normal": 1
+      }
+    },
+    {
+      "step": "逐字去重",
+      "rows": 47838,
+      "per_class": {
+        "Normal": 16020,
+        "Depression": 15073,
+        "Anxiety": 3611,
+        "Bipolar": 2501,
+        "Suicidal": 10633
+      }
+    },
+    {
+      "step": "近似去重",
+      "rows": 47191,
+      "per_class": {
+        "Normal": 15803,
+        "Depression": 14850,
+        "Anxiety": 3573,
+        "Bipolar": 2498,
+        "Suicidal": 10467
+      },
+      "near_dedup": {
+        "threshold": 0.9,
+        "embedding_model": "all-MiniLM-L6-v2",
+        "max_seq_length": 512,
+        "metric": "cosine",
+        "rows_before": 47838,
+        "similar_pairs_found": 778,
+        "groups_with_multiple_members": 424,
+        "rows_collapsed_same_label": 455,
+        "label_conflicting_groups": 92,
+        "label_conflicting_rows_removed": 192,
+        "rows_after": 47191,
+        "conflict_examples": [
+          {
+            "labels": [
+              "Anxiety",
+              "Normal"
+            ],
+            "n_members": 4,
+            "sample_text": "oh my god why are you so nervous"
+          },
+          {
+            "labels": [
+              "Depression",
+              "Normal"
+            ],
+            "n_members": 2,
+            "sample_text": "can't wait"
+          },
+          {
+            "labels": [
+              "Depression",
+              "Suicidal"
+            ],
+            "n_members": 2,
+            "sample_text": "I needed to get this out because I have been bottling up everything for 3 years now.I have felt horrible for the last 3 years now. I am diagnosed with severe so"
+          },
+          {
+            "labels": [
+              "Depression",
+              "Suicidal"
+            ],
+            "n_members": 2,
+            "sample_text": "I am sad and I am scaredGuys idk where else to turn to with my feelings right now. I am just so frustrated. I have been in my antidepressants for 6 weeks now an"
+          },
+          {
+            "labels": [
+              "Depression",
+              "Suicidal"
+            ],
+            "n_members": 2,
+            "sample_text": "I posted this in r/depression as well, but I figure this would be more appropriate. I always feel like I should not have any real reason to be depressed because"
+          },
+          {
+            "labels": [
+              "Depression",
+              "Suicidal"
+            ],
+            "n_members": 2,
+            "sample_text": "I am just fed up of everything. Everything and everyone pisses me off and I have tried to be happy but that just does not work. I have made plans of suicide for"
+          },
+          {
+            "labels": [
+              "Depression",
+              "Suicidal"
+            ],
+            "n_members": 2,
+            "sample_text": "I do not want to be dead, I just do not want to live in this world. I love being conscious and being able to experience existence but this world has thrown noth"
+          },
+          {
+            "labels": [
+              "Depression",
+              "Suicidal"
+            ],
+            "n_members": 2,
+            "sample_text": "I put this together while sobbing so hard I almost made myself vomit last night. I had a pounding headache, had to hold my breath so my parents would not hear m"
+          },
+          {
+            "labels": [
+              "Depression",
+              "Suicidal"
+            ],
+            "n_members": 2,
+            "sample_text": "I am going through a huge rough patch right now and I know it will get somewhat better eventually. But the parts of my life where I am somewhat happy are so few"
+          },
+          {
+            "labels": [
+              "Depression",
+              "Suicidal"
+            ],
+            "n_members": 3,
+            "sample_text": "(M 20) So I am writing this cuse iv been wanting to get it off my chest iv tried killing my self last week by overdosing and sent to the hospital then to a ment"
+          }
+        ]
+      }
+    }
+  ],
+  "suicidal_survivors": 10467,
+  "sample": {
+    "n": 500,
+    "seed": 42,
+    "scheme": "numpy default_rng(seed).choice(存活 Suicidal 數, n, replace=False)，依原始列號排序",
+    "sample_ids_sha256": "0bcdbfa706687432095b3d6cbc337316c8bdfc2235c65da53650d531e5ef94bc"
+  },
+  "char_length": {
+    "count": 500.0,
+    "mean": 712.358,
+    "std": 740.752229539091,
+    "min": 11.0,
+    "25%": 221.75,
+    "50%": 492.5,
+    "75%": 955.5,
+    "max": 5387.0
+  }
+}
