@@ -25,6 +25,7 @@
   --retrieval-diagnostic                  不呼叫 LLM：val 上兩種語料 k = 1..8 的檢索結構
   --select-k                              彙總 val 掃描，依規則選 k，寫 selected_k.json
   --compare-v1                            test 的 v1→v2 對照表
+  --rescore --split S --top-k K           不呼叫 LLM：從既有逐筆預測重算指標
 
 輸出：runs/NESTED_70_10_20_INCREMENTAL/TOPK_VAL_AUGV2/、MAIN_EVAL_AUGV2/
 """
@@ -101,7 +102,10 @@ V1_CONDITION = {
 # 截斷檢查（num_ctx 不改，與 15_ 相同）
 NUM_CTX = C.GEN_OPTIONS["num_ctx"]
 NEAR_CTX = int(NUM_CTX * 0.9)                          # 3,686
-AT_CTX = NUM_CTX - C.GEN_OPTIONS["num_predict"]        # 4,080
+# 超過 num_ctx 的 prompt 會被 Ollama 截斷，prompt_eval_count 回報的是截斷後的長度（實測一律
+# 2,050），不會接近 num_ctx。因此改以「rendered prompt 字元數 / prompt_eval_count」判定：
+# 未截斷的比值實測在 3–5.5，截斷的都 ≥ 8，以 6 為界。
+TRUNC_CHARS_PER_TOKEN = 6.0
 
 LABEL_IDS = list(range(len(C.LABELS)))
 INVALID = len(C.LABELS)
@@ -383,6 +387,12 @@ def score(records: list[dict]) -> dict:
     }
 
 
+def is_truncated(records: list[dict]) -> np.ndarray:
+    chars = np.array([len(r["rendered_prompt"]) for r in records])
+    tokens = np.array([r["prompt_eval_count"] or 0 for r in records])
+    return chars > TRUNC_CHARS_PER_TOKEN * np.maximum(tokens, 1)
+
+
 def save_metrics(out: Path, split: str, k: int, cond: tuple, records: list[dict]) -> dict:
     condition, prompt_name, corpus, display = cond
     spec = M.PROMPTS[prompt_name]
@@ -391,6 +401,7 @@ def save_metrics(out: Path, split: str, k: int, cond: tuple, records: list[dict]
     correct = sum(bool(r["correct"]) for r in records)
     valid = [r for r in records if not r["invalid"]]
     tokens = np.array([r["prompt_eval_count"] or 0 for r in records])
+    truncated = is_truncated(records)
     s = score(records)
     distinct = [r["n_distinct_sources"] for r in records if r["n_distinct_sources"] is not None]
     result = {
@@ -416,12 +427,14 @@ def save_metrics(out: Path, split: str, k: int, cond: tuple, records: list[dict]
         "model_digest": records[0]["model_digest"],
         "prompt_eval_count_mean": float(tokens.mean()),
         "prompt_eval_count_max": int(tokens.max()),
+        "truncation_rule": f"len(rendered_prompt) / prompt_eval_count > {TRUNC_CHARS_PER_TOKEN}",
+        "truncated_count": int(truncated.sum()),
+        "truncated_rate": float(truncated.mean()),
+        "truncated_accuracy": float(np.mean([r["correct"] for r, t in zip(records, truncated) if t]))
+        if truncated.any() else None,
         "near_ctx_threshold": NEAR_CTX,
-        "near_ctx_count": int((tokens >= NEAR_CTX).sum()),
-        "near_ctx_rate": float((tokens >= NEAR_CTX).mean()),
-        "at_ctx_threshold": AT_CTX,
-        "at_ctx_count": int((tokens >= AT_CTX).sum()),
-        "at_ctx_rate": float((tokens >= AT_CTX).mean()),
+        "near_ctx_count": int((tokens[~truncated] >= NEAR_CTX).sum()),
+        "near_ctx_rate": float((tokens[~truncated] >= NEAR_CTX).sum() / n),
         "mean_distinct_sources": float(np.mean(distinct)) if distinct else None,
         "elapsed_s_total": round(float(sum(r["elapsed_s"] for r in records)), 3),
         "elapsed_s_mean": float(np.mean([r["elapsed_s"] for r in records])),
@@ -489,7 +502,8 @@ def write_manifest(out: Path, split: str, df: pd.DataFrame, k: int, conditions: 
         "top_k": k,
         "top_k_source": k_src,
         "reference_context_format": "top-k docs by descending similarity joined with '\\n'",
-        "truncation_thresholds": {"num_ctx": NUM_CTX, "near_ctx": NEAR_CTX, "at_ctx": AT_CTX},
+        "truncation_check": {"num_ctx": NUM_CTX, "near_ctx": NEAR_CTX,
+                             "truncated_if_chars_per_token_above": TRUNC_CHARS_PER_TOKEN},
         "prompt_source": "15_nested_custom_prompt_eval.py PROMPTS (sha256 checked against 15_ manifest)",
         "prompts": prompts,
         "conditions": [
@@ -548,10 +562,25 @@ def run_eval(split: str, k: int, condition: str, smoke: int | None) -> None:
         for m in metrics:
             C.log(f"  {m['condition']}: acc={m['strict_accuracy']:.4f} "
                   f"macroF1={m['macro_f1']:.4f} invalid={m['invalid_count']} "
-                  f"at_ctx={m['at_ctx_count']}")
+                  f"truncated={m['truncated_count']}")
 
 
 # ---------------------------------------------------------------- 不呼叫 LLM 的檢查
+
+def rescore(split: str, k: int) -> None:
+    """從既有逐筆預測重算 metrics／confusion／summary；不呼叫 LLM，不改 manifest 與逐筆紀錄。"""
+    pool = RAG_CONDITIONS if split == "val" else CONDITIONS
+    df = load_split(split)
+    out = out_dir(split, k, None)
+    for cond in pool:
+        records = M.check_complete(out / f"predictions_{cond[0]}.jsonl", df)
+        save_metrics(out, split, k, cond, records)
+        save_confusion(out, cond[0], records)
+    metrics = [C.load_json(out / f"metrics_{c[0]}.json") for c in pool]
+    pd.DataFrame(metrics).to_csv(out / "summary.csv", index=False, encoding="utf-8-sig")
+    C.log(f"{split} k={k} 已重算指標：" +
+          "、".join(f"{m['condition']} truncated={m['truncated_count']}" for m in metrics))
+
 
 def parity_check(n: int) -> None:
     """k = 1、noaug：27_ 組出的 prompt 必須與 15_ 存下的 rendered prompt 逐字相同。"""
@@ -669,7 +698,8 @@ def select_k() -> None:
                 "corpus": cond[2], "prompt": cond[1], "n": m["n"],
                 "accuracy": m["strict_accuracy"], "macro_f1": m["macro_f1"],
                 "weighted_f1": m["weighted_f1"], "invalid_rate": m["invalid_rate"],
-                "near_ctx_rate": m["near_ctx_rate"], "at_ctx_rate": m["at_ctx_rate"],
+                "truncated_count": m["truncated_count"], "truncated_rate": m["truncated_rate"],
+                "near_ctx_rate": m["near_ctx_rate"],
                 "prompt_eval_count_mean": m["prompt_eval_count_mean"],
                 "prompt_eval_count_max": m["prompt_eval_count_max"],
                 "mean_distinct_sources": m["mean_distinct_sources"],
@@ -768,6 +798,7 @@ def main() -> None:
     mode.add_argument("--retrieval-diagnostic", action="store_true")
     mode.add_argument("--select-k", action="store_true")
     mode.add_argument("--compare-v1", action="store_true")
+    mode.add_argument("--rescore", action="store_true")
     args = parser.parse_args()
 
     if args.parity_check:
@@ -778,6 +809,10 @@ def main() -> None:
         select_k()
     elif args.compare_v1:
         compare_v1()
+    elif args.rescore:
+        if args.split is None or args.top_k is None:
+            parser.error("--rescore 需要 --split 與 --top-k")
+        rescore(args.split, args.top_k)
     else:
         if args.split is None or args.top_k is None:
             parser.error("評估需要 --split 與 --top-k")
