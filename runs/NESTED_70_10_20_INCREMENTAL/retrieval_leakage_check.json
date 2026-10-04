@@ -1,0 +1,304 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "script": "src/19_retrieval_leakage_check.py",
+  "metric": "cosine similarity (all-MiniLM-L6-v2, normalized, IndexFlatIP exact search)",
+  "note": "top-1 為精確最近鄰，max 即該切分對整個語料的全域最高相似度",
+  "sources": {
+    "test": "CUSTOM_PROMPT_EVAL/retrieval_audit_rag_{noaug,aug}_base.jsonl（15_）",
+    "val": "以 12_ RebuildRagIndex 重新嵌入與搜尋"
+  },
+  "corpora": {
+    "noaug": {
+      "n_docs": 6994,
+      "base_n_docs": 5996,
+      "added_doc_count": 998,
+      "paraphrase_docs": 0,
+      "exact_overlap_with_eval_splits": {
+        "val": 0,
+        "test": 0
+      },
+      "index_sha256": "361c4c4b981fff9e5bec980de7080160357234588ad89fa3a22440d199dd21e6"
+    },
+    "aug": {
+      "n_docs": 18095,
+      "base_n_docs": 15101,
+      "added_doc_count": 2994,
+      "paraphrase_docs": 11101,
+      "exact_overlap_with_eval_splits": {
+        "val": 0,
+        "test": 0
+      },
+      "index_sha256": "9de3ce6d10b13bc037df5fe0bed3f130144ce02a081fea3589ccc6dd367efa2e"
+    }
+  },
+  "test": {
+    "noaug": {
+      "n": 1998,
+      "top1_similarity": {
+        "max": 0.8714554905891418,
+        "mean": 0.605349904535948,
+        "median": 0.633416473865509,
+        "p95": 0.797527441382408,
+        "p99": 0.8305357545614243,
+        "min": 0.20489993691444397
+      },
+      "count_at_or_above": {
+        "0.80": 94,
+        "0.85": 7,
+        "0.90": 0,
+        "0.95": 0
+      },
+      "top1_source": {
+        "by_origin": {
+          "original": 1998
+        },
+        "by_corpus_part": {
+          "base": 1707,
+          "nested_added": 291
+        },
+        "max_similarity_by_origin": {
+          "original": 0.8714554905891418
+        },
+        "mean_similarity_by_origin": {
+          "original": 0.605349904535948
+        }
+      },
+      "top1_same_source_id_as_query": 0,
+      "highest_pairs": [
+        {
+          "query_id": "test_01626",
+          "doc_id": "train_05863",
+          "similarity": 0.8714554905891418,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_00046",
+          "doc_id": "train_02623",
+          "similarity": 0.8708226680755615,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_01880",
+          "doc_id": "train_00864",
+          "similarity": 0.8676828145980835,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_00835",
+          "doc_id": "train_04182",
+          "similarity": 0.861116886138916,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_01845",
+          "doc_id": "test_02233",
+          "similarity": 0.860666036605835,
+          "origin": "original"
+        }
+      ]
+    },
+    "aug": {
+      "n": 1998,
+      "top1_similarity": {
+        "max": 0.8782024383544922,
+        "mean": 0.6212719181427607,
+        "median": 0.6501032710075378,
+        "p95": 0.804998978972435,
+        "p99": 0.8440730094909668,
+        "min": 0.25656673312187195
+      },
+      "count_at_or_above": {
+        "0.80": 113,
+        "0.85": 14,
+        "0.90": 0,
+        "0.95": 0
+      },
+      "top1_source": {
+        "by_origin": {
+          "paraphrase": 1010,
+          "original": 988
+        },
+        "by_corpus_part": {
+          "base": 1685,
+          "nested_added": 313
+        },
+        "max_similarity_by_origin": {
+          "paraphrase": 0.8782024383544922,
+          "original": 0.8714554309844971
+        },
+        "mean_similarity_by_origin": {
+          "paraphrase": 0.6181851187259844,
+          "original": 0.6244274519595058
+        }
+      },
+      "top1_same_source_id_as_query": 0,
+      "highest_pairs": [
+        {
+          "query_id": "test_01625",
+          "doc_id": "aug_test_00063_1",
+          "similarity": 0.8782024383544922,
+          "origin": "paraphrase"
+        },
+        {
+          "query_id": "test_01880",
+          "doc_id": "aug_train_00864_0",
+          "similarity": 0.874615490436554,
+          "origin": "paraphrase"
+        },
+        {
+          "query_id": "test_01626",
+          "doc_id": "train_05863",
+          "similarity": 0.8714554309844971,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_00046",
+          "doc_id": "train_02623",
+          "similarity": 0.870822548866272,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_02198",
+          "doc_id": "aug_test_00065_0",
+          "similarity": 0.8626084327697754,
+          "origin": "paraphrase"
+        }
+      ]
+    }
+  },
+  "val": {
+    "noaug": {
+      "n": 1000,
+      "top1_similarity": {
+        "max": 0.892619788646698,
+        "mean": 0.6072272392213345,
+        "median": 0.6387655735015869,
+        "p95": 0.8000903904438018,
+        "p99": 0.8387625461816788,
+        "min": 0.25936567783355713
+      },
+      "count_at_or_above": {
+        "0.80": 51,
+        "0.85": 4,
+        "0.90": 0,
+        "0.95": 0
+      },
+      "top1_source": {
+        "by_origin": {
+          "original": 1000
+        },
+        "by_corpus_part": {
+          "base": 872,
+          "nested_added": 128
+        },
+        "max_similarity_by_origin": {
+          "original": 0.892619788646698
+        },
+        "mean_similarity_by_origin": {
+          "original": 0.6072272392213345
+        }
+      },
+      "top1_same_source_id_as_query": 0,
+      "highest_pairs": [
+        {
+          "query_id": "val_confirm_00045",
+          "doc_id": "train_01412",
+          "similarity": 0.892619788646698,
+          "origin": "original"
+        },
+        {
+          "query_id": "val_search_00288",
+          "doc_id": "train_05707",
+          "similarity": 0.8660556077957153,
+          "origin": "original"
+        },
+        {
+          "query_id": "val_search_00148",
+          "doc_id": "test_02233",
+          "similarity": 0.8571480512619019,
+          "origin": "original"
+        },
+        {
+          "query_id": "val_confirm_00997",
+          "doc_id": "train_05709",
+          "similarity": 0.852513313293457,
+          "origin": "original"
+        },
+        {
+          "query_id": "val_search_00284",
+          "doc_id": "train_04724",
+          "similarity": 0.8461679816246033,
+          "origin": "original"
+        }
+      ]
+    },
+    "aug": {
+      "n": 1000,
+      "top1_similarity": {
+        "max": 0.892619788646698,
+        "mean": 0.6231737307906151,
+        "median": 0.6562359929084778,
+        "p95": 0.8082456916570663,
+        "p99": 0.8461927610635758,
+        "min": 0.2593657374382019
+      },
+      "count_at_or_above": {
+        "0.80": 65,
+        "0.85": 8,
+        "0.90": 0,
+        "0.95": 0
+      },
+      "top1_source": {
+        "by_origin": {
+          "paraphrase": 504,
+          "original": 496
+        },
+        "by_corpus_part": {
+          "base": 853,
+          "nested_added": 147
+        },
+        "max_similarity_by_origin": {
+          "original": 0.892619788646698,
+          "paraphrase": 0.8752933740615845
+        },
+        "mean_similarity_by_origin": {
+          "original": 0.6240681152069761,
+          "paraphrase": 0.6222935429522916
+        }
+      },
+      "top1_same_source_id_as_query": 0,
+      "highest_pairs": [
+        {
+          "query_id": "val_confirm_00045",
+          "doc_id": "train_01412",
+          "similarity": 0.892619788646698,
+          "origin": "original"
+        },
+        {
+          "query_id": "val_confirm_00755",
+          "doc_id": "aug_train_04814_1",
+          "similarity": 0.8752933740615845,
+          "origin": "paraphrase"
+        },
+        {
+          "query_id": "val_search_00288",
+          "doc_id": "train_05707",
+          "similarity": 0.8660556077957153,
+          "origin": "original"
+        },
+        {
+          "query_id": "val_confirm_00764",
+          "doc_id": "aug_train_04643_1",
+          "similarity": 0.8606747388839722,
+          "origin": "paraphrase"
+        },
+        {
+          "query_id": "val_search_00148",
+          "doc_id": "aug_train_04084_1",
+          "similarity": 0.8601910471916199,
+          "origin": "paraphrase"
+        }
+      ]
+    }
+  }
+}

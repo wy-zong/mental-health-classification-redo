@@ -1,0 +1,71 @@
+{
+  "n_queries": 200,
+  "seed": 42,
+  "embedder_device": "cpu（與 15_ 實驗相同）",
+  "procedure": "逐筆查詢（batch=1，與 15_ 相同）；先暖機 5 筆不計時",
+  "hardware": {
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.10.18",
+    "processor": "Intel64 Family 6 Model 165 Stepping 2, GenuineIntel",
+    "torch": "2.14.0+cu126",
+    "torch_cuda_available": true,
+    "gpu_name": "NVIDIA GeForce RTX 2070",
+    "faiss": "1.15.0",
+    "sentence_transformers": "6.0.1",
+    "numpy": "2.2.6"
+  },
+  "corpora": {
+    "noaug": {
+      "n_docs": 6994,
+      "embed_ms_mean": 25.805534000101034,
+      "embed_ms_median": 20.051100000273436,
+      "embed_ms_p95": 68.98790998966432,
+      "embed_ms_max": 120.15720002818853,
+      "faiss_search_ms_mean": 0.8411244986928068,
+      "faiss_search_ms_median": 0.8111500064842403,
+      "faiss_search_ms_p95": 1.1272050236584619,
+      "faiss_search_ms_max": 1.3575999764725566,
+      "retrieval_total_ms_mean": 26.64665849879384,
+      "retrieval_total_ms_median": 20.924449985614046,
+      "retrieval_total_ms_p95": 70.07325001759455,
+      "retrieval_total_ms_max": 121.51480000466108
+    },
+    "aug": {
+      "n_docs": 18095,
+      "embed_ms_mean": 31.629555501567665,
+      "embed_ms_median": 24.55450003617443,
+      "embed_ms_p95": 77.38569501671007,
+      "embed_ms_max": 111.4100000122562,
+      "faiss_search_ms_mean": 2.3695024946937338,
+      "faiss_search_ms_median": 2.296899998327717,
+      "faiss_search_ms_p95": 2.8817599784815675,
+      "faiss_search_ms_max": 8.643199980724603,
+      "retrieval_total_ms_mean": 33.9990579962614,
+      "retrieval_total_ms_median": 26.773850026074797,
+      "retrieval_total_ms_p95": 79.5405050186673,
+      "retrieval_total_ms_max": 115.76630000490695
+    }
+  },
+  "experiment_environment": {
+    "custom_prompt_eval_platform": "Windows-10-10.0.26200-SP0",
+    "custom_prompt_eval_python": "3.10.18",
+    "custom_prompt_eval_model": {
+      "model_name": "llama3.1",
+      "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+      "weights_blob_digest": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+      "size_bytes": 4920753328
+    },
+    "MAIN_hardware": {
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python": "3.10.18",
+      "processor": "Intel64 Family 6 Model 165 Stepping 2, GenuineIntel",
+      "torch_cuda_available": true,
+      "gpu_name": "NVIDIA GeForce RTX 2070",
+      "gpu_count": 1,
+      "gpu_total_memory_gb": 8.0,
+      "cuda_version": "12.6",
+      "nvidia_smi": "NVIDIA GeForce RTX 2070, 576.02, 8192 MiB"
+    },
+    "note": "15_ 的 manifest 只記錄 platform 與 python，沒有 GPU 欄位；platform 字串與 MAIN 相同，硬體欄位引用 MAIN（RTX 2070 8 GB、CUDA 12.6）。"
+  }
+}

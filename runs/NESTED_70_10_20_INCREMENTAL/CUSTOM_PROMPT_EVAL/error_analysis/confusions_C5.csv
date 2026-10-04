@@ -1,0 +1,17 @@
+﻿code,condition,true_label,pred_label,count,share_of_errors,share_of_true_class
+C5,rag_aug_optimized,Depression,Anxiety,70,0.14198782961460446,0.1402805611222445
+C5,rag_aug_optimized,Normal,Anxiety,66,0.13387423935091278,0.13226452905811623
+C5,rag_aug_optimized,Depression,INVALID,63,0.12778904665314403,0.12625250501002003
+C5,rag_aug_optimized,Depression,Bipolar,54,0.10953346855983773,0.10821643286573146
+C5,rag_aug_optimized,Bipolar,Depression,42,0.08519269776876268,0.084
+C5,rag_aug_optimized,Bipolar,Anxiety,38,0.07707910750507099,0.076
+C5,rag_aug_optimized,Normal,Depression,37,0.07505070993914807,0.07414829659318638
+C5,rag_aug_optimized,Anxiety,Depression,23,0.04665314401622718,0.046
+C5,rag_aug_optimized,Normal,Bipolar,23,0.04665314401622718,0.04609218436873747
+C5,rag_aug_optimized,Normal,INVALID,20,0.04056795131845842,0.04008016032064128
+C5,rag_aug_optimized,Anxiety,Bipolar,18,0.036511156186612576,0.036
+C5,rag_aug_optimized,Anxiety,Normal,12,0.02434077079107505,0.024
+C5,rag_aug_optimized,Bipolar,Normal,11,0.02231237322515213,0.022
+C5,rag_aug_optimized,Depression,Normal,10,0.02028397565922921,0.02004008016032064
+C5,rag_aug_optimized,Bipolar,INVALID,5,0.010141987829614604,0.01
+C5,rag_aug_optimized,Anxiety,INVALID,1,0.002028397565922921,0.002
