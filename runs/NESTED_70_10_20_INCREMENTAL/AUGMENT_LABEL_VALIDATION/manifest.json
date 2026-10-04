@@ -1,0 +1,27 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "script": "src/22_augment_label_validation.py",
+  "prompt_source": "src/15_nested_custom_prompt_eval.py PROMPTS['base_norag']",
+  "prompt_template": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar].\nNow classify this text: {text}.\noutput only one of the following labels: [Normal, Depression, Anxiety, Bipolar].",
+  "prompt_sha256": "139f899aa7797d948fa0eaf92b02305c6e092f0a1c9a8fc4c72eb24f52843a1a",
+  "llm_generation_options": {
+    "temperature": 0.1,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 16,
+    "top_p": 1.0
+  },
+  "model": {
+    "model_name": "llama3.1",
+    "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "weights_blob_digest": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+    "size_bytes": 4920753328
+  },
+  "inputs": {
+    "aug_docs_sha256": "ecd397ca3025c04d0cdabefd659570a4a964e3d26db0d2bdd5c8f37f99a894e2",
+    "custom_prompt_eval_manifest_sha256": "a826f1a195e2009e86c5cb8d892a6acf6b83e3945ea1361c63a908f73990b56f",
+    "main_augmented_csv_sha256": "f4b15a7ea28d51915975ab3a680394acb635b2345c968a77b3f6c12feae95221",
+    "nested_augmented_csv_sha256": "4cc7947fd0a4d73ba060c5c15095b0e28d4d9b8dac9e948039f7c1752b565ea3"
+  },
+  "created_at": "2026-10-01 18:31:44+0800"
+}
