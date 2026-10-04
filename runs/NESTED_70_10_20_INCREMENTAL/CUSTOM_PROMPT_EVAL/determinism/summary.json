@@ -1,0 +1,1002 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "CUSTOM_PROMPT_EVAL",
+  "script": "src/21_decoding_determinism.py",
+  "issue": "#5",
+  "procedure": "test 依類別分層抽 200 筆（每類 50，random_state=42+類別序）；C4、C5 各以 15_ 存下的 rendered_prompt 原樣重送 Ollama 2 次（15_ 的 GEN_OPTIONS），以 15_ 的 parse_label 解析；另以 15_ 的 FAISS 索引重新檢索 top-1 並依 15_ 規則重組 prompt",
+  "inputs": {
+    "manifest_sha256": "a826f1a195e2009e86c5cb8d892a6acf6b83e3945ea1361c63a908f73990b56f",
+    "test_sha256": "f5ec6983dec361b01ba1ee2e1700ce7c2e59234deea349a58261fc03751bbd09",
+    "predictions_C4_sha256": "69bc3a5d30e949977daae48306413ef2272c12950c6917ecd354dc8c83f093f2",
+    "predictions_C5_sha256": "10184602450f6a4283788d7b208a5df2467e1875b138d77295bac4165c834828"
+  },
+  "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+  "llm_generation_options": {
+    "temperature": 0.0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 16,
+    "top_p": 1.0
+  },
+  "results": {
+    "C4": {
+      "condition": "rag_noaug_optimized",
+      "vs_original": {
+        "pass1": {
+          "raw_equal": {
+            "k": 191,
+            "n": 200,
+            "rate": 0.955,
+            "wilson95": [
+              0.916703295616288,
+              0.9761474571149557
+            ]
+          },
+          "pred_equal": {
+            "k": 195,
+            "n": 200,
+            "rate": 0.975,
+            "wilson95": [
+              0.9428216592483453,
+              0.9892752804161399
+            ]
+          },
+          "retrieved_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "prompt_rebuilt_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "by_label": {
+            "Normal": {
+              "raw_equal": {
+                "k": 49,
+                "n": 50,
+                "rate": 0.98,
+                "wilson95": [
+                  0.8950455630610349,
+                  0.9964607407674954
+                ]
+              },
+              "pred_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              }
+            },
+            "Depression": {
+              "raw_equal": {
+                "k": 44,
+                "n": 50,
+                "rate": 0.88,
+                "wilson95": [
+                  0.7619518250454469,
+                  0.9438239988188064
+                ]
+              },
+              "pred_equal": {
+                "k": 46,
+                "n": 50,
+                "rate": 0.92,
+                "wilson95": [
+                  0.8116175297192756,
+                  0.9684504861306886
+                ]
+              }
+            },
+            "Anxiety": {
+              "raw_equal": {
+                "k": 49,
+                "n": 50,
+                "rate": 0.98,
+                "wilson95": [
+                  0.8950455630610349,
+                  0.9964607407674954
+                ]
+              },
+              "pred_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              }
+            },
+            "Bipolar": {
+              "raw_equal": {
+                "k": 49,
+                "n": 50,
+                "rate": 0.98,
+                "wilson95": [
+                  0.8950455630610349,
+                  0.9964607407674954
+                ]
+              },
+              "pred_equal": {
+                "k": 49,
+                "n": 50,
+                "rate": 0.98,
+                "wilson95": [
+                  0.8950455630610349,
+                  0.9964607407674954
+                ]
+              }
+            }
+          },
+          "max_retrieved_similarity_abs_diff": 0.0,
+          "mismatches": [
+            {
+              "id": "test_00143",
+              "true_label": "Normal",
+              "orig_raw_response": "I cannot provide a classification for the text \"My goal is to win the lottery",
+              "rerun_raw_response": "I cannot classify the text as it contains a potentially suicidal statement. Is there anything",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00062",
+              "true_label": "Depression",
+              "orig_raw_response": "Based on the content of the text, I would classify it as: **Dep",
+              "rerun_raw_response": "Depression",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": 1,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_02311",
+              "true_label": "Depression",
+              "orig_raw_response": "Depression",
+              "rerun_raw_response": "Bipolar",
+              "orig_pred_label_id": 1,
+              "rerun_pred_label_id": 3,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00370",
+              "true_label": "Depression",
+              "orig_raw_response": "I cannot classify a text as having a mental health condition. If you are experiencing",
+              "rerun_raw_response": "I cannot classify a text that describes self-harm and suicidal ideation. If",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00081",
+              "true_label": "Depression",
+              "orig_raw_response": "I can't provide information that could aid in suicide. If you are experiencing thoughts",
+              "rerun_raw_response": "I can't provide a classification for this text. If you or someone you know",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00201",
+              "true_label": "Depression",
+              "orig_raw_response": "Depression",
+              "rerun_raw_response": "Bipolar",
+              "orig_pred_label_id": 1,
+              "rerun_pred_label_id": 3,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00293",
+              "true_label": "Depression",
+              "orig_raw_response": "I cannot provide a classification for a text that may be related to self-harm",
+              "rerun_raw_response": "Normal",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": 0,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_01549",
+              "true_label": "Anxiety",
+              "orig_raw_response": "Based on the text, I would classify it as: **Anxiety**\n\nThe",
+              "rerun_raw_response": "Based on the text, I classify it as: **Anxiety**\n\nThe text",
+              "orig_pred_label_id": 2,
+              "rerun_pred_label_id": 2,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00384",
+              "true_label": "Bipolar",
+              "orig_raw_response": "Anxiety",
+              "rerun_raw_response": "Depression",
+              "orig_pred_label_id": 2,
+              "rerun_pred_label_id": 1,
+              "retrieved_equal": true
+            }
+          ]
+        },
+        "pass2": {
+          "raw_equal": {
+            "k": 191,
+            "n": 200,
+            "rate": 0.955,
+            "wilson95": [
+              0.916703295616288,
+              0.9761474571149557
+            ]
+          },
+          "pred_equal": {
+            "k": 195,
+            "n": 200,
+            "rate": 0.975,
+            "wilson95": [
+              0.9428216592483453,
+              0.9892752804161399
+            ]
+          },
+          "retrieved_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "prompt_rebuilt_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "by_label": {
+            "Normal": {
+              "raw_equal": {
+                "k": 49,
+                "n": 50,
+                "rate": 0.98,
+                "wilson95": [
+                  0.8950455630610349,
+                  0.9964607407674954
+                ]
+              },
+              "pred_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              }
+            },
+            "Depression": {
+              "raw_equal": {
+                "k": 44,
+                "n": 50,
+                "rate": 0.88,
+                "wilson95": [
+                  0.7619518250454469,
+                  0.9438239988188064
+                ]
+              },
+              "pred_equal": {
+                "k": 46,
+                "n": 50,
+                "rate": 0.92,
+                "wilson95": [
+                  0.8116175297192756,
+                  0.9684504861306886
+                ]
+              }
+            },
+            "Anxiety": {
+              "raw_equal": {
+                "k": 49,
+                "n": 50,
+                "rate": 0.98,
+                "wilson95": [
+                  0.8950455630610349,
+                  0.9964607407674954
+                ]
+              },
+              "pred_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              }
+            },
+            "Bipolar": {
+              "raw_equal": {
+                "k": 49,
+                "n": 50,
+                "rate": 0.98,
+                "wilson95": [
+                  0.8950455630610349,
+                  0.9964607407674954
+                ]
+              },
+              "pred_equal": {
+                "k": 49,
+                "n": 50,
+                "rate": 0.98,
+                "wilson95": [
+                  0.8950455630610349,
+                  0.9964607407674954
+                ]
+              }
+            }
+          },
+          "max_retrieved_similarity_abs_diff": 0.0,
+          "mismatches": [
+            {
+              "id": "test_00143",
+              "true_label": "Normal",
+              "orig_raw_response": "I cannot provide a classification for the text \"My goal is to win the lottery",
+              "rerun_raw_response": "I cannot classify the text as it contains a potentially suicidal statement. Is there anything",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00062",
+              "true_label": "Depression",
+              "orig_raw_response": "Based on the content of the text, I would classify it as: **Dep",
+              "rerun_raw_response": "Depression",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": 1,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_02311",
+              "true_label": "Depression",
+              "orig_raw_response": "Depression",
+              "rerun_raw_response": "Bipolar",
+              "orig_pred_label_id": 1,
+              "rerun_pred_label_id": 3,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00370",
+              "true_label": "Depression",
+              "orig_raw_response": "I cannot classify a text as having a mental health condition. If you are experiencing",
+              "rerun_raw_response": "I cannot classify a text that describes self-harm and suicidal ideation. If",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00081",
+              "true_label": "Depression",
+              "orig_raw_response": "I can't provide information that could aid in suicide. If you are experiencing thoughts",
+              "rerun_raw_response": "I can't provide a classification for this text. If you or someone you know",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00201",
+              "true_label": "Depression",
+              "orig_raw_response": "Depression",
+              "rerun_raw_response": "Bipolar",
+              "orig_pred_label_id": 1,
+              "rerun_pred_label_id": 3,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00293",
+              "true_label": "Depression",
+              "orig_raw_response": "I cannot provide a classification for a text that may be related to self-harm",
+              "rerun_raw_response": "Normal",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": 0,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_01549",
+              "true_label": "Anxiety",
+              "orig_raw_response": "Based on the text, I would classify it as: **Anxiety**\n\nThe",
+              "rerun_raw_response": "Based on the text, I classify it as: **Anxiety**\n\nThe text",
+              "orig_pred_label_id": 2,
+              "rerun_pred_label_id": 2,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00384",
+              "true_label": "Bipolar",
+              "orig_raw_response": "Anxiety",
+              "rerun_raw_response": "Depression",
+              "orig_pred_label_id": 2,
+              "rerun_pred_label_id": 1,
+              "retrieved_equal": true
+            }
+          ]
+        }
+      },
+      "between_passes": {
+        "pass1_vs_pass2": {
+          "raw_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "pred_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "mismatch_ids": []
+        }
+      }
+    },
+    "C5": {
+      "condition": "rag_aug_optimized",
+      "vs_original": {
+        "pass1": {
+          "raw_equal": {
+            "k": 194,
+            "n": 200,
+            "rate": 0.97,
+            "wilson95": [
+              0.9361057071903662,
+              0.9861796857408085
+            ]
+          },
+          "pred_equal": {
+            "k": 196,
+            "n": 200,
+            "rate": 0.98,
+            "wilson95": [
+              0.949712912759955,
+              0.9921955736378406
+            ]
+          },
+          "retrieved_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "prompt_rebuilt_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "by_label": {
+            "Normal": {
+              "raw_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              },
+              "pred_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              }
+            },
+            "Depression": {
+              "raw_equal": {
+                "k": 44,
+                "n": 50,
+                "rate": 0.88,
+                "wilson95": [
+                  0.7619518250454469,
+                  0.9438239988188064
+                ]
+              },
+              "pred_equal": {
+                "k": 46,
+                "n": 50,
+                "rate": 0.92,
+                "wilson95": [
+                  0.8116175297192756,
+                  0.9684504861306886
+                ]
+              }
+            },
+            "Anxiety": {
+              "raw_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              },
+              "pred_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              }
+            },
+            "Bipolar": {
+              "raw_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              },
+              "pred_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              }
+            }
+          },
+          "max_retrieved_similarity_abs_diff": 0.0,
+          "mismatches": [
+            {
+              "id": "test_00062",
+              "true_label": "Depression",
+              "orig_raw_response": "Based on the content of the text, I would classify it as: **Dep",
+              "rerun_raw_response": "Depression",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": 1,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00370",
+              "true_label": "Depression",
+              "orig_raw_response": "I cannot classify a text as having a mental health condition. If you are experiencing",
+              "rerun_raw_response": "I cannot classify a text that describes self-harm and suicidal ideation. If",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00815",
+              "true_label": "Depression",
+              "orig_raw_response": "I cannot provide a diagnosis of bipolar disorder. If you are struggling with your mental",
+              "rerun_raw_response": "I cannot provide information that could be used to self-harm. If you are",
+              "orig_pred_label_id": 3,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00576",
+              "true_label": "Depression",
+              "orig_raw_response": "Depression",
+              "rerun_raw_response": "Normal",
+              "orig_pred_label_id": 1,
+              "rerun_pred_label_id": 0,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00081",
+              "true_label": "Depression",
+              "orig_raw_response": "I can't provide information that could aid in suicide. If you are experiencing thoughts",
+              "rerun_raw_response": "I can't provide a classification for this text. If you or someone you know",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00293",
+              "true_label": "Depression",
+              "orig_raw_response": "I cannot provide a classification for a text that may be related to self-harm",
+              "rerun_raw_response": "Normal",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": 0,
+              "retrieved_equal": true
+            }
+          ]
+        },
+        "pass2": {
+          "raw_equal": {
+            "k": 194,
+            "n": 200,
+            "rate": 0.97,
+            "wilson95": [
+              0.9361057071903662,
+              0.9861796857408085
+            ]
+          },
+          "pred_equal": {
+            "k": 196,
+            "n": 200,
+            "rate": 0.98,
+            "wilson95": [
+              0.949712912759955,
+              0.9921955736378406
+            ]
+          },
+          "retrieved_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "prompt_rebuilt_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "by_label": {
+            "Normal": {
+              "raw_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              },
+              "pred_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              }
+            },
+            "Depression": {
+              "raw_equal": {
+                "k": 44,
+                "n": 50,
+                "rate": 0.88,
+                "wilson95": [
+                  0.7619518250454469,
+                  0.9438239988188064
+                ]
+              },
+              "pred_equal": {
+                "k": 46,
+                "n": 50,
+                "rate": 0.92,
+                "wilson95": [
+                  0.8116175297192756,
+                  0.9684504861306886
+                ]
+              }
+            },
+            "Anxiety": {
+              "raw_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              },
+              "pred_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              }
+            },
+            "Bipolar": {
+              "raw_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              },
+              "pred_equal": {
+                "k": 50,
+                "n": 50,
+                "rate": 1.0,
+                "wilson95": [
+                  0.9286523998213857,
+                  0.9999999999999999
+                ]
+              }
+            }
+          },
+          "max_retrieved_similarity_abs_diff": 0.0,
+          "mismatches": [
+            {
+              "id": "test_00062",
+              "true_label": "Depression",
+              "orig_raw_response": "Based on the content of the text, I would classify it as: **Dep",
+              "rerun_raw_response": "Depression",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": 1,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00370",
+              "true_label": "Depression",
+              "orig_raw_response": "I cannot classify a text as having a mental health condition. If you are experiencing",
+              "rerun_raw_response": "I cannot classify a text that describes self-harm and suicidal ideation. If",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00815",
+              "true_label": "Depression",
+              "orig_raw_response": "I cannot provide a diagnosis of bipolar disorder. If you are struggling with your mental",
+              "rerun_raw_response": "I cannot provide information that could be used to self-harm. If you are",
+              "orig_pred_label_id": 3,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00576",
+              "true_label": "Depression",
+              "orig_raw_response": "Depression",
+              "rerun_raw_response": "Normal",
+              "orig_pred_label_id": 1,
+              "rerun_pred_label_id": 0,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00081",
+              "true_label": "Depression",
+              "orig_raw_response": "I can't provide information that could aid in suicide. If you are experiencing thoughts",
+              "rerun_raw_response": "I can't provide a classification for this text. If you or someone you know",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": null,
+              "retrieved_equal": true
+            },
+            {
+              "id": "test_00293",
+              "true_label": "Depression",
+              "orig_raw_response": "I cannot provide a classification for a text that may be related to self-harm",
+              "rerun_raw_response": "Normal",
+              "orig_pred_label_id": null,
+              "rerun_pred_label_id": 0,
+              "retrieved_equal": true
+            }
+          ]
+        }
+      },
+      "between_passes": {
+        "pass1_vs_pass2": {
+          "raw_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "pred_equal": {
+            "k": 200,
+            "n": 200,
+            "rate": 1.0,
+            "wilson95": [
+              0.9811546733310369,
+              0.9999999999999999
+            ]
+          },
+          "mismatch_ids": []
+        }
+      }
+    },
+    "pooled": {
+      "vs_original": {
+        "pass1": {
+          "raw_equal": {
+            "k": 385,
+            "n": 400,
+            "rate": 0.9625,
+            "wilson95": [
+              0.9390561573300114,
+              0.9771449702732762
+            ]
+          },
+          "pred_equal": {
+            "k": 391,
+            "n": 400,
+            "rate": 0.9775,
+            "wilson95": [
+              0.9577973422411895,
+              0.9881184165276101
+            ]
+          },
+          "retrieved_equal": {
+            "k": 400,
+            "n": 400,
+            "rate": 1.0,
+            "wilson95": [
+              0.9904877055170676,
+              1.0000000000000002
+            ]
+          }
+        },
+        "pass2": {
+          "raw_equal": {
+            "k": 385,
+            "n": 400,
+            "rate": 0.9625,
+            "wilson95": [
+              0.9390561573300114,
+              0.9771449702732762
+            ]
+          },
+          "pred_equal": {
+            "k": 391,
+            "n": 400,
+            "rate": 0.9775,
+            "wilson95": [
+              0.9577973422411895,
+              0.9881184165276101
+            ]
+          },
+          "retrieved_equal": {
+            "k": 400,
+            "n": 400,
+            "rate": 1.0,
+            "wilson95": [
+              0.9904877055170676,
+              1.0000000000000002
+            ]
+          }
+        }
+      },
+      "between_passes": {
+        "pass1_vs_pass2": {
+          "raw_equal": {
+            "k": 400,
+            "n": 400,
+            "rate": 1.0,
+            "wilson95": [
+              0.9904877055170676,
+              1.0000000000000002
+            ]
+          },
+          "pred_equal": {
+            "k": 400,
+            "n": 400,
+            "rate": 1.0,
+            "wilson95": [
+              0.9904877055170676,
+              1.0000000000000002
+            ]
+          },
+          "mismatch_ids": []
+        }
+      }
+    }
+  },
+  "sessions": [
+    {
+      "created_at": "2026-10-01 18:13:32+0800",
+      "python": "3.10.18",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "git_revision": "8f0eeac03b04ccbbec58fea6e983a53baeda9196",
+      "packages": {
+        "pandas": "2.3.3",
+        "numpy": "2.2.6",
+        "scikit-learn": "1.7.2",
+        "scipy": "1.15.3",
+        "sentence-transformers": "6.0.1",
+        "faiss-cpu": "1.15.0",
+        "optuna": "5.0.0",
+        "transformers": "5.17.0",
+        "torch": "2.14.0+cu126",
+        "ollama": "0.6.2"
+      },
+      "ollama_server_version": "0.34.4",
+      "model": {
+        "model_name": "llama3.1",
+        "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+        "weights_blob_digest": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+        "size_bytes": 4920753328
+      },
+      "llm_generation_options": {
+        "temperature": 0.0,
+        "seed": 42,
+        "num_ctx": 4096,
+        "num_predict": 16,
+        "top_p": 1.0
+      },
+      "gpu": {
+        "name": "NVIDIA GeForce RTX 2070",
+        "driver_version": "576.02",
+        "memory_total_mib": 8192
+      },
+      "ollama_ps_after": {
+        "pass1": [
+          {
+            "model": "llama3.1:latest",
+            "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+            "size_bytes": 5271715839,
+            "size_vram_bytes": 5271715839
+          }
+        ],
+        "pass2": [
+          {
+            "model": "llama3.1:latest",
+            "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+            "size_bytes": 5271715839,
+            "size_vram_bytes": 5271715839
+          }
+        ]
+      },
+      "vram": {
+        "poll_interval_s": 0.5,
+        "n_samples": 742,
+        "used_before_run_mib": 1507,
+        "peak_used_mib": 6675,
+        "note": "nvidia-smi memory.used 為整張 GPU 的用量（含其他程序）；模型本身佔用看 ollama_ps_after 的 size_vram_bytes"
+      }
+    }
+  ],
+  "cache_state_probe": {
+    "procedure": "每筆在三種狀態下各送一次：cold＝剛載入模型直接送；after_predecessor＝剛載入後先送15_執行順序中緊接在前的那一筆，再送目標；repeat_same＝緊接著把目標再送一次。",
+    "n": 15,
+    "equals_orig": {
+      "cold": 5,
+      "after_predecessor": 6,
+      "repeat_same": 3
+    },
+    "recovered_by_any_state": 8,
+    "outputs_differ_across_states": 6,
+    "interpretation": "同一 prompt 的輸出會隨 KV cache 狀態（前一個請求）而改變；15_ 是依 test.csv 順序連續送出，前一筆無法完全重現時，該筆輸出也就不一定能重現"
+  }
+}
