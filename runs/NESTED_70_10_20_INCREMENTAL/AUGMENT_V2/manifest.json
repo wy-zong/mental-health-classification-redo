@@ -1,0 +1,123 @@
+{
+  "issue": 1,
+  "created_at": "2026-10-04T15:34:20+0800",
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "output_dir": "runs/NESTED_70_10_20_INCREMENTAL/AUGMENT_V2",
+  "git_revision": "0285d4a7cb3ecc73cfcd0a51b5965a37f80a2cb8",
+  "python": "3.10.18 | packaged by Anaconda, Inc. | (main, Jun  5 2025, 13:08:55) [MSC v.1929 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "gpu": [
+    "NVIDIA GeForce RTX 2070, 8192 MiB, 576.02"
+  ],
+  "packages": {
+    "pandas": "2.3.3",
+    "numpy": "2.2.6",
+    "scikit-learn": "1.7.2",
+    "scipy": "1.15.3",
+    "sentence-transformers": "6.0.1",
+    "faiss-cpu": "1.15.0",
+    "optuna": "5.0.0",
+    "transformers": "5.17.0",
+    "torch": "2.14.0+cu126",
+    "ollama": "0.6.2"
+  },
+  "model": null,
+  "model_15_manifest": {
+    "model_name": "llama3.1",
+    "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "weights_blob_digest": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+    "size_bytes": 4920753328
+  },
+  "config": {
+    "n_target": 2,
+    "max_new_attempts": 10,
+    "target_splits": [
+      "train",
+      "test"
+    ],
+    "new_seed_rule": "seed = 20000 + j（j = 0..max_new_attempts-1，與原文和切分無關）",
+    "rewrite_instruction": "Rewrite the following text in different words while preserving its original meaning, tone, and emotional content. Output only the rewritten text.",
+    "rewrite_instruction_sha256": "1c4c36cf95c8a47bd4409407a13071d2fd556b10908c6231ab19aaa78ba34e8f",
+    "rewrite_prompt_format": "{instruction}\\n\\nText:\\n{statement.strip()}",
+    "rewrite_options": {
+      "temperature": 0.7,
+      "seed": 42,
+      "num_ctx": 4096,
+      "num_predict": 1024
+    },
+    "rewrite_options_effective": {
+      "temperature": 0.7,
+      "seed": 42,
+      "num_ctx": 4096,
+      "num_predict": 1024,
+      "top_p": 1.0
+    },
+    "clean_rule": "只去頭尾空白與包住整段的成對引號／反引號；不刪任何句子",
+    "rule_order": [
+      "empty",
+      "refusal",
+      "meta_commentary",
+      "identical_to_source",
+      "length_ratio",
+      "sbert",
+      "duplicate"
+    ],
+    "refusal_opening_regex": "^(?:(?:i['’]?m sorry|i apologize|i['’]?m afraid),?\\s*(?:but\\s*)?)?(?:i['’]?m not sure\\s+)?i\\s*(?:can['’]?t|cannot|can not|am unable to|['’]m unable to|am not able to|['’]m not able to|won['’]?t be able to)\\s+(?:write|rewrite|fulfill|provide|create|generate|process|rephrase|paraphrase|carry out|support|complete|engage|comply|accommodate|produce|reproduce|modify|edit|translate|respond|answer|(?:help|assist)\\s+(?:with|you))\\b",
+    "safety_message_regex": "(suicide prevention|suicide (?:and|&) crisis|crisis (?:text )?line|crisis hotline|crisis lifeline|1-800-273|741741|\\b988\\b|text home to|samaritans|qualified mental health professional|seek help from a|is there (?:anything|something) else i can help)",
+    "meta_word_regex": "(re-?writ|rephras|paraphras|re-?word|version of (?:the|this|your) (?:text|post|passage|poem|message|statement)|another way to (?:say|put|phrase)|in different words)",
+    "meta_inline_regex": "^(?:[^\\n]{0,100}?[.!]\\s+)?(?:here['’]?s|here is|below is)\\b[^:\\n]{0,120}?(?:re-?writ|rephras|paraphras|re-?word|version)[^:\\n]{0,80}:\\s*\\S",
+    "meta_trailing_lead_regex": "^[(\\[*_\\s]*(?:note\\b|please note|let me know|i hope (?:this|that|you)|feel free|i['’]?ve (?:tried|aimed|attempted|kept|maintained|preserved|rewritten|rephrased|changed|made|used|removed|added|replaced|condensed)|i (?:tried|aimed|attempted|kept|maintained|preserved|rewrote|rephrased|changed|made|used|removed|added|replaced|condensed)|in (?:this|the|my) (?:rewritten|revised|rephrased)|th(?:is|e) (?:rewritten|revised|rephrased) (?:text|version))",
+    "meta_trailing_word_regex": "(re-?writ|rephras|paraphras|re-?word|original (?:text|tone|meaning|message|content|post|wording|intent)|emotional (?:tone|content)|the (?:same )?(?:tone|meaning) of the)",
+    "meta_task_regex": "((?:re-?writ\\w*|rephras\\w*|paraphras\\w*|re-?word\\w*) (?:the|this|your|that) (?:original |provided |given )?(?:text|statement|passage|message)\\b|\\b(?:a|the|my) (?:rewritten|rephrased|revised|paraphrased) (?:text|version)\\b|\\b(?:original|provided|given) text\\b|\\btext (?:you(?:['’]ve| have)? provided|to re-?write|for me to)\\b|\\bme to (?:re-?write|rephrase|paraphrase)\\b|^rewritten (?:text|version)\\s*:)",
+    "meta_opening_max_len": 160,
+    "length_ratio": [
+      0.5,
+      2.0
+    ],
+    "sbert_threshold_rule": {
+      "primary": 0.6,
+      "floor": 0.5,
+      "pilot_per_label": 50,
+      "pilot_seed": 2026,
+      "switch_if_any_label_shortfall_rate_gt": 0.05
+    },
+    "llm_reclassification": false,
+    "embed_model": "all-MiniLM-L6-v2",
+    "embed_max_seq": 512,
+    "embed_device": "cpu",
+    "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "targets_sha256": "6f3a00e7ff268f5cc5b6abda74457371548531fce874552d1a1c0807dd6a4d33",
+    "n_targets": 8992
+  },
+  "sbert_min_locked": 0.5,
+  "reused_inputs": {
+    "main_raw": 11992,
+    "nested_raw": 1996,
+    "main_kept_15": 9105,
+    "nested_kept_15": 1996,
+    "sources_with_reused": 6994,
+    "inputs_sha256": {
+      "runs/MAIN/augment_raw.jsonl": "b25bf69e5b3bcb8ca2e93ce93684b4345a01af0f5dcf1050ff42a88e8ba76699",
+      "runs/MAIN/augmented.csv": "f4b15a7ea28d51915975ab3a680394acb635b2345c968a77b3f6c12feae95221",
+      "runs/MAIN/augment_audit.json": "26e213b4191badc2465a32615370fc871db8ec2c5e25c62138c9d0897d0a9b1e",
+      "runs/NESTED_70_10_20_INCREMENTAL/augment_raw.jsonl": "2020e1dd4241427f26b26112c8f145907271bfa171e72dacdcbdc0a6890b84d1",
+      "runs/NESTED_70_10_20_INCREMENTAL/augmented_new.csv": "4cc7947fd0a4d73ba060c5c15095b0e28d4d9b8dac9e948039f7c1752b565ea3",
+      "runs/NESTED_70_10_20_INCREMENTAL/augmented_meta.json": "56659a03a759591c15138fb58b3b9d8a12b12e6a6915f2158410386a56347212",
+      "runs/NESTED_70_10_20_INCREMENTAL/corpus/aug_docs.json": "ecd397ca3025c04d0cdabefd659570a4a964e3d26db0d2bdd5c8f37f99a894e2",
+      "runs/NESTED_70_10_20_INCREMENTAL/CUSTOM_PROMPT_EVAL/custom_prompt_eval_manifest.json": "a826f1a195e2009e86c5cb8d892a6acf6b83e3945ea1361c63a908f73990b56f",
+      "runs/NESTED_70_10_20_INCREMENTAL/splits/train.csv": "139f99775c867da173fee28784fd48448a718dec1ad16ac83f627566f421ba00",
+      "runs/NESTED_70_10_20_INCREMENTAL/splits/val.csv": "c12da324facc457bd2ee2f298d11b70a3d87f85cd77a217078f28b4fcf0171f0",
+      "runs/NESTED_70_10_20_INCREMENTAL/splits/test.csv": "f5ec6983dec361b01ba1ee2e1700ce7c2e59234deea349a58261fc03751bbd09",
+      "runs/NESTED_70_10_20_INCREMENTAL/splits/split_manifest.json": "011e523cfed8987182f00a8da07162ea2465cf5f5c502507c1cfd0ada83678f5"
+    }
+  },
+  "outputs_sha256": {
+    "accepted.csv": "c9863f7610555c1ea24fb646c2b20093c91212562963e3a5f8df4f0123480919",
+    "source_status.csv": "e80892f36671fe91db1f5732f8983b5608d0251edcb6a37779d7e157fa5844fd",
+    "candidates.jsonl.gz": "4eb22d87b1f1ac87273b1ac87e7ffa279ded3009f0c93364c5344296144f616d",
+    "summary.json": "08944a9f922cbba1277723c85d9170e22d55674a7c63b0870e1320192b86174f",
+    "sbert_checkpoint.json": "ad37496480d781c2afe137779e7d18a2491498b0e01dd90e6bd4a6f0edd48dee"
+  },
+  "usage_rule": "任何切分的 RAG 語料 = 該切分 train 的原文 + accepted.csv 中 source_id 屬於該切分 train 的改寫；val／test 原文的改寫在該切分中一律不用（select_for_split）。val 原文沒有改寫，重複切分時 val 固定，只重新切分 train＋test。改寫只依賴自己的原文，所以結果與切分無關。",
+  "determinism_note": "單一 worker 時同一 seed 可重現；所有原始回應都已存檔，結果以存檔為準"
+}

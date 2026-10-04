@@ -1,0 +1,181 @@
+{
+  "created_at": "2026-10-04T15:55:14+0800",
+  "sbert_min": 0.5,
+  "accepted_sha256": "c9863f7610555c1ea24fb646c2b20093c91212562963e3a5f8df4f0123480919",
+  "n_accepted": 16075,
+  "usage_rule": "任何切分的 RAG 語料 = 該切分 train 的原文 + accepted.csv 中 source_id 屬於該切分 train 的改寫；val／test 原文的改寫在該切分中一律不用（select_for_split）。val 原文沒有改寫，重複切分時 val 固定，只重新切分 train＋test。改寫只依賴自己的原文，所以結果與切分無關。",
+  "invariants": {
+    "problems": [],
+    "sbert_min_observed": 0.5000100135803223,
+    "length_ratio_range": [
+      0.5001054185114906,
+      2.0
+    ]
+  },
+  "corpus_exp15": {
+    "n_docs": 19495,
+    "expected_n_docs": 19495,
+    "docs_from_non_train_sources": 0,
+    "original_part_identical_to_noaug": true,
+    "exact_overlap_with_val_test": 0,
+    "top_k_meta": 1
+  },
+  "exp15_aug_corpus_reference": {
+    "test_top1_max": 0.8782024383544922,
+    "test_top1_mean": 0.6212719082832336,
+    "test_top1_share_paraphrase": 0.5055055055055055
+  },
+  "splits": {
+    "exp15": {
+      "n_train_sources": 6994,
+      "n_eval_sources": 2998,
+      "n_paraphrases_in_corpus": 12501,
+      "paraphrases_from_eval_sources": 0,
+      "exact_overlap_corpus_vs_eval": 0,
+      "max_cos_paraphrase_vs_eval_original": 0.9000052213668823,
+      "max_cos_train_original_vs_eval_original": 0.8966131210327148,
+      "n_paraphrase_vs_eval_cos_ge_0_90": 1,
+      "retrieval_top1_val": {
+        "max": 0.8972941040992737,
+        "mean": 0.6237893104553223,
+        "p99": 0.8461810350418091,
+        "n_ge_0_90": 0,
+        "share_paraphrase": 0.535
+      },
+      "retrieval_top1_test": {
+        "max": 0.8782024383544922,
+        "mean": 0.6218962669372559,
+        "p99": 0.8445271253585815,
+        "n_ge_0_90": 0,
+        "share_paraphrase": 0.5305305305305306
+      },
+      "pass": true
+    },
+    "resplit_seed0": {
+      "n_train_sources": 6994,
+      "n_eval_sources": 2998,
+      "n_paraphrases_in_corpus": 12510,
+      "paraphrases_from_eval_sources": 0,
+      "exact_overlap_corpus_vs_eval": 0,
+      "max_cos_paraphrase_vs_eval_original": 0.9000052213668823,
+      "max_cos_train_original_vs_eval_original": 0.8978487253189087,
+      "n_paraphrase_vs_eval_cos_ge_0_90": 1,
+      "retrieval_top1_val": {
+        "max": 0.8972941040992737,
+        "mean": 0.6225944757461548,
+        "p99": 0.8461810350418091,
+        "n_ge_0_90": 0,
+        "share_paraphrase": 0.541
+      },
+      "retrieval_top1_test": {
+        "max": 0.8648196458816528,
+        "mean": 0.6182000041007996,
+        "p99": 0.8426170349121094,
+        "n_ge_0_90": 0,
+        "share_paraphrase": 0.5375375375375375
+      },
+      "pass": true
+    },
+    "resplit_seed1": {
+      "n_train_sources": 6994,
+      "n_eval_sources": 2998,
+      "n_paraphrases_in_corpus": 12491,
+      "paraphrases_from_eval_sources": 0,
+      "exact_overlap_corpus_vs_eval": 0,
+      "max_cos_paraphrase_vs_eval_original": 0.9000052213668823,
+      "max_cos_train_original_vs_eval_original": 0.8966131210327148,
+      "n_paraphrase_vs_eval_cos_ge_0_90": 1,
+      "retrieval_top1_val": {
+        "max": 0.8972941040992737,
+        "mean": 0.6223413348197937,
+        "p99": 0.8461810350418091,
+        "n_ge_0_90": 0,
+        "share_paraphrase": 0.542
+      },
+      "retrieval_top1_test": {
+        "max": 0.8714553117752075,
+        "mean": 0.6239028573036194,
+        "p99": 0.8396015763282776,
+        "n_ge_0_90": 0,
+        "share_paraphrase": 0.5115115115115115
+      },
+      "pass": true
+    },
+    "resplit_seed2": {
+      "n_train_sources": 6994,
+      "n_eval_sources": 2998,
+      "n_paraphrases_in_corpus": 12507,
+      "paraphrases_from_eval_sources": 0,
+      "exact_overlap_corpus_vs_eval": 0,
+      "max_cos_paraphrase_vs_eval_original": 0.9000052213668823,
+      "max_cos_train_original_vs_eval_original": 0.8978487253189087,
+      "n_paraphrase_vs_eval_cos_ge_0_90": 1,
+      "retrieval_top1_val": {
+        "max": 0.8972941040992737,
+        "mean": 0.623318612575531,
+        "p99": 0.8424468040466309,
+        "n_ge_0_90": 0,
+        "share_paraphrase": 0.53
+      },
+      "retrieval_top1_test": {
+        "max": 0.8769170045852661,
+        "mean": 0.624502956867218,
+        "p99": 0.8445510864257812,
+        "n_ge_0_90": 0,
+        "share_paraphrase": 0.5230230230230231
+      },
+      "pass": true
+    },
+    "resplit_seed3": {
+      "n_train_sources": 6994,
+      "n_eval_sources": 2998,
+      "n_paraphrases_in_corpus": 12496,
+      "paraphrases_from_eval_sources": 0,
+      "exact_overlap_corpus_vs_eval": 0,
+      "max_cos_paraphrase_vs_eval_original": 0.9000052213668823,
+      "max_cos_train_original_vs_eval_original": 0.892619788646698,
+      "n_paraphrase_vs_eval_cos_ge_0_90": 1,
+      "retrieval_top1_val": {
+        "max": 0.8972941040992737,
+        "mean": 0.6231769323348999,
+        "p99": 0.8475030660629272,
+        "n_ge_0_90": 0,
+        "share_paraphrase": 0.529
+      },
+      "retrieval_top1_test": {
+        "max": 0.8770269155502319,
+        "mean": 0.6195505261421204,
+        "p99": 0.8403922915458679,
+        "n_ge_0_90": 0,
+        "share_paraphrase": 0.526026026026026
+      },
+      "pass": true
+    },
+    "resplit_seed4": {
+      "n_train_sources": 6994,
+      "n_eval_sources": 2998,
+      "n_paraphrases_in_corpus": 12504,
+      "paraphrases_from_eval_sources": 0,
+      "exact_overlap_corpus_vs_eval": 0,
+      "max_cos_paraphrase_vs_eval_original": 0.9000052213668823,
+      "max_cos_train_original_vs_eval_original": 0.8978487253189087,
+      "n_paraphrase_vs_eval_cos_ge_0_90": 1,
+      "retrieval_top1_val": {
+        "max": 0.8972941040992737,
+        "mean": 0.6231313347816467,
+        "p99": 0.8430819511413574,
+        "n_ge_0_90": 0,
+        "share_paraphrase": 0.546
+      },
+      "retrieval_top1_test": {
+        "max": 0.9331985712051392,
+        "mean": 0.6194000244140625,
+        "p99": 0.8406959772109985,
+        "n_ge_0_90": 1,
+        "share_paraphrase": 0.5325325325325325
+      },
+      "pass": true
+    }
+  },
+  "pass": true
+}
