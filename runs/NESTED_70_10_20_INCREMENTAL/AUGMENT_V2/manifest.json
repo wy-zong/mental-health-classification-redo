@@ -1,9 +1,9 @@
 {
   "issue": 1,
-  "created_at": "2026-10-04T11:47:56+0800",
+  "created_at": "2026-10-04T15:34:20+0800",
   "run": "NESTED_70_10_20_INCREMENTAL",
   "output_dir": "runs/NESTED_70_10_20_INCREMENTAL/AUGMENT_V2",
-  "git_revision": "e30e9cce27ffd3b2f3f1a8fce03036ca1a9230c5",
+  "git_revision": "0285d4a7cb3ecc73cfcd0a51b5965a37f80a2cb8",
   "python": "3.10.18 | packaged by Anaconda, Inc. | (main, Jun  5 2025, 13:08:55) [MSC v.1929 64 bit (AMD64)]",
   "platform": "Windows-10-10.0.26200-SP0",
   "gpu": [
@@ -30,7 +30,7 @@
   },
   "config": {
     "n_target": 2,
-    "max_new_attempts": 5,
+    "max_new_attempts": 10,
     "target_splits": [
       "train",
       "test"
@@ -112,10 +112,10 @@
     }
   },
   "outputs_sha256": {
-    "accepted.csv": "f1afd74998f7393d32f6d3315216874c4ebc8a97944f39553e9584faff0a433e",
-    "source_status.csv": "9a0221408c93854f91ca5467bf39ea191499447d00994319cbfe2b6d3fef6766",
-    "candidates.jsonl.gz": "247e265b1127140a0c71ab2483c2829a3c3148e9e89f070a4b76cbc0582293ab",
-    "summary.json": "fb7a260f122198dd3243875460347a8b84eddb8865ca5ed48b46784b101c3bd5",
+    "accepted.csv": "c9863f7610555c1ea24fb646c2b20093c91212562963e3a5f8df4f0123480919",
+    "source_status.csv": "e80892f36671fe91db1f5732f8983b5608d0251edcb6a37779d7e157fa5844fd",
+    "candidates.jsonl.gz": "4eb22d87b1f1ac87273b1ac87e7ffa279ded3009f0c93364c5344296144f616d",
+    "summary.json": "08944a9f922cbba1277723c85d9170e22d55674a7c63b0870e1320192b86174f",
     "sbert_checkpoint.json": "ad37496480d781c2afe137779e7d18a2491498b0e01dd90e6bd4a6f0edd48dee"
   },
   "usage_rule": "任何切分的 RAG 語料 = 該切分 train 的原文 + accepted.csv 中 source_id 屬於該切分 train 的改寫；val／test 原文的改寫在該切分中一律不用（select_for_split）。val 原文沒有改寫，重複切分時 val 固定，只重新切分 train＋test。改寫只依賴自己的原文，所以結果與切分無關。",

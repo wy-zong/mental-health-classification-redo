@@ -1,6 +1,6 @@
 {
   "n_target": 2,
-  "max_new_attempts": 5,
+  "max_new_attempts": 10,
   "target_splits": [
     "train",
     "test"
@@ -57,5 +57,12 @@
   "embed_device": "cpu",
   "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
   "targets_sha256": "6f3a00e7ff268f5cc5b6abda74457371548531fce874552d1a1c0807dd6a4d33",
-  "n_targets": 8992
+  "n_targets": 8992,
+  "max_new_attempts_history": [
+    {
+      "from": 5,
+      "to": 10,
+      "changed_at": "2026-10-04T12:57:29+0800"
+    }
+  ]
 }

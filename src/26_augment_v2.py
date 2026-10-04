@@ -18,8 +18,9 @@
     長度比 0.5–2.0、SBERT ≥ 門檻、與已接受的改寫重複。不做 LLM 重分類。
   * SBERT 門檻先用 0.6，只在 pilot 檢查一次：任一類別「新生成 5 次後仍補不滿」的原文
     比例 > 5% 時，改用 0.5（底線）。門檻鎖定在 sbert_checkpoint.json。
-  * 每筆原文依固定的候選順序，取前 N 筆通過的。不足就換 seed 新生成，最多 5 次，
-    條件不放寬。
+  * 每筆原文依固定的候選順序，取前 N 筆通過的。不足就換 seed 新生成，條件不放寬。
+    新生成上限第一輪為 5 次（pilot 檢查點也以 5 次判定），之後提高到 10 次，
+    只對仍補不滿的原文續生成；調整紀錄寫在 run_config.json 的 max_new_attempts_history。
 
 防洩漏
   每筆改寫只依賴自己的原文：prompt 只含該筆文本，seed 只依候選序號決定，規則只比較改寫與
@@ -86,7 +87,8 @@ OUT_ROOT = BASE / "AUGMENT_V2"
 CORPUS_NAME = "aug_v2"
 
 N_TARGET = R.N_AUG_PER_SOURCE            # 2，與 12_／13_ 相同
-MAX_NEW_ATTEMPTS = 5
+MAX_NEW_ATTEMPTS = 10                    # 第一輪為 5（PILOT_MAX_NEW），之後提高
+PILOT_MAX_NEW = 5
 NEW_SEED_BASE = 20000                    # 舊 seed 為 42／43（MAIN）與 1042／1043（巢狀）
 LENGTH_RATIO = (0.5, 2.0)                # 含端點，字元數，改寫／原文
 SBERT_PRIMARY = 0.60
@@ -275,6 +277,15 @@ def effective_options(options: dict) -> dict:
     return {**C.GEN_OPTIONS, **options}
 
 
+# Ollama 在模型陷入重複迴圈時中止生成。曾發生同一請求連續重試都失敗、之後重跑又正常的情況；
+# 重試用完仍是這個錯誤時，記為一次失敗的嘗試，不中斷整個 topup
+REPEAT_LIMIT_RE = re.compile(r"token repeat limit", re.IGNORECASE)
+
+
+class GenerationAborted(Exception):
+    pass
+
+
 def chat_retry(prompt: str, options: dict, tries: int = 6) -> dict:
     delay = 5
     for k in range(tries):
@@ -282,6 +293,8 @@ def chat_retry(prompt: str, options: dict, tries: int = 6) -> dict:
             return C.chat(prompt, options=options)
         except Exception as exc:  # noqa: BLE001
             if k == tries - 1:
+                if REPEAT_LIMIT_RE.search(str(exc)):
+                    raise GenerationAborted(str(exc)) from exc
                 raise
             C.log(f"  Ollama 呼叫失敗（{type(exc).__name__}: {exc}），{delay} 秒後重試")
             time.sleep(delay)
@@ -675,6 +688,14 @@ class Ctx:
         cfg = self.config()
         old = C.load_json(path)
         if old:
+            history = old.pop("max_new_attempts_history", [])
+            if old.get("max_new_attempts") is not None and cfg["max_new_attempts"] > old["max_new_attempts"]:
+                # 只允許提高新生成上限：已生成的候選序號與 seed 不變，只對補不滿的原文續生成
+                history = history + [{"from": old["max_new_attempts"], "to": cfg["max_new_attempts"],
+                                       "changed_at": now()}]
+                C.log(f"新生成上限由 {old['max_new_attempts']} 提高到 {cfg['max_new_attempts']}，記入 run_config.json")
+                old["max_new_attempts"] = cfg["max_new_attempts"]
+                save_json(path, {**old, "max_new_attempts_history": history})
             diff = sorted(k for k in set(cfg) | set(old) if cfg.get(k) != old.get(k))
             if diff:
                 C.die(f"設定與既有輸出不一致：{diff}\n  既有輸出：{self.out}\n"
@@ -750,7 +771,14 @@ def generate(ctx: Ctx, sid: str, j: int) -> dict:
     seed = NEW_SEED_BASE + j
     prompt = f"{R.REWRITE_INSTRUCTION}\n\nText:\n{str(src).strip()}"
     options = {**R.REWRITE_OPTIONS, "seed": seed}
-    resp = chat_retry(prompt, options)
+    try:
+        resp = chat_retry(prompt, options)
+        error = None
+    except GenerationAborted as exc:
+        # 記為一次失敗的嘗試：回應留空（被 empty 規則淘汰），錯誤訊息存檔
+        C.log(f"  {sid} 第 {j} 次生成被 Ollama 中止（{exc}），記為失敗的嘗試")
+        resp = {"raw_response": "", "elapsed_s": None, "prompt_eval_count": None, "eval_count": None}
+        error = str(exc)
     eff = effective_options(options)
     return {
         "candidate_id": f"{sid}#g{j:02d}", "source_id": sid, "origin": "new", "code": f"g{j:02d}",
@@ -759,7 +787,7 @@ def generate(ctx: Ctx, sid: str, j: int) -> dict:
         "generation_options": eff, "elapsed_s": resp["elapsed_s"],
         "prompt_eval_count": resp["prompt_eval_count"], "eval_count": resp["eval_count"],
         "hit_num_predict": (resp["eval_count"] or 0) >= eff["num_predict"],
-        "model_digest": ctx.model["digest"], "created_at": now(),
+        "model_digest": ctx.model["digest"], "created_at": now(), "generation_error": error,
     }
 
 
@@ -1150,21 +1178,26 @@ def stage_pilot(ctx: Ctx, workers: int, budget_h: float, sids: list[str] | None 
         return
     started = now()
     sids = pilot_targets(ctx) if sids is None else sids
-    topup(ctx, SBERT_PRIMARY, sids, workers, budget_h, "pilot")
-    accepted, _ = select(ctx, SBERT_PRIMARY)
-    incomplete = [s for s in sids if len(accepted[s]) < ctx.n_target and
-                  sum(1 for c in candidates_of(ctx, s) if c["origin"] == "new") < ctx.max_new]
-    if incomplete:
-        C.die(f"pilot 尚未跑完（{len(incomplete)} 筆原文還可再生成）：請重新執行 --stage pilot")
-
-    stats = {f"{thr:.2f}": pilot_stats(ctx, thr, sids) for thr in (SBERT_PRIMARY, SBERT_FLOOR)}
+    full_max_new = ctx.max_new
+    ctx.max_new = min(full_max_new, PILOT_MAX_NEW)     # 檢查點固定以 5 次判定
+    try:
+        topup(ctx, SBERT_PRIMARY, sids, workers, budget_h, "pilot")
+        accepted, _ = select(ctx, SBERT_PRIMARY)
+        incomplete = [s for s in sids if len(accepted[s]) < ctx.n_target and
+                      sum(1 for c in candidates_of(ctx, s) if c["origin"] == "new") < ctx.max_new]
+        if incomplete:
+            C.die(f"pilot 尚未跑完（{len(incomplete)} 筆原文還可再生成）：請重新執行 --stage pilot")
+        stats = {f"{thr:.2f}": pilot_stats(ctx, thr, sids) for thr in (SBERT_PRIMARY, SBERT_FLOOR)}
+        pilot_max_new = ctx.max_new
+    finally:
+        ctx.max_new = full_max_new
     primary = stats[f"{SBERT_PRIMARY:.2f}"]
     too_strict = {lab: v["shortfall_rate"] for lab, v in primary.items()
                   if v["shortfall_rate"] > PILOT_MAX_SHORTFALL_RATE}
     locked = SBERT_FLOOR if too_strict else SBERT_PRIMARY
     cp = {
         "created_at": now(), "started_at": started,
-        "rule": (f"每類抽 {PILOT_PER_LABEL} 筆原文，以 SBERT ≥ {SBERT_PRIMARY} 跑完（新生成上限 {ctx.max_new} 次）；"
+        "rule": (f"每類抽 {PILOT_PER_LABEL} 筆原文，以 SBERT ≥ {SBERT_PRIMARY} 跑完（新生成上限 {pilot_max_new} 次）；"
                  f"任一類別補不滿 {ctx.n_target} 筆的原文比例 > {PILOT_MAX_SHORTFALL_RATE:.0%} 就改用 {SBERT_FLOOR}"
                  f"（底線，不再往下調）。只檢查一次。"),
         "pilot_seed": PILOT_SEED, "pilot_sources": sids,
@@ -1267,6 +1300,7 @@ def stage_finalize(ctx: Ctx) -> None:
     cp = ctx.checkpoint()
     summary = {
         "created_at": now(), "n_target": ctx.n_target, "max_new_attempts": ctx.max_new,
+        "max_new_attempts_history": (C.load_json(ctx.out / "run_config.json") or {}).get("max_new_attempts_history", []),
         "sbert_min": thr, "sbert_checkpoint_decision": cp["decision"],
         "coverage": cov, "funnel": fun,
         "shortfall_sources": shortfall[["source_id", "status", "exp15_split", "len_source",
@@ -1280,7 +1314,9 @@ def stage_finalize(ctx: Ctx) -> None:
         "new_generation": {
             "n": len(new_gens),
             "attempts_per_source": str_keys(st_df["n_new_generated"].value_counts().sort_index().to_dict()),
-            "mean_elapsed_s": float(np.mean([g["elapsed_s"] for g in new_gens])) if new_gens else None,
+            "generation_errors": Counter(g["generation_error"] for g in new_gens if g.get("generation_error")),
+            "mean_elapsed_s": float(np.mean([g["elapsed_s"] for g in new_gens if g["elapsed_s"] is not None]))
+            if new_gens else None,
             "mean_eval_count": float(np.mean([g["eval_count"] or 0 for g in new_gens])) if new_gens else None,
             "hit_num_predict": sum(bool(g["hit_num_predict"]) for g in new_gens),
         },
