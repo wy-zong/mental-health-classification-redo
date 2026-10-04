@@ -1,0 +1,73 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "SUICIDAL_SAFETY",
+  "script": "src/24_suicidal_safety_probe.py",
+  "issue": 6,
+  "created_at": "2026-10-02 15:02:10+0800",
+  "python": "3.10.18",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "git_revision": "8f0eeac03b04ccbbec58fea6e983a53baeda9196",
+  "packages": {
+    "pandas": "2.3.3",
+    "numpy": "2.2.6",
+    "scikit-learn": "1.7.2",
+    "scipy": "1.15.3",
+    "sentence-transformers": "6.0.1",
+    "faiss-cpu": "1.15.0",
+    "optuna": "5.0.0",
+    "transformers": "5.17.0",
+    "torch": "2.14.0+cu126",
+    "ollama": "0.6.2"
+  },
+  "ollama_server_version": "0.34.4",
+  "model": {
+    "model_name": "llama3.1",
+    "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "weights_blob_digest": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+    "size_bytes": 4920753328
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 2070",
+    "driver_version": "576.02",
+    "memory_total_mib": 8192
+  },
+  "prompt_sha256": {
+    "4label": "139f899aa7797d948fa0eaf92b02305c6e092f0a1c9a8fc4c72eb24f52843a1a",
+    "5label": "632ea8abc568ecf332664a0509c800027b9587ddeef55bab6465ad109f4701b8",
+    "long4": "139f899aa7797d948fa0eaf92b02305c6e092f0a1c9a8fc4c72eb24f52843a1a"
+  },
+  "llm_generation_options": {
+    "4label": {
+      "temperature": 0.0,
+      "seed": 42,
+      "num_ctx": 4096,
+      "num_predict": 16,
+      "top_p": 1.0
+    },
+    "5label": {
+      "temperature": 0.0,
+      "seed": 42,
+      "num_ctx": 4096,
+      "num_predict": 16,
+      "top_p": 1.0
+    },
+    "long4": {
+      "temperature": 0.0,
+      "seed": 42,
+      "num_ctx": 4096,
+      "num_predict": 256,
+      "top_p": 1.0
+    }
+  },
+  "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+  "sample_ids_sha256": "0bcdbfa706687432095b3d6cbc337316c8bdfc2235c65da53650d531e5ef94bc",
+  "templates": {
+    "4label": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar].\nNow classify this text: {text}.\noutput only one of the following labels: [Normal, Depression, Anxiety, Bipolar].",
+    "5label": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar, Suicidal].\nNow classify this text: {text}.\noutput only one of the following labels: [Normal, Depression, Anxiety, Bipolar, Suicidal].",
+    "long4": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar].\nNow classify this text: {text}.\noutput only one of the following labels: [Normal, Depression, Anxiety, Bipolar]."
+  },
+  "inputs": {
+    "custom_prompt_eval_manifest_sha256": "a826f1a195e2009e86c5cb8d892a6acf6b83e3945ea1361c63a908f73990b56f",
+    "c1_predictions_sha256": "168add8c8923363e7d852e1277fb1a48407fd9f2fe74fa7a68f7a00682961ae2"
+  }
+}
