@@ -12,3 +12,10 @@ data/corpus/*.bin
 
 .DS_Store
 runs/*/augment_raw.jsonl
+
+# 26_augment_v2.py 的中間紀錄（內容已收進 candidates.jsonl.gz）、快取與 smoke 輸出
+runs/*/AUGMENT_V2/generations.jsonl
+runs/*/AUGMENT_V2/checks.jsonl
+runs/*/AUGMENT_V2/cache/
+runs/*/AUGMENT_V2/_smoke/
+tmp_*.log
