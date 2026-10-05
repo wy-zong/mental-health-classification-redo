@@ -1,0 +1,184 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "MAIN_EVAL_AUGV2",
+  "created_at": "2026-10-05 07:07:50+0800",
+  "python": "3.10.18",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "git_revision": "3ec955a2a31e2c5833fd63d2adb3a5f37b0cf8b0",
+  "model": {
+    "model_name": "llama3.1",
+    "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "weights_blob_digest": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+    "size_bytes": 4920753328,
+    "ollama_version": "0.35.0"
+  },
+  "ollama_version": "0.35.0",
+  "llm_generation_options": {
+    "temperature": 0.0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 16,
+    "top_p": 1.0
+  },
+  "split": {
+    "name": "test",
+    "path": "splits/test.csv",
+    "n": 1998,
+    "sha256": "f5ec6983dec361b01ba1ee2e1700ce7c2e59234deea349a58261fc03751bbd09",
+    "label_counts": {
+      "Anxiety": 500,
+      "Bipolar": 500,
+      "Depression": 499,
+      "Normal": 499
+    }
+  },
+  "smoke_n": null,
+  "top_k": 5,
+  "top_k_source": {
+    "role": "selected_on_val",
+    "selected_k_path": "TOPK_VAL_AUGV2/selected_k.json",
+    "selected_k_sha256": "976edd735cc3b2505a797c45923ad03fd3f224181b59f1ec189e656f7736cbe5"
+  },
+  "reference_context_format": "top-k docs by descending similarity joined with '\\n'",
+  "truncation_check": {
+    "num_ctx": 4096,
+    "near_ctx": 3686,
+    "truncated_if_chars_per_token_above": 6.0
+  },
+  "prompt_source": "15_nested_custom_prompt_eval.py PROMPTS (sha256 checked against 15_ manifest)",
+  "prompts": {
+    "optimized_rag": {
+      "prompt_id": "user_optimized_rag_prompt_exact",
+      "sha256": "c2700aeb895c635e0e4e608e4ec45ba2155afc5e15cbaa2cd1d5f8573caabe6a",
+      "template": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar].\nBelow is some related reference content that might help you classify the new text: {reference_context}.\nNow classify this text: {text}.\nPlease only output one of the following labels: [Normal, Depression, Anxiety, Bipolar]. Do not output anything else.r",
+      "uses_rag": true
+    },
+    "base_rag": {
+      "prompt_id": "user_base_rag_prompt",
+      "sha256": "b4db1632c9247a2ead8e9f90487050b6dcedadc38b66e483c580804da3555f03",
+      "template": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar].\nYou can refer to the following reference content for categorization: {reference_context}.\nNow classify this text: {text}.\noutput only one of the following labels: [Normal, Depression, Anxiety, Bipolar].",
+      "uses_rag": true
+    },
+    "base_norag": {
+      "prompt_id": "user_base_llm_only_prompt",
+      "sha256": "139f899aa7797d948fa0eaf92b02305c6e092f0a1c9a8fc4c72eb24f52843a1a",
+      "template": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar].\nNow classify this text: {text}.\noutput only one of the following labels: [Normal, Depression, Anxiety, Bipolar].",
+      "uses_rag": false
+    }
+  },
+  "conditions": [
+    {
+      "condition": "norag_base",
+      "display_name": "無檢索・基礎 prompt",
+      "prompt": "base_norag",
+      "corpus": null,
+      "v1_condition": "norag_base"
+    },
+    {
+      "condition": "rag_noaug_base",
+      "display_name": "原文檢索・基礎 prompt",
+      "prompt": "base_rag",
+      "corpus": "noaug",
+      "v1_condition": "rag_noaug_base"
+    },
+    {
+      "condition": "rag_augv2_base",
+      "display_name": "原文＋擴寫檢索・基礎 prompt",
+      "prompt": "base_rag",
+      "corpus": "aug_v2",
+      "v1_condition": "rag_aug_base"
+    },
+    {
+      "condition": "rag_noaug_optimized",
+      "display_name": "原文檢索・最佳化 prompt",
+      "prompt": "optimized_rag",
+      "corpus": "noaug",
+      "v1_condition": "rag_noaug_optimized"
+    },
+    {
+      "condition": "rag_augv2_optimized",
+      "display_name": "原文＋擴寫檢索・最佳化 prompt",
+      "prompt": "optimized_rag",
+      "corpus": "aug_v2",
+      "v1_condition": "rag_aug_optimized"
+    }
+  ],
+  "corpora": {
+    "noaug": {
+      "meta": {
+        "run": "NESTED_70_10_20_INCREMENTAL",
+        "name": "noaug",
+        "source": "existing_corpus_plus_nested_train_added",
+        "n_docs": 6994,
+        "base_n_docs": 5996,
+        "added_doc_count": 998,
+        "added_source_rows": 998,
+        "added_augmented_rows": 0,
+        "embedding_model": "all-MiniLM-L6-v2",
+        "max_seq_length": 512,
+        "normalized": true,
+        "metric": "cosine (IndexFlatIP on normalized vectors)",
+        "top_k": 1,
+        "exact_overlap_with_eval_splits": {
+          "val": 0,
+          "test": 0
+        },
+        "base_index_sha256": "5234eb1df2ebc9cb3834b062a9968d4dcc1e11d3655cde42430fdfe57c7b1c44",
+        "base_docs_sha256": "6318bc22d67a09189c5bf7814fd77edc1a74bbb01ff6757589e05e23f3bbd7eb",
+        "added_doc_ids_sha256": "68e812dfa9bd796e2957e3cd5bc5e38d851be38dd16d6c9cd0c52ea97659d274",
+        "index_sha256": "361c4c4b981fff9e5bec980de7080160357234588ad89fa3a22440d199dd21e6",
+        "docs_sha256": "ddb8ed73bf2348e3c130f08990580d98f1c5dd29ddf919d5cc68dae8e8b38037",
+        "created_at": "2026-09-21 06:26:50+0800"
+      },
+      "meta_sha256": "b6e905d336578ea0678237d4ed4a6b4c3e615431509ca1d68e8d5dbcf5c1f134",
+      "index_sha256_actual": "361c4c4b981fff9e5bec980de7080160357234588ad89fa3a22440d199dd21e6",
+      "docs_sha256_disk": "ddb8ed73bf2348e3c130f08990580d98f1c5dd29ddf919d5cc68dae8e8b38037",
+      "docs_sha256_lf_normalized": "ea3c135ec664f52201d92c87ab19d12603c914c4bdfec5c971f2c69a7e34ed7c",
+      "docs_sha256_match": "disk"
+    },
+    "aug_v2": {
+      "meta": {
+        "run": "NESTED_70_10_20_INCREMENTAL",
+        "name": "aug_v2",
+        "source": "exp15_noaug_train_originals_plus_augment_v2_train_paraphrases",
+        "n_docs": 19495,
+        "n_original_docs": 6994,
+        "n_paraphrase_docs": 12501,
+        "paraphrases_by_label": {
+          "Bipolar": 3433,
+          "Anxiety": 3280,
+          "Depression": 3115,
+          "Normal": 2673
+        },
+        "embedding_model": "all-MiniLM-L6-v2",
+        "max_seq_length": 512,
+        "normalized": true,
+        "metric": "cosine (IndexFlatIP on normalized vectors)",
+        "top_k": 1,
+        "doc_format": "{statement} true_label is {status}（R.corpus_entry）",
+        "original_vectors_from": "corpus/noaug.index（reconstruct_n，與 15_ C2／C4 的語料逐位元相同）",
+        "exact_overlap_with_eval_splits": {
+          "val": 0,
+          "test": 0
+        },
+        "paraphrase_source_splits": {
+          "train": 12501
+        },
+        "sbert_min": 0.5,
+        "accepted_sha256": "c9863f7610555c1ea24fb646c2b20093c91212562963e3a5f8df4f0123480919",
+        "noaug_index_sha256": "361c4c4b981fff9e5bec980de7080160357234588ad89fa3a22440d199dd21e6",
+        "noaug_docs_sha256": "ddb8ed73bf2348e3c130f08990580d98f1c5dd29ddf919d5cc68dae8e8b38037",
+        "index_sha256": "50a02525ea2461082b5f90b341a775c10263de7c4a58da68e5415e70881612d0",
+        "docs_sha256": "784296d2e24126f0ac6d0994d31f83097b79b2f81eb186dbd85345d905f6cc25",
+        "usage_rule": "任何切分的 RAG 語料 = 該切分 train 的原文 + accepted.csv 中 source_id 屬於該切分 train 的改寫；val／test 原文的改寫在該切分中一律不用（select_for_split）。val 原文沒有改寫，重複切分時 val 固定，只重新切分 train＋test。改寫只依賴自己的原文，所以結果與切分無關。",
+        "created_at": "2026-10-04T15:39:24+0800"
+      },
+      "meta_sha256": "f367b61daab02e417a27caf82269fcdd7e987d1a5559d9cec8f17f2a407b95be",
+      "index_sha256_actual": "50a02525ea2461082b5f90b341a775c10263de7c4a58da68e5415e70881612d0",
+      "docs_sha256_disk": "2d9b5e02e888ff4d66b3367a38162b6c476f7f111af179c727f9645928d261e9",
+      "docs_sha256_lf_normalized": "784296d2e24126f0ac6d0994d31f83097b79b2f81eb186dbd85345d905f6cc25",
+      "docs_sha256_match": "lf_normalized"
+    }
+  },
+  "v1_manifest_sha256": "a826f1a195e2009e86c5cb8d892a6acf6b83e3945ea1361c63a908f73990b56f"
+}

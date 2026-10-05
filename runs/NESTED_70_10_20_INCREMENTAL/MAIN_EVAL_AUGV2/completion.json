@@ -1,0 +1,16 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "MAIN_EVAL_AUGV2",
+  "split": "test",
+  "completed_at": "2026-10-05 09:50:45+0800",
+  "conditions": [
+    "norag_base",
+    "rag_noaug_base",
+    "rag_augv2_base",
+    "rag_noaug_optimized",
+    "rag_augv2_optimized"
+  ],
+  "top_k": 5,
+  "n": 1998,
+  "smoke_n": null
+}
