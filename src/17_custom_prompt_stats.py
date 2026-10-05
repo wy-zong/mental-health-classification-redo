@@ -303,7 +303,7 @@ def main() -> None:
             "valid_only": "只在有效回覆上計分（敏感度分析）",
         },
         "inputs": {
-            "test_split_sha256": C.sha256_file(E.TEST_PATH),
+            "test_split_sha256": E.test_split_sha256(),
             "predictions_sha256": E.predictions_sha256(P),
         },
     }

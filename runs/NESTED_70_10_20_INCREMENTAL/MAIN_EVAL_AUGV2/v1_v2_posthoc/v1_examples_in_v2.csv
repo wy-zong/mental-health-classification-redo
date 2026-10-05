@@ -1,0 +1,29 @@
+﻿group,id,true_label,pred_C1_v1,pred_C1_v2,pred_C2_v1,pred_C2_v2,pred_C4_v1,pred_C4_v2,pred_C5_v1,pred_C5_v2,in_group_v1,still_holds_v2
+helped,test_00018,Bipolar,Depression,Depression,Bipolar,Bipolar,Bipolar,Bipolar,Bipolar,Bipolar,True,True
+helped,test_02418,Bipolar,Normal,Normal,Bipolar,Bipolar,Bipolar,Bipolar,Bipolar,Bipolar,True,True
+helped,test_02330,Bipolar,Depression,Depression,Bipolar,Bipolar,Bipolar,Bipolar,Bipolar,Bipolar,True,True
+helped,test_00332,Depression,INVALID,INVALID,Depression,Depression,Bipolar,Bipolar,Bipolar,Bipolar,True,True
+helped,test_01657,Bipolar,INVALID,INVALID,Bipolar,Bipolar,Bipolar,Bipolar,Bipolar,Bipolar,True,True
+hurt,test_01927,Anxiety,Anxiety,Anxiety,Normal,INVALID,Depression,Depression,Depression,Depression,True,True
+hurt,test_00141,Depression,Depression,Depression,INVALID,Depression,Depression,Depression,Depression,Depression,True,False
+hurt,test_00825,Normal,Normal,Normal,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,True,True
+hurt,test_00584,Normal,Normal,Normal,INVALID,INVALID,Normal,Anxiety,Normal,Normal,True,True
+hurt,test_01721,Normal,Normal,Normal,INVALID,INVALID,Normal,Normal,Normal,Normal,True,True
+C4 Depression→INVALID,test_00915,Depression,INVALID,INVALID,INVALID,Depression,INVALID,Depression,INVALID,Depression,True,False
+C4 Depression→INVALID,test_00196,Depression,Normal,Normal,INVALID,Depression,INVALID,Depression,Normal,Bipolar,True,False
+C4 Depression→INVALID,test_00952,Depression,Depression,Depression,INVALID,Depression,INVALID,INVALID,INVALID,Depression,True,True
+C4 Normal→Anxiety,test_01262,Normal,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Depression,Depression,True,True
+C4 Normal→Anxiety,test_00825,Normal,Normal,Normal,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,True,True
+C4 Normal→Anxiety,test_00317,Normal,INVALID,INVALID,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,True,True
+C4 Depression→Anxiety,test_01230,Depression,INVALID,INVALID,Anxiety,Anxiety,Anxiety,Anxiety,Depression,Depression,True,True
+C4 Depression→Anxiety,test_02479,Depression,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,True,True
+C4 Depression→Anxiety,test_00306,Depression,INVALID,Depression,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,True,True
+C5 Depression→Anxiety,test_02367,Depression,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,True,True
+C5 Depression→Anxiety,test_00977,Depression,INVALID,INVALID,INVALID,INVALID,Anxiety,Bipolar,Anxiety,Bipolar,True,False
+C5 Depression→Anxiety,test_00800,Depression,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,Anxiety,True,True
+C5 Normal→Anxiety,test_01586,Normal,INVALID,Depression,Anxiety,INVALID,Anxiety,Anxiety,Anxiety,Depression,True,False
+C5 Normal→Anxiety,test_01415,Normal,INVALID,INVALID,INVALID,Depression,Anxiety,Depression,Anxiety,Depression,True,False
+C5 Normal→Anxiety,test_01874,Normal,INVALID,INVALID,INVALID,INVALID,Anxiety,Anxiety,Anxiety,Anxiety,True,True
+C5 Depression→INVALID,test_00467,Depression,INVALID,INVALID,Depression,INVALID,INVALID,Depression,INVALID,Depression,True,False
+C5 Depression→INVALID,test_00607,Depression,INVALID,INVALID,Depression,Depression,INVALID,Depression,INVALID,Depression,True,False
+C5 Depression→INVALID,test_01243,Depression,Depression,Depression,INVALID,Depression,INVALID,Depression,INVALID,Depression,True,False

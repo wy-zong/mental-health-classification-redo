@@ -1,0 +1,214 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "script": "src/28_v1_v2_posthoc_compare.py",
+  "issues": [
+    7,
+    8,
+    10,
+    13
+  ],
+  "procedure": "只讀 v1（CUSTOM_PROMPT_EVAL/，15_）與 v2（MAIN_EVAL_AUGV2/，27_）既有的 17_、18_、23_ 輸出，以代號 C1–C5（配對以 first、second）合併並列；不重算統計。",
+  "v1": {
+    "experiment": "CUSTOM_PROMPT_EVAL",
+    "top_k": 1,
+    "corpora": [
+      "noaug",
+      "aug"
+    ]
+  },
+  "v2": {
+    "experiment": "MAIN_EVAL_AUGV2",
+    "top_k": 5,
+    "corpora": [
+      "noaug",
+      "aug_v2"
+    ]
+  },
+  "display_names": {
+    "C1": {
+      "display_name": "無檢索・基礎 prompt",
+      "condition_v1": "norag_base",
+      "condition_v2": "norag_base"
+    },
+    "C2": {
+      "display_name": "原文檢索・基礎 prompt",
+      "condition_v1": "rag_noaug_base",
+      "condition_v2": "rag_noaug_base"
+    },
+    "C3": {
+      "display_name": "原文＋擴寫檢索・基礎 prompt",
+      "condition_v1": "rag_aug_base",
+      "condition_v2": "rag_augv2_base"
+    },
+    "C4": {
+      "display_name": "原文檢索・最佳化 prompt",
+      "condition_v1": "rag_noaug_optimized",
+      "condition_v2": "rag_noaug_optimized"
+    },
+    "C5": {
+      "display_name": "原文＋擴寫檢索・最佳化 prompt",
+      "condition_v1": "rag_aug_optimized",
+      "condition_v2": "rag_augv2_optimized"
+    }
+  },
+  "test_split_sha256": "f5ec6983dec361b01ba1ee2e1700ce7c2e59234deea349a58261fc03751bbd09",
+  "inputs_sha256": {
+    "v1": {
+      "stats.json": "794657253f07551302b63533e4c0193488dc7da51f18a32e2d12e83efd444acc",
+      "stats_conditions.csv": "91a82a99f6bc6cefaf9184f175331ae27faa16a93589fbb6ff9982472530bc22",
+      "stats_paired.csv": "21d412fb76aadf90289f3b8ee18d54eb71fdf6957b947556f0a3852d46edc65d",
+      "stats_per_class.csv": "70d7ef24d268e143b1ac94ec6838df44d846acc61ec9dbd6ca65856b2e98b7eb",
+      "stats_invalid.csv": "db7bc2e2a955f503b7b50b7985a7c9c8f38bae0bdde0083a6804afd6c84899ba",
+      "stats_invalid_paired.csv": "903625886d14c00b8e8fa599c9a3ca30d34c83f28892fad6e860be476053727f",
+      "stats_invalid_reasons.csv": "a5f3843ebf5cca5d096aa638c3b8ed79123b3ceccc45922685cc2c2444550f2d",
+      "error_analysis/error_analysis_summary.json": "6f5de4744b9e7db5367a9bdd2dbe9334e92d2a1844f3f5d1a77885132670a38c",
+      "error_analysis/confusions_C4.csv": "01fd01c972bee87a24186c9b504489a9303ef17d8d0afdc08ac0c962997445b4",
+      "error_analysis/confusions_C5.csv": "8c5a3b8a620a68548a3708a9e20089d72c21e490c5494589b9e403ede92823a8",
+      "error_analysis/retrieval_copy_stats.csv": "64da91489af7d01ceb7091172bcc92b7032ac15a2db4da2c305cf53b8785e7a1",
+      "label_parsing/parse_rule_within_condition.csv": "2b962340442f3ed8e8341eb38fab256005bd82338e278e9b9ab5e6a1c70cda72",
+      "label_parsing/parse_rule_paired.csv": "ef24bdbbcb78806a5a0bd6286760a337b4419a68ba814c346c00b6dd0b3278c9",
+      "predictions_norag_base.jsonl": "168add8c8923363e7d852e1277fb1a48407fd9f2fe74fa7a68f7a00682961ae2",
+      "predictions_rag_noaug_base.jsonl": "a9037252cd0698f4f029fd9bd7a5b9f50834435517f1606a9bbbe8d033c20bb9",
+      "predictions_rag_aug_base.jsonl": "df0ed2db96499680f8ecefaf94e6901bccd0b27252556e7fe81c643a3669050a",
+      "predictions_rag_noaug_optimized.jsonl": "69bc3a5d30e949977daae48306413ef2272c12950c6917ecd354dc8c83f093f2",
+      "predictions_rag_aug_optimized.jsonl": "10184602450f6a4283788d7b208a5df2467e1875b138d77295bac4165c834828",
+      "error_analysis/examples.md": "756717f15e9f5a943705c1b0bfe42340c32ce3afcfc4c7d35e7e9ca6af184b80",
+      "error_analysis/rag_helped_C1wrong_C2right.jsonl": "204b6703185b24e442b27e57cfb817a4498d41134b2ca2f685320b0b2e3212ad",
+      "error_analysis/rag_hurt_C1right_C2wrong.jsonl": "c6ef8cb985b797b09d12baf16cc892749d3c4e1025203d65c0db34c9e6c35d52"
+    },
+    "v2": {
+      "stats.json": "ef3eef16b0b3c361d76c489d5df4639e4f0e63c51022c6919f45c445d9ede51c",
+      "stats_conditions.csv": "62c7e2803ba228d0fa0908a78bee796d04a5f8c8f6b3ce2f4e6c0df29909c9dd",
+      "stats_paired.csv": "bc9dab2e4fa66f30369ff8cec0b92abf2147c5884d783d0cd5d06cd6510d206f",
+      "stats_per_class.csv": "c15473773cb3d0c797b262f2014900cc8bd2b5b0cf5a0e23100d12a4660ab476",
+      "stats_invalid.csv": "d9d2dbccadc42e660d22a8a1a83299e0adbdf04d9437b8394093d61f5e35338e",
+      "stats_invalid_paired.csv": "7b9578e55320b1a6de0e72e639a5c4201abd4e5ba5bb9902ad984c67fb87f786",
+      "stats_invalid_reasons.csv": "7f7a9f2bb89e449a638a4755261974767f54ba1d0129c7f9060f7b01694f43f1",
+      "error_analysis/error_analysis_summary.json": "72cc9d81e0b075f3080db207d839e5327c01cec1541218a1110a1803e4a07f5a",
+      "error_analysis/confusions_C4.csv": "b3fe80103af1e351f3f418b75d86872006d80010ccf791405a683cd2c8221d60",
+      "error_analysis/confusions_C5.csv": "29f819e1c7b340706f9758657d86c3d3d3aaf19a260460d7e55c7b5dd2810935",
+      "error_analysis/retrieval_copy_stats.csv": "ccc6b6c2baa213f41747c29f3d43146b49ae88731474b252832055deb6eac9e5",
+      "label_parsing/parse_rule_within_condition.csv": "9908b785e25382490642e1b262262848acaf09fad79e2f0689a915483e0f3342",
+      "label_parsing/parse_rule_paired.csv": "1e548ee3953fdde199e7bb9da3def2c1f68e6c6fb4e48951d560d6833100d3bc",
+      "predictions_norag_base.jsonl": "da85a050677cc765bde98f331e6a13fc27648d35ecf0b2523644e75e699b87ae",
+      "predictions_rag_noaug_base.jsonl": "c5547c1a75f973e4e662b69d9403e773c238d3adbe7d5bb2efdafd51b75111f8",
+      "predictions_rag_augv2_base.jsonl": "d0e68ab083edf90f113879395faf7a518b9674c17b182cd7b4b23e17c1ee6030",
+      "predictions_rag_noaug_optimized.jsonl": "7a5005d885f6f2df6dc507002ddffe533de8dc3b08ef36347610bbbca0827f5f",
+      "predictions_rag_augv2_optimized.jsonl": "b6a42eaab1262914295de0fe718541bd78ae051bf10b2e51e30effb7a3fba574",
+      "error_analysis/rag_helped_C1wrong_C2right.jsonl": "6b88891a3dc3888c0241c4101d733d621148d974037f36637b7cfc88fff57314",
+      "error_analysis/rag_hurt_C1right_C2wrong.jsonl": "cfdb5bab343ebc2ffb7fd54d142ced0cb84894aebd9f07134183ad2e701174ae"
+    }
+  },
+  "findings": {
+    "stats_paired_significance_changed": [
+      "C2→C3"
+    ],
+    "stats_paired_significant_v1": [
+      "C1→C2",
+      "C1→C3",
+      "C1→C4",
+      "C1→C5",
+      "C2→C4",
+      "C2→C5",
+      "C3→C4",
+      "C3→C5"
+    ],
+    "stats_paired_significant_v2": [
+      "C1→C2",
+      "C1→C3",
+      "C1→C4",
+      "C1→C5",
+      "C2→C3",
+      "C2→C4",
+      "C2→C5",
+      "C3→C4",
+      "C3→C5"
+    ],
+    "invalid_paired_significance_changed": [],
+    "invalid_paired_not_significant_v1": [
+      "C4→C5"
+    ],
+    "invalid_paired_not_significant_v2": [
+      "C4→C5"
+    ],
+    "label_parsing_max_abs_delta_accuracy": {
+      "v1": 0.0030030030030029,
+      "v2": 0.0035035035035034
+    },
+    "label_parsing_holm_flipped": {
+      "v1": [],
+      "v2": []
+    },
+    "invalid_in_top5_confusions": {
+      "v1": [
+        "C4",
+        "C5"
+      ],
+      "v2": []
+    },
+    "v1_examples_still_hold_in_v2": {
+      "n_examples": 28,
+      "n_still_hold": 19,
+      "by_group": {
+        "helped": "5/5",
+        "hurt": "4/5",
+        "C4 Depression→INVALID": "1/3",
+        "C4 Normal→Anxiety": "3/3",
+        "C4 Depression→Anxiety": "3/3",
+        "C5 Depression→Anxiety": "2/3",
+        "C5 Normal→Anxiety": "1/3",
+        "C5 Depression→INVALID": "0/3"
+      }
+    },
+    "v1_groups_overlap": {
+      "helped": {
+        "n_v1": 372,
+        "n_v2": 439,
+        "n_both": 260,
+        "share_of_v1_still_in_v2": 0.6989247311827957
+      },
+      "hurt": {
+        "n_v1": 216,
+        "n_v2": 215,
+        "n_both": 90,
+        "share_of_v1_still_in_v2": 0.4166666666666667
+      },
+      "C4 Depression→INVALID": {
+        "n_v1": 61,
+        "n_v2": 22,
+        "n_both": 15,
+        "share_of_v1_still_in_v2": 0.2459016393442623
+      },
+      "C4 Normal→Anxiety": {
+        "n_v1": 58,
+        "n_v2": 90,
+        "n_both": 44,
+        "share_of_v1_still_in_v2": 0.7586206896551724
+      },
+      "C4 Depression→Anxiety": {
+        "n_v1": 58,
+        "n_v2": 63,
+        "n_both": 45,
+        "share_of_v1_still_in_v2": 0.7758620689655172
+      },
+      "C5 Depression→Anxiety": {
+        "n_v1": 70,
+        "n_v2": 74,
+        "n_both": 55,
+        "share_of_v1_still_in_v2": 0.7857142857142857
+      },
+      "C5 Normal→Anxiety": {
+        "n_v1": 66,
+        "n_v2": 101,
+        "n_both": 54,
+        "share_of_v1_still_in_v2": 0.8181818181818182
+      },
+      "C5 Depression→INVALID": {
+        "n_v1": 63,
+        "n_v2": 19,
+        "n_both": 14,
+        "share_of_v1_still_in_v2": 0.2222222222222222
+      }
+    }
+  }
+}

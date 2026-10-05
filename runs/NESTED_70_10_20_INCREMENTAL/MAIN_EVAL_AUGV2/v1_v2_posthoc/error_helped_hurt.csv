@@ -1,0 +1,3 @@
+﻿group,group_display,n_v1,n_v2,delta_n,C1_invalid_v1,C1_invalid_v2,delta_C1_invalid,C2_invalid_v1,C2_invalid_v2,delta_C2_invalid,C2_pred_equals_retrieved_v1,C2_pred_equals_retrieved_v2,delta_C2_pred_equals_retrieved,retrieved_label_correct_v1,retrieved_label_correct_v2,delta_retrieved_label_correct
+helped,RAG 有幫助（C1 錯 → C2 對）,372,439,67,233,290,57,0,0,0,346,407,61,346,407,61
+hurt,RAG 有害（C1 對 → C2 錯）,216,215,-1,0,0,0,156,133,-23,39,48,9,137,123,-14
