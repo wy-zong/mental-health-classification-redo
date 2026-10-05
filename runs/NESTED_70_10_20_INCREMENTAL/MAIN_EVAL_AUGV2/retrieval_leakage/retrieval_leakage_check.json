@@ -1,0 +1,517 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "script": "src/19_retrieval_leakage_check.py",
+  "metric": "cosine similarity (all-MiniLM-L6-v2, normalized, IndexFlatIP exact search)",
+  "note": "top-1 為精確最近鄰，max 即該切分對整個語料的全域最高相似度",
+  "sources": {
+    "test": "MAIN_EVAL_AUGV2/retrieval_audit_rag_noaug_base.jsonl、MAIN_EVAL_AUGV2/retrieval_audit_rag_augv2_base.jsonl（27_main_eval_augv2.py）",
+    "val": "以 12_ RebuildRagIndex 重新嵌入與搜尋"
+  },
+  "corpora": {
+    "noaug": {
+      "n_docs": 6994,
+      "base_n_docs": 5996,
+      "added_doc_count": 998,
+      "paraphrase_docs": 0,
+      "exact_overlap_with_eval_splits": {
+        "val": 0,
+        "test": 0
+      },
+      "index_sha256": "361c4c4b981fff9e5bec980de7080160357234588ad89fa3a22440d199dd21e6",
+      "added_part_name": "nested_added",
+      "docs_sha256_disk": "ddb8ed73bf2348e3c130f08990580d98f1c5dd29ddf919d5cc68dae8e8b38037",
+      "docs_sha256_lf_normalized": "ea3c135ec664f52201d92c87ab19d12603c914c4bdfec5c971f2c69a7e34ed7c",
+      "docs_sha256_match": "disk"
+    },
+    "aug_v2": {
+      "n_docs": 19495,
+      "base_n_docs": 6994,
+      "added_doc_count": 12501,
+      "paraphrase_docs": 12501,
+      "exact_overlap_with_eval_splits": {
+        "val": 0,
+        "test": 0
+      },
+      "index_sha256": "50a02525ea2461082b5f90b341a775c10263de7c4a58da68e5415e70881612d0",
+      "added_part_name": "paraphrase",
+      "docs_sha256_disk": "2d9b5e02e888ff4d66b3367a38162b6c476f7f111af179c727f9645928d261e9",
+      "docs_sha256_lf_normalized": "784296d2e24126f0ac6d0994d31f83097b79b2f81eb186dbd85345d905f6cc25",
+      "docs_sha256_match": "lf_normalized"
+    }
+  },
+  "test": {
+    "noaug": {
+      "n": 1998,
+      "top1_similarity": {
+        "max": 0.8714554905891418,
+        "mean": 0.605349904535948,
+        "median": 0.633416473865509,
+        "p95": 0.797527441382408,
+        "p99": 0.8305357545614243,
+        "min": 0.20489993691444397
+      },
+      "count_at_or_above": {
+        "0.80": 94,
+        "0.85": 7,
+        "0.90": 0,
+        "0.95": 0
+      },
+      "top1_source": {
+        "by_origin": {
+          "original": 1998
+        },
+        "by_corpus_part": {
+          "base": 1707,
+          "nested_added": 291
+        },
+        "max_similarity_by_origin": {
+          "original": 0.8714554905891418
+        },
+        "mean_similarity_by_origin": {
+          "original": 0.605349904535948
+        }
+      },
+      "top1_same_source_id_as_query": 0,
+      "highest_pairs": [
+        {
+          "query_id": "test_01626",
+          "doc_id": "train_05863",
+          "similarity": 0.8714554905891418,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_00046",
+          "doc_id": "train_02623",
+          "similarity": 0.8708226680755615,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_01880",
+          "doc_id": "train_00864",
+          "similarity": 0.8676828145980835,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_00835",
+          "doc_id": "train_04182",
+          "similarity": 0.861116886138916,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_01845",
+          "doc_id": "test_02233",
+          "similarity": 0.860666036605835,
+          "origin": "original"
+        }
+      ],
+      "all_k": {
+        "k": 5,
+        "n_pairs": 9990,
+        "similarity": {
+          "max": 0.8714554905891418,
+          "mean": 0.5681436744269666,
+          "median": 0.5955850780010223,
+          "p99": 0.8158829897642136,
+          "min": 0.16944949328899384
+        },
+        "pairs_at_or_above": {
+          "0.80": 218,
+          "0.85": 9,
+          "0.90": 0,
+          "0.95": 0
+        },
+        "queries_with_any_at_or_above": {
+          "0.80": 94,
+          "0.85": 7,
+          "0.90": 0,
+          "0.95": 0
+        },
+        "by_origin": {
+          "original": 9990,
+          "paraphrase": 0
+        },
+        "max_similarity_by_origin": {
+          "original": 0.8714554905891418
+        },
+        "mean_similarity_by_origin": {
+          "original": 0.5681436744269666
+        },
+        "queries_with_same_source_id_in_top_k": 0
+      }
+    },
+    "aug_v2": {
+      "n": 1998,
+      "top1_similarity": {
+        "max": 0.8782024383544922,
+        "mean": 0.6218962894754486,
+        "median": 0.6517724394798279,
+        "p95": 0.8085252135992049,
+        "p99": 0.8445271056890488,
+        "min": 0.2656254470348358
+      },
+      "count_at_or_above": {
+        "0.80": 122,
+        "0.85": 14,
+        "0.90": 0,
+        "0.95": 0
+      },
+      "top1_source": {
+        "by_origin": {
+          "paraphrase": 1060,
+          "original": 938
+        },
+        "by_corpus_part": {
+          "paraphrase": 1060,
+          "base": 938
+        },
+        "max_similarity_by_origin": {
+          "paraphrase": 0.8782024383544922,
+          "original": 0.8714554309844971
+        },
+        "mean_similarity_by_origin": {
+          "paraphrase": 0.6201409711590353,
+          "original": 0.623879911453485
+        }
+      },
+      "top1_same_source_id_as_query": 0,
+      "highest_pairs": [
+        {
+          "query_id": "test_01625",
+          "doc_id": "aug_test_00063_n1",
+          "similarity": 0.8782024383544922,
+          "origin": "paraphrase"
+        },
+        {
+          "query_id": "test_01880",
+          "doc_id": "aug_train_00864_m0",
+          "similarity": 0.8746155500411987,
+          "origin": "paraphrase"
+        },
+        {
+          "query_id": "test_01626",
+          "doc_id": "train_05863",
+          "similarity": 0.8714554309844971,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_00046",
+          "doc_id": "train_02623",
+          "similarity": 0.870822548866272,
+          "origin": "original"
+        },
+        {
+          "query_id": "test_02198",
+          "doc_id": "aug_test_00065_n0",
+          "similarity": 0.8626084327697754,
+          "origin": "paraphrase"
+        }
+      ],
+      "all_k": {
+        "k": 5,
+        "n_pairs": 9990,
+        "similarity": {
+          "max": 0.8782024383544922,
+          "mean": 0.5938756430590594,
+          "median": 0.6218259334564209,
+          "p99": 0.8287182760238649,
+          "min": 0.1917542815208435
+        },
+        "pairs_at_or_above": {
+          "0.80": 350,
+          "0.85": 24,
+          "0.90": 0,
+          "0.95": 0
+        },
+        "queries_with_any_at_or_above": {
+          "0.80": 122,
+          "0.85": 14,
+          "0.90": 0,
+          "0.95": 0
+        },
+        "by_origin": {
+          "original": 4262,
+          "paraphrase": 5728
+        },
+        "max_similarity_by_origin": {
+          "original": 0.8714554309844971,
+          "paraphrase": 0.8782024383544922
+        },
+        "mean_similarity_by_origin": {
+          "original": 0.590935079998838,
+          "paraphrase": 0.5960636108947199
+        },
+        "queries_with_same_source_id_in_top_k": 0
+      }
+    }
+  },
+  "val": {
+    "noaug": {
+      "n": 1000,
+      "top1_similarity": {
+        "max": 0.892619788646698,
+        "mean": 0.6072272392213345,
+        "median": 0.6387655735015869,
+        "p95": 0.8000903904438018,
+        "p99": 0.8387625461816788,
+        "min": 0.25936567783355713
+      },
+      "count_at_or_above": {
+        "0.80": 51,
+        "0.85": 4,
+        "0.90": 0,
+        "0.95": 0
+      },
+      "top1_source": {
+        "by_origin": {
+          "original": 1000
+        },
+        "by_corpus_part": {
+          "base": 872,
+          "nested_added": 128
+        },
+        "max_similarity_by_origin": {
+          "original": 0.892619788646698
+        },
+        "mean_similarity_by_origin": {
+          "original": 0.6072272392213345
+        }
+      },
+      "top1_same_source_id_as_query": 0,
+      "highest_pairs": [
+        {
+          "query_id": "val_confirm_00045",
+          "doc_id": "train_01412",
+          "similarity": 0.892619788646698,
+          "origin": "original"
+        },
+        {
+          "query_id": "val_search_00288",
+          "doc_id": "train_05707",
+          "similarity": 0.8660556077957153,
+          "origin": "original"
+        },
+        {
+          "query_id": "val_search_00148",
+          "doc_id": "test_02233",
+          "similarity": 0.8571480512619019,
+          "origin": "original"
+        },
+        {
+          "query_id": "val_confirm_00997",
+          "doc_id": "train_05709",
+          "similarity": 0.852513313293457,
+          "origin": "original"
+        },
+        {
+          "query_id": "val_search_00284",
+          "doc_id": "train_04724",
+          "similarity": 0.8461679816246033,
+          "origin": "original"
+        }
+      ],
+      "all_k": {
+        "k": 5,
+        "n_pairs": 5000,
+        "similarity": {
+          "max": 0.892619788646698,
+          "mean": 0.5719209911316633,
+          "median": 0.604289174079895,
+          "p99": 0.8182736635208131,
+          "min": 0.19935396313667297
+        },
+        "pairs_at_or_above": {
+          "0.80": 122,
+          "0.85": 6,
+          "0.90": 0,
+          "0.95": 0
+        },
+        "queries_with_any_at_or_above": {
+          "0.80": 51,
+          "0.85": 4,
+          "0.90": 0,
+          "0.95": 0
+        },
+        "by_origin": {
+          "original": 5000,
+          "paraphrase": 0
+        },
+        "max_similarity_by_origin": {
+          "original": 0.892619788646698
+        },
+        "mean_similarity_by_origin": {
+          "original": 0.5719209911316633
+        },
+        "queries_with_same_source_id_in_top_k": 0
+      }
+    },
+    "aug_v2": {
+      "n": 1000,
+      "top1_similarity": {
+        "max": 0.8972939252853394,
+        "mean": 0.6237892850339413,
+        "median": 0.6597268879413605,
+        "p95": 0.8092583745718002,
+        "p99": 0.8461812162399291,
+        "min": 0.2593657374382019
+      },
+      "count_at_or_above": {
+        "0.80": 67,
+        "0.85": 6,
+        "0.90": 0,
+        "0.95": 0
+      },
+      "top1_source": {
+        "by_origin": {
+          "paraphrase": 535,
+          "original": 465
+        },
+        "by_corpus_part": {
+          "paraphrase": 535,
+          "base": 465
+        },
+        "max_similarity_by_origin": {
+          "paraphrase": 0.8972939252853394,
+          "original": 0.8660556077957153
+        },
+        "mean_similarity_by_origin": {
+          "paraphrase": 0.6229341516984958,
+          "original": 0.6247731481188087
+        }
+      },
+      "top1_same_source_id_as_query": 0,
+      "highest_pairs": [
+        {
+          "query_id": "val_confirm_00045",
+          "doc_id": "aug_train_01412_m1",
+          "similarity": 0.8972939252853394,
+          "origin": "paraphrase"
+        },
+        {
+          "query_id": "val_confirm_00755",
+          "doc_id": "aug_train_04814_m1",
+          "similarity": 0.875293493270874,
+          "origin": "paraphrase"
+        },
+        {
+          "query_id": "val_search_00288",
+          "doc_id": "train_05707",
+          "similarity": 0.8660556077957153,
+          "origin": "original"
+        },
+        {
+          "query_id": "val_search_00148",
+          "doc_id": "aug_train_04084_m1",
+          "similarity": 0.8601910471916199,
+          "origin": "paraphrase"
+        },
+        {
+          "query_id": "val_confirm_01036",
+          "doc_id": "aug_train_03366_m0",
+          "similarity": 0.8582925796508789,
+          "origin": "paraphrase"
+        }
+      ],
+      "all_k": {
+        "k": 5,
+        "n_pairs": 5000,
+        "similarity": {
+          "max": 0.8972939252853394,
+          "mean": 0.596152255371213,
+          "median": 0.6313945651054382,
+          "p99": 0.8326672196388246,
+          "min": 0.2364879846572876
+        },
+        "pairs_at_or_above": {
+          "0.80": 182,
+          "0.85": 11,
+          "0.90": 0,
+          "0.95": 0
+        },
+        "queries_with_any_at_or_above": {
+          "0.80": 67,
+          "0.85": 6,
+          "0.90": 0,
+          "0.95": 0
+        },
+        "by_origin": {
+          "original": 2170,
+          "paraphrase": 2830
+        },
+        "max_similarity_by_origin": {
+          "original": 0.892619788646698,
+          "paraphrase": 0.8972939252853394
+        },
+        "mean_similarity_by_origin": {
+          "original": 0.594430657033272,
+          "paraphrase": 0.5974723502098461
+        },
+        "queries_with_same_source_id_in_top_k": 0
+      }
+    }
+  },
+  "profile": "v2",
+  "experiment": "MAIN_EVAL_AUGV2",
+  "top_k": 5,
+  "split_safety_cross_check": {
+    "source": "AUGMENT_V2/split_safety_check.json",
+    "corpus": "aug_v2",
+    "tolerance": 1e-06,
+    "splits": {
+      "test": {
+        "max": {
+          "ours": 0.8782024383544922,
+          "split_safety_check": 0.8782024383544922,
+          "match": true
+        },
+        "mean": {
+          "ours": 0.6218962894754486,
+          "split_safety_check": 0.6218962669372559,
+          "match": true
+        },
+        "p99": {
+          "ours": 0.8445271056890488,
+          "split_safety_check": 0.8445271253585815,
+          "match": true
+        },
+        "n_ge_0_90": {
+          "ours": 0,
+          "split_safety_check": 0,
+          "match": true
+        },
+        "share_paraphrase": {
+          "ours": 0.5305305305305306,
+          "split_safety_check": 0.5305305305305306,
+          "match": true
+        }
+      },
+      "val": {
+        "max": {
+          "ours": 0.8972939252853394,
+          "split_safety_check": 0.8972941040992737,
+          "match": true
+        },
+        "mean": {
+          "ours": 0.6237892850339413,
+          "split_safety_check": 0.6237893104553223,
+          "match": true
+        },
+        "p99": {
+          "ours": 0.8461812162399291,
+          "split_safety_check": 0.8461810350418091,
+          "match": true
+        },
+        "n_ge_0_90": {
+          "ours": 0,
+          "split_safety_check": 0,
+          "match": true
+        },
+        "share_paraphrase": {
+          "ours": 0.535,
+          "split_safety_check": 0.535,
+          "match": true
+        }
+      }
+    },
+    "all_match": true
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "created_at_utc": "2026-10-05T11:53:36.699310+00:00",
+  "script": "src/plot_paper_confusion_matrices.py --set custom15 --profile v2",
+  "source_experiment": "src/27_main_eval_augv2.py (MAIN_EVAL_AUGV2)",
+  "plot_method": {
+    "normalization": "row (each true-label row sums to 1)",
+    "color_scale": "Blues, shared vmin=0, vmax=1, one colorbar",
+    "rows": "True Label (4 classes)",
+    "columns": "Predicted Label, including INVALID",
+    "invalid_policy": "Any prediction not in the four valid labels is plotted as INVALID.",
+    "figures": [
+      "confusion_rownorm_C1-C5.png",
+      "confusion_rownorm_C1-C5.pdf"
+    ],
+    "interactive_show": false
+  },
+  "experiments": [
+    {
+      "code": "C1",
+      "condition": "norag_base",
+      "prediction_file": "runs/NESTED_70_10_20_INCREMENTAL/MAIN_EVAL_AUGV2/predictions_norag_base.jsonl",
+      "prediction_file_sha256": "da85a050677cc765bde98f331e6a13fc27648d35ecf0b2523644e75e699b87ae",
+      "n": 1998,
+      "strict_accuracy": 0.54004004004004,
+      "invalid": 554,
+      "per_class_recall": {
+        "Normal": 0.5190380761523046,
+        "Depression": 0.46092184368737477,
+        "Anxiety": 0.704,
+        "Bipolar": 0.476
+      },
+      "per_class_invalid_rate": {
+        "Normal": 0.37074148296593185,
+        "Depression": 0.38276553106212424,
+        "Anxiety": 0.148,
+        "Bipolar": 0.208
+      },
+      "counts_csv": "confusion_C1_norag_base_counts.csv",
+      "rownorm_csv": "confusion_C1_norag_base_rownorm.csv",
+      "display_name": "無檢索・基礎 prompt",
+      "title": "C1　無檢索・基礎 prompt"
+    },
+    {
+      "code": "C2",
+      "condition": "rag_noaug_base",
+      "prediction_file": "runs/NESTED_70_10_20_INCREMENTAL/MAIN_EVAL_AUGV2/predictions_rag_noaug_base.jsonl",
+      "prediction_file_sha256": "c5547c1a75f973e4e662b69d9403e773c238d3adbe7d5bb2efdafd51b75111f8",
+      "n": 1998,
+      "strict_accuracy": 0.6521521521521522,
+      "invalid": 356,
+      "per_class_recall": {
+        "Normal": 0.4849699398797595,
+        "Depression": 0.6192384769539078,
+        "Anxiety": 0.814,
+        "Bipolar": 0.69
+      },
+      "per_class_invalid_rate": {
+        "Normal": 0.3026052104208417,
+        "Depression": 0.1523046092184369,
+        "Anxiety": 0.132,
+        "Bipolar": 0.126
+      },
+      "counts_csv": "confusion_C2_rag_noaug_base_counts.csv",
+      "rownorm_csv": "confusion_C2_rag_noaug_base_rownorm.csv",
+      "display_name": "原文檢索・基礎 prompt",
+      "title": "C2　原文檢索・基礎 prompt"
+    },
+    {
+      "code": "C3",
+      "condition": "rag_augv2_base",
+      "prediction_file": "runs/NESTED_70_10_20_INCREMENTAL/MAIN_EVAL_AUGV2/predictions_rag_augv2_base.jsonl",
+      "prediction_file_sha256": "d0e68ab083edf90f113879395faf7a518b9674c17b182cd7b4b23e17c1ee6030",
+      "n": 1998,
+      "strict_accuracy": 0.6881881881881882,
+      "invalid": 226,
+      "per_class_recall": {
+        "Normal": 0.5270541082164328,
+        "Depression": 0.625250501002004,
+        "Anxiety": 0.87,
+        "Bipolar": 0.73
+      },
+      "per_class_invalid_rate": {
+        "Normal": 0.250501002004008,
+        "Depression": 0.09819639278557114,
+        "Anxiety": 0.06,
+        "Bipolar": 0.044
+      },
+      "counts_csv": "confusion_C3_rag_augv2_base_counts.csv",
+      "rownorm_csv": "confusion_C3_rag_augv2_base_rownorm.csv",
+      "display_name": "原文＋擴寫檢索・基礎 prompt",
+      "title": "C3　原文＋擴寫檢索・基礎 prompt"
+    },
+    {
+      "code": "C4",
+      "condition": "rag_noaug_optimized",
+      "prediction_file": "runs/NESTED_70_10_20_INCREMENTAL/MAIN_EVAL_AUGV2/predictions_rag_noaug_optimized.jsonl",
+      "prediction_file_sha256": "7a5005d885f6f2df6dc507002ddffe533de8dc3b08ef36347610bbbca0827f5f",
+      "n": 1998,
+      "strict_accuracy": 0.7612612612612613,
+      "invalid": 41,
+      "per_class_recall": {
+        "Normal": 0.5991983967935872,
+        "Depression": 0.6753507014028056,
+        "Anxiety": 0.92,
+        "Bipolar": 0.85
+      },
+      "per_class_invalid_rate": {
+        "Normal": 0.03406813627254509,
+        "Depression": 0.04408817635270541,
+        "Anxiety": 0.002,
+        "Bipolar": 0.002
+      },
+      "counts_csv": "confusion_C4_rag_noaug_optimized_counts.csv",
+      "rownorm_csv": "confusion_C4_rag_noaug_optimized_rownorm.csv",
+      "display_name": "原文檢索・最佳化 prompt",
+      "title": "C4　原文檢索・最佳化 prompt"
+    },
+    {
+      "code": "C5",
+      "condition": "rag_augv2_optimized",
+      "prediction_file": "runs/NESTED_70_10_20_INCREMENTAL/MAIN_EVAL_AUGV2/predictions_rag_augv2_optimized.jsonl",
+      "prediction_file_sha256": "b6a42eaab1262914295de0fe718541bd78ae051bf10b2e51e30effb7a3fba574",
+      "n": 1998,
+      "strict_accuracy": 0.7537537537537538,
+      "invalid": 32,
+      "per_class_recall": {
+        "Normal": 0.6152304609218436,
+        "Depression": 0.6633266533066132,
+        "Anxiety": 0.898,
+        "Bipolar": 0.838
+      },
+      "per_class_invalid_rate": {
+        "Normal": 0.026052104208416832,
+        "Depression": 0.03807615230460922,
+        "Anxiety": 0.0,
+        "Bipolar": 0.0
+      },
+      "counts_csv": "confusion_C5_rag_augv2_optimized_counts.csv",
+      "rownorm_csv": "confusion_C5_rag_augv2_optimized_rownorm.csv",
+      "display_name": "原文＋擴寫檢索・最佳化 prompt",
+      "title": "C5　原文＋擴寫檢索・最佳化 prompt"
+    }
+  ],
+  "profile": "v2",
+  "top_k": 5,
+  "panel_title_font": "Microsoft JhengHei"
+}

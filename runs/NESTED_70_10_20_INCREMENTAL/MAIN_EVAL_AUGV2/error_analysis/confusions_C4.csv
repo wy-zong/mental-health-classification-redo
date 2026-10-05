@@ -1,0 +1,17 @@
+﻿code,condition,true_label,pred_label,count,share_of_errors,share_of_true_class,display_name
+C4,rag_noaug_optimized,Normal,Anxiety,90,0.18867924528301888,0.18036072144288579,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Depression,Bipolar,70,0.14675052410901468,0.1402805611222445,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Depression,Anxiety,63,0.1320754716981132,0.12625250501002003,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Normal,Bipolar,47,0.09853249475890985,0.09418837675350701,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Normal,Depression,46,0.09643605870020965,0.09218436873747494,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Bipolar,Depression,35,0.07337526205450734,0.07,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Bipolar,Anxiety,32,0.06708595387840671,0.064,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Anxiety,Bipolar,22,0.04612159329140461,0.044,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Depression,INVALID,22,0.04612159329140461,0.04408817635270541,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Normal,INVALID,17,0.03563941299790356,0.03406813627254509,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Anxiety,Depression,13,0.027253668763102725,0.026,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Bipolar,Normal,7,0.014675052410901468,0.014,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Depression,Normal,7,0.014675052410901468,0.014028056112224449,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Anxiety,Normal,4,0.008385744234800839,0.008,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Bipolar,INVALID,1,0.0020964360587002098,0.002,原文檢索・最佳化 prompt
+C4,rag_noaug_optimized,Anxiety,INVALID,1,0.0020964360587002098,0.002,原文檢索・最佳化 prompt

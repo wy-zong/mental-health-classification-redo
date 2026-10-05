@@ -1,12 +1,13 @@
-"""15_（CUSTOM_PROMPT_EVAL）的統計結果：論文 Table IV／VI／VII 與無效回覆分析。
+"""主實驗（v1：15_；v2：27_）的統計結果：論文 Table IV／VI／VII 與無效回覆分析。
 
-只讀 15_ 已落地的逐筆預測，不呼叫 LLM。輸出到 CUSTOM_PROMPT_EVAL/：
+只讀已落地的逐筆預測，不呼叫 LLM。輸出到 --out-dir（v2 預設 MAIN_EVAL_AUGV2/；
+v1 的 CUSTOM_PROMPT_EVAL/ 是凍結的存檔，必須另外指定）：
 
 Table VI／VII（issue #7）
 * stats_conditions.csv     各條件 accuracy、macro-F1、weighted-F1、invalid rate ＋ bootstrap 95% CI
 * stats_paired.csv         10 組配對：Δacc、ΔmacroF1（含 CI）、n01／n10、exact McNemar、Holm、相對錯誤率下降
 * stats_per_class.csv      各類 precision／recall／F1 與 macro／weighted 平均（Table IV 格式）
-* stats_paper_check.csv    與論文 Table VI／VII 逐格比對
+* stats_paper_check.csv    與論文 Table VI／VII 逐格比對（只有 v1）
 
 無效回覆（issue #8）
 * stats_invalid.csv          invalid rate 與 CI；valid-only accuracy／macro-F1（敏感度分析）
@@ -15,9 +16,11 @@ Table VI／VII（issue #7）
 
 全部彙整於 stats.json。慣例：無效回應計為答錯；差值一律為後者減前者；
 bootstrap 10,000 次、seed 42，配對時兩個條件共用同一組重抽索引。
+有代號的表都附 display_name 欄（同一代號在 v1、v2 指的條件不同）。
 
 用法：
-    python 17_custom_prompt_stats.py [--bootstrap 10000]
+    python 17_custom_prompt_stats.py --profile v2 [--bootstrap 10000]
+    python 17_custom_prompt_stats.py --profile v1 --out-dir 目錄
 """
 from __future__ import annotations
 
@@ -125,25 +128,30 @@ def paper_check(cond_rows: pd.DataFrame, paired_rows: pd.DataFrame) -> pd.DataFr
     return pd.DataFrame(checks)
 
 
-def condition_table(enc: dict, boot_cm: dict) -> pd.DataFrame:
+def condition_table(P: E.Profile, enc: dict, boot_cm: dict) -> pd.DataFrame:
     rows = []
     for code, (y_true, y_pred) in enc.items():
         cm = E.confusion(y_true, y_pred)
         point = E.metrics_from_confusion(cm)
         boot = E.metrics_from_confusion(boot_cm[code])
-        row = {"code": code, "condition": E.CODES[code], "description": E.DESCRIPTIONS[code],
+        row = {"code": code, "condition": P.condition(code), "description": P.description(code),
                "n": int(len(y_true)), "correct_count": int(np.trace(cm[:, :4])),
                "invalid_count": int(cm[:, E.INVALID].sum())}
         for key in ("accuracy", "macro_f1", "weighted_f1", "invalid_rate"):
             lo, hi = E.ci95(boot[key])
             row.update({key: float(point[key]), f"{key}_ci_low": lo, f"{key}_ci_high": hi})
+        row["display_name"] = P.display(code)
         rows.append(row)
     return pd.DataFrame(rows)
 
 
-def paired_table(enc: dict, boot_cm: dict) -> pd.DataFrame:
+def comparison_display(P: E.Profile, a: str, b: str) -> str:
+    return f"{P.display(a)} → {P.display(b)}"
+
+
+def paired_table(P: E.Profile, enc: dict, boot_cm: dict) -> pd.DataFrame:
     rows, pvals = [], {}
-    for a, b in E.PAIRS:
+    for a, b in P.pairs:
         ya, pa = enc[a]
         yb, pb = enc[b]
         ca, cb = pa == ya, pb == yb
@@ -154,7 +162,7 @@ def paired_table(enc: dict, boot_cm: dict) -> pd.DataFrame:
         mc = STATS09.mcnemar(ca, cb)
         err_a, err_b = 1 - ma["accuracy"], 1 - mb["accuracy"]
         row = {"first": a, "second": b,
-               "comparison": f"{E.CODES[a]} -> {E.CODES[b]}",
+               "comparison": f"{P.condition(a)} -> {P.condition(b)}",
                "accuracy_first": float(ma["accuracy"]), "accuracy_second": float(mb["accuracy"])}
         for key in ("accuracy", "macro_f1", "weighted_f1"):
             lo, hi = E.ci95(bmb[key] - bma[key])
@@ -169,20 +177,23 @@ def paired_table(enc: dict, boot_cm: dict) -> pd.DataFrame:
     for row in rows:
         row["mcnemar_p_holm"] = adjusted[f"{row['first']}_{row['second']}"]
         row["significant_after_holm"] = bool(row["mcnemar_p_holm"] < 0.05)
+        row["comparison_display"] = comparison_display(P, row["first"], row["second"])
     return pd.DataFrame(rows)
 
 
-def per_class_table(enc: dict) -> pd.DataFrame:
+def per_class_table(P: E.Profile, enc: dict) -> pd.DataFrame:
     frames = []
     for code, (y_true, y_pred) in enc.items():
         df = E.per_class_report(y_true, y_pred)
-        df.insert(0, "condition", E.CODES[code])
+        df.insert(0, "condition", P.condition(code))
         df.insert(0, "code", code)
+        df["display_name"] = P.display(code)
         frames.append(df)
     return pd.concat(frames, ignore_index=True)
 
 
-def invalid_tables(preds: dict, enc: dict, boot_cm: dict) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def invalid_tables(P: E.Profile, preds: dict, enc: dict,
+                   boot_cm: dict) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     rows = []
     for code, (y_true, y_pred) in enc.items():
         cm = E.confusion(y_true, y_pred)
@@ -192,7 +203,7 @@ def invalid_tables(preds: dict, enc: dict, boot_cm: dict) -> tuple[pd.DataFrame,
         v_metrics = E.metrics_from_confusion(E.confusion(v_true, v_pred))
         inv_lo, inv_hi = E.ci95(E.metrics_from_confusion(boot_cm[code])["invalid_rate"])
         rows.append({
-            "code": code, "condition": E.CODES[code], "n": int(len(y_true)),
+            "code": code, "condition": P.condition(code), "n": int(len(y_true)),
             "invalid_count": int((~valid).sum()), "valid_count": int(valid.sum()),
             "invalid_rate": float((~valid).mean()),
             "invalid_rate_ci_low": inv_lo, "invalid_rate_ci_high": inv_hi,
@@ -200,16 +211,17 @@ def invalid_tables(preds: dict, enc: dict, boot_cm: dict) -> tuple[pd.DataFrame,
             "strict_macro_f1": float(E.metrics_from_confusion(cm)["macro_f1"]),
             "valid_only_accuracy": float(v_metrics["accuracy"]),
             "valid_only_macro_f1": float(v_metrics["macro_f1"]),
+            "display_name": P.display(code),
         })
 
     paired, pvals = [], {}
-    for a, b in E.PAIRS:
+    for a, b in P.pairs:
         # 以「回覆有效」當作成功：n01 = 前者無效、後者有效（後者改善）。
         va = enc[a][1] != E.INVALID
         vb = enc[b][1] != E.INVALID
         mc = STATS09.mcnemar(va, vb)
         paired.append({"first": a, "second": b,
-                       "comparison": f"{E.CODES[a]} -> {E.CODES[b]}",
+                       "comparison": f"{P.condition(a)} -> {P.condition(b)}",
                        "invalid_rate_first": float((~va).mean()),
                        "invalid_rate_second": float((~vb).mean()),
                        "delta_invalid_rate": float((~vb).mean() - (~va).mean()),
@@ -220,28 +232,32 @@ def invalid_tables(preds: dict, enc: dict, boot_cm: dict) -> tuple[pd.DataFrame,
     for row in paired:
         row["mcnemar_p_holm"] = adjusted[f"{row['first']}_{row['second']}"]
         row["significant_after_holm"] = bool(row["mcnemar_p_holm"] < 0.05)
+        row["comparison_display"] = comparison_display(P, row["first"], row["second"])
 
     reasons = []
     for code, records in preds.items():
         counts = pd.Series([r["invalid_reason"] for r in records if r["invalid"]]).value_counts()
         for reason, count in counts.items():
-            reasons.append({"code": code, "condition": E.CODES[code], "invalid_reason": reason,
+            reasons.append({"code": code, "condition": P.condition(code), "invalid_reason": reason,
                             "count": int(count), "share_of_invalid": float(count / counts.sum()),
-                            "share_of_all": float(count / len(records))})
+                            "share_of_all": float(count / len(records)),
+                            "display_name": P.display(code)})
     return pd.DataFrame(rows), pd.DataFrame(paired), pd.DataFrame(reasons)
 
 
-def save_csv(df: pd.DataFrame, name: str) -> None:
-    df.to_csv(E.OUT / name, index=False, encoding="utf-8-sig")
-    C.log(f"已寫入 {E.OUT / name}")
+def save_csv(df: pd.DataFrame, out: Path, name: str) -> None:
+    df.to_csv(out / name, index=False, encoding="utf-8-sig")
+    C.log(f"已寫入 {out / name}")
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--bootstrap", type=int, default=E.N_BOOT)
+    E.add_profile_args(ap)
     args = ap.parse_args()
+    P, out = E.resolve(args)
 
-    preds = E.load_predictions()
+    preds = E.load_predictions(P)
     enc = {code: E.encode(records) for code, records in preds.items()}
     for y_true, y_pred in enc.values():
         E.check_against_sklearn(y_true, y_pred)
@@ -249,29 +265,30 @@ def main() -> None:
     idx = E.bootstrap_indices(E.N_TEST, args.bootstrap, E.SEED)
     boot_cm = {code: E.boot_confusions(y, p, idx) for code, (y, p) in enc.items()}
 
-    cond = condition_table(enc, boot_cm)
-    paired = paired_table(enc, boot_cm)
-    per_class = per_class_table(enc)
-    inv, inv_paired, inv_reasons = invalid_tables(preds, enc, boot_cm)
-    check = paper_check(cond, paired)
+    cond = condition_table(P, enc, boot_cm)
+    paired = paired_table(P, enc, boot_cm)
+    per_class = per_class_table(P, enc)
+    inv, inv_paired, inv_reasons = invalid_tables(P, preds, enc, boot_cm)
+    check = paper_check(cond, paired) if P.paper_check else None
 
-    save_csv(cond, "stats_conditions.csv")
-    save_csv(paired, "stats_paired.csv")
-    save_csv(per_class, "stats_per_class.csv")
-    save_csv(check, "stats_paper_check.csv")
-    save_csv(inv, "stats_invalid.csv")
-    save_csv(inv_paired, "stats_invalid_paired.csv")
-    save_csv(inv_reasons, "stats_invalid_reasons.csv")
+    save_csv(cond, out, "stats_conditions.csv")
+    save_csv(paired, out, "stats_paired.csv")
+    save_csv(per_class, out, "stats_per_class.csv")
+    if check is not None:
+        save_csv(check, out, "stats_paper_check.csv")
+    save_csv(inv, out, "stats_invalid.csv")
+    save_csv(inv_paired, out, "stats_invalid_paired.csv")
+    save_csv(inv_reasons, out, "stats_invalid_reasons.csv")
 
     def records(df):
         return [{k: (None if isinstance(v, float) and math.isnan(v) else v)
                  for k, v in row.items()} for row in df.to_dict("records")]
 
-    C.save_json(E.OUT / "stats.json", {
+    summary = {
         "run": E.RUN,
-        "experiment": "CUSTOM_PROMPT_EVAL",
+        "experiment": P.experiment,
         "script": "src/17_custom_prompt_stats.py",
-        "codes": E.CODES,
+        "codes": P.codes,
         "conventions": {
             "correctness": "strict（無效回應計為答錯，分母一律 1998）",
             "f1": "四個有效類別上平均；INVALID 視為預測錯誤，不是第五類",
@@ -287,24 +304,29 @@ def main() -> None:
         },
         "inputs": {
             "test_split_sha256": C.sha256_file(E.TEST_PATH),
-            "predictions_sha256": {
-                code: C.sha256_file(E.OUT / f"predictions_{cond_name}.jsonl")
-                for code, cond_name in E.CODES.items()
-            },
+            "predictions_sha256": E.predictions_sha256(P),
         },
-        "paper_check_summary": {
+    }
+    if check is not None:
+        summary["paper_check_summary"] = {
             "cells": int(len(check)),
             "matched": int(check["match"].sum()),
             "mismatched": records(check[~check["match"]]),
-        },
+        }
+    summary.update({
         "conditions": records(cond),
         "paired": records(paired),
         "per_class": records(per_class),
         "invalid": records(inv),
         "invalid_paired": records(inv_paired),
         "invalid_reasons": records(inv_reasons),
+        "profile": P.name,
+        "source_script": P.source_script,
+        "top_k": P.top_k,
+        "display_names": P.display_names(),
     })
-    C.log(f"已寫入 {E.OUT / 'stats.json'}")
+    C.save_json(out / "stats.json", summary)
+    C.log(f"已寫入 {out / 'stats.json'}")
 
     C.log("")
     for r in cond.itertuples():
@@ -319,9 +341,10 @@ def main() -> None:
     for r in inv_paired.itertuples():
         C.log(f"invalid {r.first}->{r.second} {r.only_first_invalid}/{r.only_second_invalid} "
               f"p={r.mcnemar_p:.3g} holm={r.mcnemar_p_holm:.3g}")
-    C.log(f"論文比對：{int(check['match'].sum())}/{len(check)} 格吻合")
-    for r in check[~check["match"]].itertuples():
-        C.log(f"  不符 Table {r.table} {r.row} {r.column}: paper={r.paper} ours={r.ours:.6g}")
+    if check is not None:
+        C.log(f"論文比對：{int(check['match'].sum())}/{len(check)} 格吻合")
+        for r in check[~check["match"]].itertuples():
+            C.log(f"  不符 Table {r.table} {r.row} {r.column}: paper={r.paper} ours={r.ours:.6g}")
 
 
 if __name__ == "__main__":
