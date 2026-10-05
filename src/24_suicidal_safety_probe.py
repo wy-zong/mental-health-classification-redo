@@ -474,7 +474,7 @@ def summarize(settings: dict, c1: list[dict], expected: dict[str, int]) -> None:
             "sample_ids_sha256": C.sha256_file(OUT / "sample_ids.csv"),
             "predictions_sha256": {k: C.sha256_file(OUT / f"predictions_{k}.jsonl") for k in preds},
             "c1_predictions_sha256": C.sha256_file(E.OUT / "predictions_norag_base.jsonl"),
-            "test_split_sha256": C.sha256_file(E.TEST_PATH),
+            "test_split_sha256": E.test_split_sha256(),
         },
         "prediction_distribution": {k: distribution(v, settings[k]["labels"]) for k, v in preds.items()},
         "prediction_distribution_excluding_refusals": {

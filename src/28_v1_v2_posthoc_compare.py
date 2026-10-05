@@ -143,9 +143,15 @@ def add_code_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_pair_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """配對列附顯示名稱與兩版各自的條件 ID（C3／C5 在 v1、v2 指不同語料）。"""
     df = df.copy()
-    df.insert(2, "comparison_display", [comparison_display(a, b)
-                                        for a, b in zip(df["first"], df["second"])])
+    cols = {"comparison_display": [comparison_display(a, b)
+                                   for a, b in zip(df["first"], df["second"])]}
+    for v, P in VERSIONS:
+        cols[f"first_condition_{v}"] = [P.condition(a) for a in df["first"]]
+        cols[f"second_condition_{v}"] = [P.condition(b) for b in df["second"]]
+    for i, (name, values) in enumerate(cols.items()):
+        df.insert(2 + i, name, values)
     return df
 
 
@@ -404,7 +410,7 @@ def main() -> None:
     check_display_names()
     stats = {v: read_json(v, "stats.json") for v, _ in VERSIONS}
     split = {v: stats[v]["inputs"]["test_split_sha256"] for v, _ in VERSIONS}
-    if split["v1"] != split["v2"] or split["v1"] != C.sha256_file(E.TEST_PATH):
+    if split["v1"] != split["v2"] or split["v1"] != E.test_split_sha256():
         C.die(f"v1、v2 的 test split sha256 與現行 test.csv 不全相同：{split}")
 
     tables = {

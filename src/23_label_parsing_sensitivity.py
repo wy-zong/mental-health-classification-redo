@@ -240,7 +240,7 @@ def main() -> None:
             "multiple_comparison": "Table VII 的 10 組配對各自在規則內做 Holm",
         },
         "inputs": {
-            "test_split_sha256": C.sha256_file(E.TEST_PATH),
+            "test_split_sha256": E.test_split_sha256(),
             "predictions_sha256": E.predictions_sha256(P),
         },
         "strict_reparse_matches_15_records": True,

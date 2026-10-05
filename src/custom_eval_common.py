@@ -40,6 +40,12 @@ V1_OUT = BASE_OUT / "CUSTOM_PROMPT_EVAL"
 V2_OUT = BASE_OUT / "MAIN_EVAL_AUGV2"
 OUT = V1_OUT                           # v1；21_、22_、24_ 直接使用
 TEST_PATH = BASE_OUT / "splits" / "test.csv"
+# test.csv 的 sha256。原檔以 CRLF 分隔記錄、statement 欄內另有裸 LF，換行混用：
+# git blob 是 CRLF→LF 正規化後的內容，乾淨 checkout 的位元組因此隨 core.autocrlf 而不同
+# （LF checkout 即 blob；autocrlf=true 的新 clone 會把裸 LF 也轉成 CRLF），但解析出的資料相同。
+# 各輸出與 manifest 一律記錄原檔的 TEST_SHA256；核對時以 LF 正規化後的內容比對 TEST_SHA256_LF。
+TEST_SHA256 = "f5ec6983dec361b01ba1ee2e1700ce7c2e59234deea349a58261fc03751bbd09"
+TEST_SHA256_LF = "5c798730ea9d79d11030ae8447a214b2a87bbae710f6dcea27ba6585e2a7437d"
 N_TEST = 1998
 SEED = 42
 N_BOOT = 10000
@@ -252,6 +258,16 @@ def resolve(args: argparse.Namespace) -> tuple[Profile, Path]:
     return profile, out
 
 
+def test_split_sha256() -> str:
+    """核對磁碟上的 test.csv（容許 checkout 造成的換行差異），回傳記錄用的原檔 sha256。"""
+    raw = TEST_PATH.read_bytes()
+    disk = hashlib.sha256(raw).hexdigest()
+    lf = hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest()
+    if disk != TEST_SHA256 and lf != TEST_SHA256_LF:
+        C.die(f"{TEST_PATH} 的 sha256 不符（磁碟 {disk}，LF 正規化 {lf}）")
+    return TEST_SHA256
+
+
 def load_test() -> pd.DataFrame:
     test = pd.read_csv(TEST_PATH)
     if len(test) != N_TEST:
@@ -265,7 +281,7 @@ def load_predictions(profile: Profile | None = None) -> dict[str, list[dict]]:
     prompts, _ = source_15()
 
     test = load_test()
-    test_sha = C.sha256_file(TEST_PATH)
+    test_sha = test_split_sha256()
     order = [str(x) for x in test["id"]]
     truth = dict(zip(order, test["status"]))
 
