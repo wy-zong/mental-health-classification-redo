@@ -5,7 +5,7 @@ Normal, Depression, Anxiety, and Bipolar; the first matching label was returned�
 15_ 實際用的是 common.parse_label：先比對數字，再比對標籤文字且只接受唯一命中，
 多個標籤同時命中算 INVALID（multi_label）。
 
-這支腳本只讀 15_ 已落地的 raw_response，不呼叫 LLM：
+v2（27_）沿用 common.parse_label。這支腳本只讀已落地的 raw_response，不呼叫 LLM：
 
 1. 先用 common.parse_label 重新解析，確認與存檔的 pred_label_id、parse_reason 逐筆相同；
 2. 以論文描述的規則（README 記錄的原始實作：不分大小寫的子字串比對，依固定順序取
@@ -13,7 +13,8 @@ Normal, Depression, Anxiety, and Bipolar; the first matching label was returned�
 3. 兩種規則下 C1–C5 的 accuracy、macro-F1、weighted-F1、invalid rate（bootstrap 95% CI），
    同一條件內兩規則的差異（exact McNemar），以及用 first-match 重算的 Table VII。
 
-輸出到 CUSTOM_PROMPT_EVAL/label_parsing/：
+輸出到 <輸出目錄>/label_parsing/（v2 預設 MAIN_EVAL_AUGV2/；v1 的 CUSTOM_PROMPT_EVAL/ 是凍結的
+存檔，必須以 --out-dir 另外指定；與論文 Table VI 的點估計比對只在 v1 做）：
 * parse_rule_conditions.csv          兩種規則 × C1–C5 的指標與 CI
 * parse_rule_within_condition.csv    同一條件內 first-match 減 strict 的差異、McNemar
 * parse_rule_paired.csv              兩種規則下的 Table VII 10 組配對，標出 Holm 顯著性是否翻轉
@@ -24,7 +25,8 @@ Normal, Depression, Anxiety, and Bipolar; the first matching label was returned�
 所有條件與兩種規則共用同一組重抽索引。
 
 用法：
-    python 23_label_parsing_sensitivity.py [--bootstrap 10000]
+    python 23_label_parsing_sensitivity.py --profile v2 [--bootstrap 10000]
+    python 23_label_parsing_sensitivity.py --profile v1 --out-dir 目錄
 """
 from __future__ import annotations
 
@@ -43,7 +45,6 @@ import custom_eval_common as E  # noqa: E402
 S17 = C.load_module("17_custom_prompt_stats")
 STATS09 = S17.STATS09
 
-OUT = E.OUT / "label_parsing"
 RULES = ("strict", "first_match")
 RULE_DESCRIPTIONS = {
     "strict": "common.parse_label（15_ 實際使用）：先比對數字；標籤文字以 \\b 字界、"
@@ -65,15 +66,15 @@ def parse_first_match(raw: str | None) -> tuple[int | None, str]:
     return None, "no_label"
 
 
-def verify_strict(preds: dict[str, list[dict]]) -> None:
-    """用 common.parse_label 重新解析，必須與 15_ 存下的結果逐筆相同。"""
+def verify_strict(P: E.Profile, preds: dict[str, list[dict]]) -> None:
+    """用 common.parse_label 重新解析，必須與存檔的結果逐筆相同。"""
     for code, records in preds.items():
         bad = [r["id"] for r in records
                if C.parse_label(r["raw_response"]) != (r["pred_label_id"], r["parse_reason"])]
         if bad:
             C.die(f"{code}：{len(bad)} 筆以 common.parse_label 重新解析後與存檔不符，"
                   f"例如 {bad[:5]}")
-    C.log("strict 規則重新解析：C1–C5 全部與 15_ 存檔一致")
+    C.log(f"strict 規則重新解析：C1–C5 全部與 {P.experiment} 存檔一致")
 
 
 def encode_first_match(records: list[dict]) -> tuple[np.ndarray, np.ndarray, list[str]]:
@@ -87,9 +88,9 @@ def label_name(i: int) -> str:
     return "INVALID" if i == E.INVALID else C.ID_TO_LABEL[int(i)]
 
 
-def within_condition(enc: dict, boot: dict) -> pd.DataFrame:
+def within_condition(P: E.Profile, enc: dict, boot: dict) -> pd.DataFrame:
     rows = []
-    for code in E.CODES:
+    for code in P.codes:
         y, ps = enc["strict"][code]
         _, pf = enc["first_match"][code]
         ms = E.metrics_from_confusion(E.confusion(y, ps))
@@ -98,7 +99,7 @@ def within_condition(enc: dict, boot: dict) -> pd.DataFrame:
         bf = E.metrics_from_confusion(boot["first_match"][code])
         mc = STATS09.mcnemar(ps == y, pf == y)
         changed = ps != pf
-        row = {"code": code, "condition": E.CODES[code],
+        row = {"code": code, "condition": P.condition(code),
                "changed_rows": int(changed.sum()),
                "changed_invalid_to_label": int((changed & (ps == E.INVALID)).sum()),
                "changed_label_to_label": int((changed & (ps != E.INVALID) & (pf != E.INVALID)).sum()),
@@ -113,11 +114,12 @@ def within_condition(enc: dict, boot: dict) -> pd.DataFrame:
                         f"delta_{key}": float(mf[key] - ms[key]),
                         f"delta_{key}_ci_low": lo, f"delta_{key}_ci_high": hi})
         row.update({"n01": mc["n01"], "n10": mc["n10"], "mcnemar_p": mc["p_value"]})
+        row["display_name"] = P.display(code)
         rows.append(row)
     return pd.DataFrame(rows)
 
 
-def changed_rows(preds: dict, enc: dict, reasons_fm: dict) -> list[dict]:
+def changed_rows(P: E.Profile, preds: dict, enc: dict, reasons_fm: dict) -> list[dict]:
     out = []
     for code, records in preds.items():
         _, ps = enc["strict"][code]
@@ -126,12 +128,13 @@ def changed_rows(preds: dict, enc: dict, reasons_fm: dict) -> list[dict]:
             if ps[i] == pf[i]:
                 continue
             out.append({
-                "code": code, "condition": E.CODES[code], "id": r["id"],
+                "code": code, "condition": P.condition(code), "id": r["id"],
                 "true_label": r["true_label"],
                 "strict_pred": label_name(ps[i]), "strict_reason": r["parse_reason"],
                 "first_match_pred": label_name(pf[i]), "first_match_reason": reasons_fm[code][i],
                 "first_match_correct": bool(pf[i] == C.LABEL_TO_ID[r["true_label"]]),
                 "raw_response": r["raw_response"],
+                "display_name": P.display(code),
             })
     return out
 
@@ -150,9 +153,9 @@ def paper_vi_check(cond: pd.DataFrame) -> list[dict]:
     return out
 
 
-def save_csv(df: pd.DataFrame, name: str) -> None:
-    df.to_csv(OUT / name, index=False, encoding="utf-8-sig")
-    C.log(f"已寫入 {OUT / name}")
+def save_csv(df: pd.DataFrame, out: Path, name: str) -> None:
+    df.to_csv(out / name, index=False, encoding="utf-8-sig")
+    C.log(f"已寫入 {out / name}")
 
 
 def records(df: pd.DataFrame) -> list[dict]:
@@ -163,11 +166,14 @@ def records(df: pd.DataFrame) -> list[dict]:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--bootstrap", type=int, default=E.N_BOOT)
+    E.add_profile_args(ap)
     args = ap.parse_args()
-    OUT.mkdir(parents=True, exist_ok=True)
+    P, out_dir = E.resolve(args)
+    out = out_dir / "label_parsing"
+    out.mkdir(parents=True, exist_ok=True)
 
-    preds = E.load_predictions()
-    verify_strict(preds)
+    preds = E.load_predictions(P)
+    verify_strict(P, preds)
 
     enc = {"strict": {}, "first_match": {}}
     reasons_fm = {}
@@ -186,12 +192,12 @@ def main() -> None:
     boot = {rule: {code: E.boot_confusions(y, p, idx) for code, (y, p) in enc[rule].items()}
             for rule in RULES}
 
-    cond = pd.concat([S17.condition_table(enc[rule], boot[rule]).assign(rule=rule)
+    cond = pd.concat([S17.condition_table(P, enc[rule], boot[rule]).assign(rule=rule)
                       for rule in RULES], ignore_index=True)
     cond = cond[["rule"] + [c for c in cond.columns if c != "rule"]]
-    within = within_condition(enc, boot)
+    within = within_condition(P, enc, boot)
 
-    paired = {rule: S17.paired_table(enc[rule], boot[rule]) for rule in RULES}
+    paired = {rule: S17.paired_table(P, enc[rule], boot[rule]) for rule in RULES}
     keep = ["delta_accuracy", "delta_accuracy_ci_low", "delta_accuracy_ci_high",
             "delta_macro_f1", "delta_macro_f1_ci_low", "delta_macro_f1_ci_high",
             "n01", "n10", "mcnemar_p", "mcnemar_p_holm", "significant_after_holm"]
@@ -200,14 +206,16 @@ def main() -> None:
         suffixes=("_strict", "_first_match"))
     both["holm_significance_flipped"] = (both["significant_after_holm_strict"]
                                          != both["significant_after_holm_first_match"])
+    both["comparison_display"] = [S17.comparison_display(P, a, b)
+                                  for a, b in zip(both["first"], both["second"])]
 
-    changed = changed_rows(preds, enc, reasons_fm)
-    vi_check = paper_vi_check(cond)
+    changed = changed_rows(P, preds, enc, reasons_fm)
+    vi_check = paper_vi_check(cond) if P.paper_check else None
 
-    save_csv(cond, "parse_rule_conditions.csv")
-    save_csv(within, "parse_rule_within_condition.csv")
-    save_csv(both, "parse_rule_paired.csv")
-    path = OUT / "parse_rule_changed_rows.jsonl"
+    save_csv(cond, out, "parse_rule_conditions.csv")
+    save_csv(within, out, "parse_rule_within_condition.csv")
+    save_csv(both, out, "parse_rule_paired.csv")
+    path = out / "parse_rule_changed_rows.jsonl"
     path.unlink(missing_ok=True)
     for rec in changed:
         C.append_jsonl(path, rec)
@@ -215,12 +223,12 @@ def main() -> None:
 
     reason_counts = pd.DataFrame(changed).groupby(
         ["code", "strict_reason", "first_match_pred"]).size() if changed else pd.Series(dtype=int)
-    C.save_json(OUT / "summary.json", {
+    summary = {
         "run": E.RUN,
-        "experiment": "CUSTOM_PROMPT_EVAL",
+        "experiment": P.experiment,
         "script": "src/23_label_parsing_sensitivity.py",
         "issue": 13,
-        "codes": E.CODES,
+        "codes": P.codes,
         "rules": RULE_DESCRIPTIONS,
         "conventions": {
             "correctness": "strict（無效回應計為答錯，分母一律 1998）",
@@ -233,13 +241,13 @@ def main() -> None:
         },
         "inputs": {
             "test_split_sha256": C.sha256_file(E.TEST_PATH),
-            "predictions_sha256": {
-                code: C.sha256_file(E.OUT / f"predictions_{cond_name}.jsonl")
-                for code, cond_name in E.CODES.items()
-            },
+            "predictions_sha256": E.predictions_sha256(P),
         },
         "strict_reparse_matches_15_records": True,
-        "paper_table_vi_point_check": vi_check,
+    }
+    if vi_check is not None:
+        summary["paper_table_vi_point_check"] = vi_check
+    summary.update({
         "changed_rows_by_reason": [
             {"code": k[0], "strict_reason": k[1], "first_match_pred": k[2], "count": int(v)}
             for k, v in reason_counts.items()
@@ -247,8 +255,11 @@ def main() -> None:
         "conditions": records(cond),
         "within_condition": records(within),
         "paired": records(both),
+        "profile": P.name,
+        "display_names": P.display_names(),
     })
-    C.log(f"已寫入 {OUT / 'summary.json'}")
+    C.save_json(out / "summary.json", summary)
+    C.log(f"已寫入 {out / 'summary.json'}")
 
     C.log("")
     for r in within.itertuples():
@@ -263,7 +274,7 @@ def main() -> None:
         C.log(f"{r.first}->{r.second} Δacc strict={r.delta_accuracy_strict:+.4f} "
               f"first_match={r.delta_accuracy_first_match:+.4f} "
               f"holm {r.mcnemar_p_holm_strict:.3g} / {r.mcnemar_p_holm_first_match:.3g}{flag}")
-    for rule in RULES:
+    for rule in RULES if vi_check is not None else ():
         ok = [c for c in vi_check if c["rule"] == rule
               and c["accuracy_match"] and c["macro_f1_match"] and c["invalid_count_match"]]
         C.log(f"論文 Table VI 點估計：{rule} 規則重現 {len(ok)}/5 個條件")

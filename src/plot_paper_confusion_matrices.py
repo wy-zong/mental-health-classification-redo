@@ -1,8 +1,15 @@
-"""Plot confusion matrices for the PAPER_* experiments and the 15_ C1-C5 set.
+"""Plot confusion matrices for the PAPER_* experiments and the main-eval C1-C5 set.
 
 ``--set paper`` (default) reproduces the PAPER_* figures below unchanged;
-``--set custom15`` draws the 15_ (CUSTOM_PROMPT_EVAL) C1-C5 results as one
-row-normalized five-panel figure (see ``plot_custom15``).
+``--set custom15`` draws the main-experiment C1-C5 results as one
+row-normalized five-panel figure (see ``plot_custom15``).  ``--profile`` picks
+the result set (see ``custom_eval_common``):
+
+* ``v1``: 15_ (CUSTOM_PROMPT_EVAL).  Its figures are a frozen record, so
+  ``--output-dir`` is required and may not point inside CUSTOM_PROMPT_EVAL/.
+* ``v2``: 27_ (MAIN_EVAL_AUGV2, aug_v2 corpus, selected top-k).  Output defaults
+  to MAIN_EVAL_AUGV2/figures/.  Panel titles are "code + display name" (the same
+  code means a different condition in v1 and v2), drawn with a CJK font.
 
 This is intentionally a standalone plotting program.  It reads the immutable
 prediction JSONL files produced by the experiment runners and does not call the
@@ -39,6 +46,7 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib import font_manager
 from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, confusion_matrix
 
 
@@ -78,8 +86,7 @@ EXPERIMENTS = [
 ]
 
 
-# 15_ (CUSTOM_PROMPT_EVAL) conditions, coded as in the paper's Table VI.
-CUSTOM15_DIR = Path("runs/NESTED_70_10_20_INCREMENTAL/CUSTOM_PROMPT_EVAL")
+# 15_ (CUSTOM_PROMPT_EVAL, v1) conditions, coded as in the paper's Table VI.
 CUSTOM15_EXPERIMENTS = [
     {"code": "C1", "condition": "norag_base", "title": "C1  LLM only"},
     {"code": "C2", "condition": "rag_noaug_base", "title": "C2  RAG"},
@@ -88,6 +95,29 @@ CUSTOM15_EXPERIMENTS = [
     {"code": "C5", "condition": "rag_aug_optimized", "title": "C5  RAG + PO + DA"},
 ]
 CUSTOM15_N = 1998
+CJK_FONT = "Microsoft JhengHei"
+
+
+def load_profile(name: str):
+    """custom_eval_common is imported lazily so that ``--set paper`` stays standalone."""
+    import sys
+
+    src = str(Path(__file__).resolve().parent)
+    if src not in sys.path:
+        sys.path.insert(0, src)
+    import custom_eval_common as E
+
+    return E, E.get_profile(name)
+
+
+def custom_experiments(profile) -> list[dict[str, Any]]:
+    """v1 keeps the original panel titles; other profiles use code + display name."""
+    if profile.name == "v1":
+        if [e["condition"] for e in CUSTOM15_EXPERIMENTS] != list(profile.codes.values()):
+            raise ValueError("CUSTOM15_EXPERIMENTS no longer matches the v1 profile")
+        return CUSTOM15_EXPERIMENTS
+    return [{"code": code, "condition": cond, "title": profile.label(code)}
+            for code, cond in profile.codes.items()]
 
 
 def sha256_file(path: Path) -> str:
@@ -196,21 +226,21 @@ def plot_one(experiment: dict[str, Any], root: Path, output_dir: Path, show: boo
     }
 
 
-def load_custom15(root: Path) -> list[tuple[dict[str, Any], Path, list[str], list[str]]]:
+def load_custom15(profile) -> list[tuple[dict[str, Any], Path, list[str], list[str]]]:
     """Read C1-C5 predictions and check they are the same 1,998 test samples."""
 
     loaded = []
     reference_ids: list[str] | None = None
-    for experiment in CUSTOM15_EXPERIMENTS:
-        path = root / CUSTOM15_DIR / f"predictions_{experiment['condition']}.jsonl"
+    for experiment in custom_experiments(profile):
+        path = profile.in_dir / f"predictions_{experiment['condition']}.jsonl"
         if not path.is_file():
             raise FileNotFoundError(f"Prediction file not found: {path}")
         records = read_jsonl(path)
         if len(records) != CUSTOM15_N:
             raise ValueError(f"{path} has {len(records)} records, expected {CUSTOM15_N}")
-        if any(r.get("experiment") != "CUSTOM_PROMPT_EVAL" or
+        if any(r.get("experiment") != profile.experiment or
                r.get("condition") != experiment["condition"] for r in records):
-            raise ValueError(f"{path} is not a CUSTOM_PROMPT_EVAL/{experiment['condition']} file")
+            raise ValueError(f"{path} is not a {profile.experiment}/{experiment['condition']} file")
         records.sort(key=lambda r: str(r["id"]))
         ids = [str(r["id"]) for r in records]
         if reference_ids is None:
@@ -224,7 +254,7 @@ def load_custom15(root: Path) -> list[tuple[dict[str, Any], Path, list[str], lis
     return loaded
 
 
-def plot_custom15(root: Path, output_dir: Path, show: bool) -> dict[str, Any]:
+def plot_custom15(root: Path, output_dir: Path, show: bool, profile) -> dict[str, Any]:
     """Five row-normalized confusion matrices side by side on a shared 0-1 scale.
 
     Rows are true labels (4 classes); columns are predicted labels including
@@ -232,7 +262,7 @@ def plot_custom15(root: Path, output_dir: Path, show: bool) -> dict[str, Any]:
     invalid-response rate.
     """
 
-    loaded = load_custom15(root)
+    loaded = load_custom15(profile)
     summaries = []
     normalized = []
     for experiment, path, y_true, y_pred in loaded:
@@ -264,8 +294,16 @@ def plot_custom15(root: Path, output_dir: Path, show: bool) -> dict[str, Any]:
             "counts_csv": f"{stem}_counts.csv",
             "rownorm_csv": f"{stem}_rownorm.csv",
         })
+        if profile.name != "v1":
+            summaries[-1].update({"display_name": profile.display(experiment["code"]),
+                                  "title": experiment["title"]})
 
     plt.rcParams.update({"font.size": 11})
+    if profile.name != "v1":
+        # Display names are Chinese; fail rather than render tofu boxes.
+        if CJK_FONT not in {f.name for f in font_manager.fontManager.ttflist}:
+            raise RuntimeError(f"CJK font {CJK_FONT!r} not found; cannot draw the panel titles")
+        plt.rcParams.update({"font.family": [CJK_FONT, "DejaVu Sans"]})
     fig, axes = plt.subplots(1, len(loaded), figsize=(4.2 * len(loaded), 4.6), sharey=True,
                              constrained_layout=True)
     image = None
@@ -291,8 +329,9 @@ def plot_custom15(root: Path, output_dir: Path, show: bool) -> dict[str, Any]:
 
     manifest = {
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
-        "script": "src/plot_paper_confusion_matrices.py --set custom15",
-        "source_experiment": "src/15_nested_custom_prompt_eval.py (CUSTOM_PROMPT_EVAL)",
+        "script": "src/plot_paper_confusion_matrices.py --set custom15"
+                  + ("" if profile.name == "v1" else f" --profile {profile.name}"),
+        "source_experiment": f"{profile.source_script} ({profile.experiment})",
         "plot_method": {
             "normalization": "row (each true-label row sums to 1)",
             "color_scale": "Blues, shared vmin=0, vmax=1, one colorbar",
@@ -304,6 +343,9 @@ def plot_custom15(root: Path, output_dir: Path, show: bool) -> dict[str, Any]:
         },
         "experiments": summaries,
     }
+    if profile.name != "v1":
+        manifest.update({"profile": profile.name, "top_k": profile.top_k,
+                         "panel_title_font": CJK_FONT})
     (output_dir / "plot_manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
     )
@@ -323,7 +365,8 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=None,
         help="Output directory (default: runs/PAPER_CONFUSION_MATRICES for --set paper, "
-             "runs/NESTED_70_10_20_INCREMENTAL/CUSTOM_PROMPT_EVAL/figures for --set custom15)",
+             "MAIN_EVAL_AUGV2/figures for --set custom15 --profile v2; required for "
+             "--profile v1, whose CUSTOM_PROMPT_EVAL/figures is frozen)",
     )
     parser.add_argument(
         "--set",
@@ -331,7 +374,13 @@ def parse_args() -> argparse.Namespace:
         choices=["paper", "custom15"],
         default="paper",
         help="paper: the PAPER_* runs (original per-figure count plots); "
-             "custom15: 15_ C1-C5 as one row-normalized five-panel figure",
+             "custom15: main-experiment C1-C5 as one row-normalized five-panel figure",
+    )
+    parser.add_argument(
+        "--profile",
+        choices=["v1", "v2"],
+        default="v1",
+        help="--set custom15 only: v1 = 15_ (CUSTOM_PROMPT_EVAL), v2 = 27_ (MAIN_EVAL_AUGV2)",
     )
     parser.add_argument(
         "--show",
@@ -345,9 +394,19 @@ def main() -> None:
     args = parse_args()
     root = args.root.resolve()
     if args.experiment_set == "custom15":
-        output_dir = (args.output_dir or root / CUSTOM15_DIR / "figures").resolve()
+        E, profile = load_profile(args.profile)
+        frozen = E.V1_OUT.resolve()
+        if args.output_dir is None:
+            if profile.name == "v1":
+                raise SystemExit("v1 (CUSTOM_PROMPT_EVAL/) is a frozen record: "
+                                 "--profile v1 requires --output-dir")
+            output_dir = (profile.in_dir / "figures").resolve()
+        else:
+            output_dir = args.output_dir.resolve()
+        if profile.name == "v1" and (output_dir == frozen or frozen in output_dir.parents):
+            raise SystemExit(f"--output-dir {output_dir} is inside the frozen v1 directory {frozen}")
         output_dir.mkdir(parents=True, exist_ok=True)
-        result = plot_custom15(root, output_dir, args.show)
+        result = plot_custom15(root, output_dir, args.show, profile)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return
 

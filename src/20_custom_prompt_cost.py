@@ -1,14 +1,17 @@
-"""15_（CUSTOM_PROMPT_EVAL）的推論成本與延遲（issue #9，離線與檢索部分）。
+"""主實驗（v1：15_；v2：27_）的推論成本與延遲（issue #9，離線與檢索部分）。
 
 * cost_latency.csv：由逐筆預測的 elapsed_s、prompt_eval_count、eval_count 彙整
   （elapsed_s 是 Ollama chat 呼叫的牆鐘時間，不含檢索）。
 * --measure-retrieval：以和實驗相同的設定（12_ RebuildRagIndex，CPU embedder）
-  從 test 以 seed 42 抽樣，分別計時 query embedding 與 FAISS 搜尋，輸出 retrieval_latency.json。
+  從 test 以 seed 42 抽樣，分別計時 query embedding 與 FAISS 搜尋（取前 k 篇，k 依 profile），
+  輸出 retrieval_latency.json。語料依 profile：v1 為 noaug／aug，v2 為 noaug／aug_v2。
 
 VRAM 峰值需要 Ollama 實際推論時以 nvidia-smi 量測，不在本腳本範圍（與確定性驗證一起跑）。
+輸出到 --out-dir（v2 預設 MAIN_EVAL_AUGV2/；v1 的 CUSTOM_PROMPT_EVAL/ 是凍結的存檔）。
 
 用法：
-    python 20_custom_prompt_cost.py [--measure-retrieval] [--n 200]
+    python 20_custom_prompt_cost.py --profile v2 [--measure-retrieval] [--n 200]
+    python 20_custom_prompt_cost.py --profile v1 --out-dir 目錄
 """
 from __future__ import annotations
 
@@ -35,19 +38,21 @@ def describe(values: np.ndarray, prefix: str) -> dict:
     }
 
 
-def cost_table(preds: dict) -> pd.DataFrame:
+def cost_table(P: E.Profile, preds: dict) -> pd.DataFrame:
     rows = []
     for code, recs in preds.items():
         elapsed = np.array([r["elapsed_s"] for r in recs], dtype=float)
         prompt_tok = np.array([r["prompt_eval_count"] or 0 for r in recs], dtype=float)
         out_tok = np.array([r["eval_count"] or 0 for r in recs], dtype=float)
-        row = {"code": code, "condition": E.CODES[code], "n": len(recs),
+        row = {"code": code, "condition": P.condition(code), "n": len(recs),
                "llm_total_hours": float(elapsed.sum() / 3600)}
         row.update(describe(elapsed, "llm_latency_s"))
         row.update(describe(prompt_tok, "prompt_tokens"))
         row.update(describe(out_tok, "output_tokens"))
         row["total_tokens"] = int(prompt_tok.sum() + out_tok.sum())
         row["missing_token_counts"] = int(sum(r["prompt_eval_count"] is None for r in recs))
+        row["top_k"] = P.top_k if P.corpus(code) else None
+        row["display_name"] = P.display(code)
         rows.append(row)
     return pd.DataFrame(rows)
 
@@ -71,25 +76,29 @@ def hardware() -> dict:
     return info
 
 
-def measure_retrieval(n: int) -> dict:
+def measure_retrieval(P: E.Profile, n: int) -> dict:
     R = C.load_module("12_rebuild_experiment")
     test = E.load_test()
     rng = np.random.default_rng(E.SEED)
     sample = test.iloc[sorted(rng.choice(len(test), n, replace=False))]
     texts = [str(s) for s in sample["statement"]]
-    out = {"n_queries": n, "seed": E.SEED, "embedder_device": "cpu（與 15_ 實驗相同）",
-           "procedure": "逐筆查詢（batch=1，與 15_ 相同）；先暖機 5 筆不計時",
+    k = P.top_k
+    runner = Path(P.source_script).name[:3]
+    out = {"n_queries": n, "seed": E.SEED, "embedder_device": f"cpu（與 {runner} 實驗相同）",
+           "procedure": f"逐筆查詢（batch=1，與 {runner} 相同）；先暖機 5 筆不計時",
            "hardware": hardware(), "corpora": {}}
-    for name in ("noaug", "aug"):
+    if P.name != "v1":
+        out["top_k"] = k
+    for name in P.corpora:
         rag = R.RebuildRagIndex(E.RUN, name)
         for t in texts[:5]:
-            rag.index.search(rag.encode([t]), 1)
+            rag.index.search(rag.encode([t]), k)
         embed_s, search_s = [], []
         for t in texts:
             t0 = time.perf_counter()
             vec = rag.encode([t])
             t1 = time.perf_counter()
-            rag.index.search(vec, 1)
+            rag.index.search(vec, k)
             t2 = time.perf_counter()
             embed_s.append(t1 - t0)
             search_s.append(t2 - t1)
@@ -111,29 +120,43 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--measure-retrieval", action="store_true")
     ap.add_argument("--n", type=int, default=200)
+    E.add_profile_args(ap)
     args = ap.parse_args()
+    P, out = E.resolve(args)
 
-    preds = E.load_predictions()
-    table = cost_table(preds)
-    table.to_csv(E.OUT / "cost_latency.csv", index=False, encoding="utf-8-sig")
-    C.log(f"已寫入 {E.OUT / 'cost_latency.csv'}")
+    preds = E.load_predictions(P)
+    table = cost_table(P, preds)
+    table.to_csv(out / "cost_latency.csv", index=False, encoding="utf-8-sig")
+    C.log(f"已寫入 {out / 'cost_latency.csv'}")
     C.log(table[["code", "llm_latency_s_median", "llm_latency_s_p95", "prompt_tokens_median",
                  "output_tokens_median", "llm_total_hours"]].to_string(index=False))
 
     if args.measure_retrieval:
-        result = measure_retrieval(args.n)
-        experiment_manifest = C.load_json(E.OUT / "custom_prompt_eval_manifest.json")
+        result = measure_retrieval(P, args.n)
         main_manifest = C.load_json(C.RUNS / "MAIN" / "run_manifest.json")
-        result["experiment_environment"] = {
-            "custom_prompt_eval_platform": experiment_manifest.get("platform"),
-            "custom_prompt_eval_python": experiment_manifest.get("python"),
-            "custom_prompt_eval_model": experiment_manifest.get("model"),
-            "MAIN_hardware": main_manifest.get("hardware"),
-            "note": "15_ 的 manifest 只記錄 platform 與 python，沒有 GPU 欄位；"
-                    "platform 字串與 MAIN 相同，硬體欄位引用 MAIN（RTX 2070 8 GB、CUDA 12.6）。",
-        }
-        C.save_json(E.OUT / "retrieval_latency.json", result)
-        C.log(f"已寫入 {E.OUT / 'retrieval_latency.json'}")
+        if P.name == "v1":
+            experiment_manifest = P.manifest
+            result["experiment_environment"] = {
+                "custom_prompt_eval_platform": experiment_manifest.get("platform"),
+                "custom_prompt_eval_python": experiment_manifest.get("python"),
+                "custom_prompt_eval_model": experiment_manifest.get("model"),
+                "MAIN_hardware": main_manifest.get("hardware"),
+                "note": "15_ 的 manifest 只記錄 platform 與 python，沒有 GPU 欄位；"
+                        "platform 字串與 MAIN 相同，硬體欄位引用 MAIN（RTX 2070 8 GB、CUDA 12.6）。",
+            }
+        else:
+            result["experiment_environment"] = {
+                "experiment": P.experiment,
+                "platform": P.manifest.get("platform"),
+                "python": P.manifest.get("python"),
+                "ollama_version": P.manifest.get("ollama_version"),
+                "model": P.manifest.get("model"),
+                "MAIN_hardware": main_manifest.get("hardware"),
+                "note": "27_ 的 manifest 沒有 GPU 欄位；硬體欄位引用 MAIN（RTX 2070 8 GB、CUDA 12.6）。",
+            }
+        result["profile"] = P.name
+        C.save_json(out / "retrieval_latency.json", result)
+        C.log(f"已寫入 {out / 'retrieval_latency.json'}")
 
 
 if __name__ == "__main__":
