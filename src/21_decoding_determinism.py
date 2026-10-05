@@ -265,6 +265,38 @@ def rate(records: list[dict], key: str) -> dict:
     return {"k": k, "n": n, "rate": k / n if n else float("nan"), "wilson95": [lo, hi]}
 
 
+def check_cached(P: E.Profile, preds: dict, sample: pd.DataFrame, out: Path, passes: int) -> None:
+    """既有的重跑紀錄必須屬於這個 profile 與現行輸入，否則停止（不能拿來續跑或彙總）。
+
+    --out-dir 可以指到別的 profile 用過的目錄，主實驗的預測也可能重產；只比對 id 會把
+    不相干的紀錄當成已完成。逐筆核對代號、條件、pass、top_k（k > 1 之前的紀錄沒有此欄，
+    視為 1），以及存檔的 raw 回覆、預測與檢索 id 是否與現行預測檔相同。
+    """
+    ids = set(sample["id"])
+    for code in CODES:
+        by_id = {str(r["id"]): r for r in preds[code]}
+        for pass_no in range(1, passes + 1):
+            path = rerun_path(out, code, pass_no)
+            for r in C.read_jsonl(path):
+                orig = by_id.get(r["id"])
+                problems = [name for name, ok in (
+                    ("id 不在抽樣中", r["id"] in ids and orig is not None),
+                    ("code", r.get("code") == code),
+                    ("pass", r.get("pass") == pass_no),
+                    ("condition", r.get("condition") == P.condition(code)),
+                    ("top_k", r.get("top_k", 1) == P.top_k),
+                    ("orig_raw_response", orig is not None
+                     and r.get("orig_raw_response") == orig["raw_response"]),
+                    ("orig_pred_label_id", orig is not None
+                     and r.get("orig_pred_label_id") == orig["pred_label_id"]),
+                    ("orig_retrieved_ids", orig is not None
+                     and r.get("orig_retrieved_ids") == orig["retrieved_ids"]),
+                ) if not ok]
+                if problems:
+                    C.die(f"{path} 的 {r['id']} 與 profile {P.name} 的現行輸入不符（"
+                          + "、".join(problems) + "）：請換 --out-dir 或刪除舊結果")
+
+
 def load_pass(out: Path, code: str, pass_no: int, sample: pd.DataFrame) -> list[dict]:
     path = rerun_path(out, code, pass_no)
     recs = list(C.read_jsonl(path))
@@ -357,6 +389,8 @@ def probe_cache_state(P: E.Profile, preds: dict, out: Path) -> dict:
     summary = C.load_json(out / "summary.json")
     if not summary:
         C.die("請先完成重跑（summary.json 不存在）")
+    if summary.get("profile", "v1") != P.name:     # 加入 profile 之前的 summary 都是 v1
+        C.die(f"{out / 'summary.json'} 屬於 profile {summary.get('profile', 'v1')}，不是 {P.name}")
     path = out / "cache_state_probe.jsonl"
     path.unlink(missing_ok=True)
     rows = []
@@ -430,6 +464,7 @@ def main() -> None:
               f"不同狀態輸出不同 {res['outputs_differ_across_states']}")
         return
     sample = stratified_sample(args.n, out)
+    check_cached(P, preds, sample, out, args.passes)
 
     # 全部重跑都已落地時只重算 summary：不卸載模型、不量 VRAM，也不新增 session 紀錄
     pending = any(len(C.done_ids(rerun_path(out, code, p))) < len(sample)
