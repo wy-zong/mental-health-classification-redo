@@ -1,0 +1,50 @@
+{
+  "helped": {
+    "n_v1": 372,
+    "n_v2": 439,
+    "n_both": 260,
+    "share_of_v1_still_in_v2": 0.6989247311827957
+  },
+  "hurt": {
+    "n_v1": 216,
+    "n_v2": 215,
+    "n_both": 90,
+    "share_of_v1_still_in_v2": 0.4166666666666667
+  },
+  "C4 Depression→INVALID": {
+    "n_v1": 61,
+    "n_v2": 22,
+    "n_both": 15,
+    "share_of_v1_still_in_v2": 0.2459016393442623
+  },
+  "C4 Normal→Anxiety": {
+    "n_v1": 58,
+    "n_v2": 90,
+    "n_both": 44,
+    "share_of_v1_still_in_v2": 0.7586206896551724
+  },
+  "C4 Depression→Anxiety": {
+    "n_v1": 58,
+    "n_v2": 63,
+    "n_both": 45,
+    "share_of_v1_still_in_v2": 0.7758620689655172
+  },
+  "C5 Depression→Anxiety": {
+    "n_v1": 70,
+    "n_v2": 74,
+    "n_both": 55,
+    "share_of_v1_still_in_v2": 0.7857142857142857
+  },
+  "C5 Normal→Anxiety": {
+    "n_v1": 66,
+    "n_v2": 101,
+    "n_both": 54,
+    "share_of_v1_still_in_v2": 0.8181818181818182
+  },
+  "C5 Depression→INVALID": {
+    "n_v1": 63,
+    "n_v2": 19,
+    "n_both": 14,
+    "share_of_v1_still_in_v2": 0.2222222222222222
+  }
+}
