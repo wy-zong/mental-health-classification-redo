@@ -1,0 +1,43 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "MAIN_EVAL_AUGV2",
+  "created_at": "2026-10-05 07:07:01+0800",
+  "rule": "All RAG conditions share one k. Choose the k in {1,3,5} with the highest mean val macro-F1 over the four RAG conditions (unrounded floats); only exact equality counts as a tie, and a tie takes the smaller k. k is never re-selected on test.",
+  "candidates": [
+    1,
+    3,
+    5
+  ],
+  "conditions": [
+    "rag_noaug_base",
+    "rag_augv2_base",
+    "rag_noaug_optimized",
+    "rag_augv2_optimized"
+  ],
+  "mean_macro_f1_by_k": {
+    "1": 0.7428604325093764,
+    "3": 0.7422665900213629,
+    "5": 0.7577668257381744
+  },
+  "best_mean_macro_f1": 0.7577668257381744,
+  "tied_k": [
+    5
+  ],
+  "tie": false,
+  "selected_k": 5,
+  "val_split_sha256": "c12da324facc457bd2ee2f298d11b70a3d87f85cd77a217078f28b4fcf0171f0",
+  "metrics_sha256": {
+    "k1/metrics_rag_noaug_base.json": "1f0c91f7adacee9b579a5869fcd63252d32cee9c11982c6223d1d1b00d6abe0a",
+    "k1/metrics_rag_augv2_base.json": "d0afa7e3b9693fb2a094a93cb51239951260f73b4b33c2ec871066970ad9d547",
+    "k1/metrics_rag_noaug_optimized.json": "aac2b84ed476223b7b05e925bbcd1b731930ef5a000fba00918c21c509e2d817",
+    "k1/metrics_rag_augv2_optimized.json": "11b8321c075f7515e29c8c4f80bd30d3a1848d55812b7a377dc67b92b7d31e59",
+    "k3/metrics_rag_noaug_base.json": "d01ca089213d54b273a7425d9d011962712725dc5e9cf37b2a0340acf9e7f2a4",
+    "k3/metrics_rag_augv2_base.json": "d50bfc9af43d0d3559ec3269e873960a47f07be17595397c68f428c70624f06f",
+    "k3/metrics_rag_noaug_optimized.json": "eb705536d365a5d7f6d6e665d4887d3c80cc0cc95a4ac9a3a8efcfe80fd0c185",
+    "k3/metrics_rag_augv2_optimized.json": "629028844e078b1c1129b8b0152bbf380836270d3d8297be30448d2f56740c02",
+    "k5/metrics_rag_noaug_base.json": "58873592d4cfb9fd70ce3157eed0af093a397d43bf0d2a625a4c7519da2b40f3",
+    "k5/metrics_rag_augv2_base.json": "15faab07fd0bc38e9e2985992ec4f3866b677db00294f9bdd78335608115b45f",
+    "k5/metrics_rag_noaug_optimized.json": "d8cb7017ecb6ab2e3d0565c4d97f7de1c0df34c52bfc40a99759406e1a19f653",
+    "k5/metrics_rag_augv2_optimized.json": "fd9f8b17eac9124e583e2c4a8a5097966cddecaa5f594fedb0672b1b899af038"
+  }
+}

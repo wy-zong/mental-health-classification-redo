@@ -1,0 +1,5 @@
+﻿true_label,Normal,Depression,Anxiety,Bipolar,INVALID
+Normal,165,12,48,15,10
+Depression,8,170,20,36,16
+Anxiety,4,8,226,11,1
+Bipolar,6,21,19,203,1

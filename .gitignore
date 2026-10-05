@@ -19,3 +19,7 @@ runs/*/AUGMENT_V2/checks.jsonl
 runs/*/AUGMENT_V2/cache/
 runs/*/AUGMENT_V2/_smoke/
 tmp_*.log
+
+# 27_main_eval_augv2.py 的 smoke 輸出
+runs/*/MAIN_EVAL_AUGV2/_smoke/
+runs/*/TOPK_VAL_AUGV2/_smoke/

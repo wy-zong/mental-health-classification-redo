@@ -1,0 +1,23 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "MAIN_EVAL_AUGV2",
+  "n_sampled": 200,
+  "seed": 42,
+  "top_k": 1,
+  "corpus": "noaug",
+  "conditions": {
+    "rag_noaug_base": {
+      "n_checked": 200,
+      "n_identical": 200,
+      "max_similarity_abs_diff": 0.0,
+      "mismatches": []
+    },
+    "rag_noaug_optimized": {
+      "n_checked": 200,
+      "n_identical": 200,
+      "max_similarity_abs_diff": 0.0,
+      "mismatches": []
+    }
+  },
+  "passed": true
+}
