@@ -24,10 +24,11 @@
   --parity-check N                        不呼叫 LLM：k = 1 時與 15_ rendered prompt 逐字對照
   --retrieval-diagnostic                  不呼叫 LLM：val 上兩種語料 k = 1..8 的檢索結構
   --select-k                              彙總 val 掃描，依規則選 k，寫 selected_k.json
-  --compare-v1                            test 的 v1→v2 對照表
+  --split test --top-k K --sensitivity    test 上以非選定的 k 跑完整五組（MAIN_EVAL_AUGV2_K{K}/）
+  --compare-v1 [--top-k K --sensitivity]  test 的 v1→v2 對照表
   --rescore --split S --top-k K           不呼叫 LLM：從既有逐筆預測重算指標
 
-輸出：runs/NESTED_70_10_20_INCREMENTAL/TOPK_VAL_AUGV2/、MAIN_EVAL_AUGV2/
+輸出：runs/NESTED_70_10_20_INCREMENTAL/TOPK_VAL_AUGV2/、MAIN_EVAL_AUGV2/、MAIN_EVAL_AUGV2_K{k}/
 """
 from __future__ import annotations
 
@@ -272,8 +273,16 @@ def build_prompt(spec: dict, text: str, rag, k: int):
 
 # ---------------------------------------------------------------- 評估
 
-def out_dir(split: str, k: int, smoke: int | None) -> Path:
-    base = VAL_OUT / f"k{k}" if split == "val" else TEST_OUT
+def sensitivity_dir(k: int) -> Path:
+    """test 上以非選定 k 跑的完整五組（k 敏感度分析），與主結果分開存放。"""
+    return BASE_OUT / f"MAIN_EVAL_AUGV2_K{k}"
+
+
+def out_dir(split: str, k: int, smoke: int | None, sensitivity: bool = False) -> Path:
+    if split == "val":
+        base = VAL_OUT / f"k{k}"
+    else:
+        base = sensitivity_dir(k) if sensitivity else TEST_OUT
     if smoke:
         base = (VAL_OUT if split == "val" else TEST_OUT) / "_smoke" / f"{split}_k{k}"
     return base
@@ -464,8 +473,14 @@ def save_paired(out: Path, records_by_condition: dict[str, list[dict]]) -> None:
         out / "paired_comparison.csv", index=False, encoding="utf-8-sig")
 
 
-def k_source(split: str, k: int, smoke: int | None) -> dict:
-    """test 的 k 必須來自 #3 的 selected_k.json；val 的 k 是掃描候選。"""
+def k_source(split: str, k: int, smoke: int | None, sensitivity: bool = False) -> dict:
+    """test 的 k 必須來自 #3 的 selected_k.json；val 的 k 是掃描候選。
+
+    --sensitivity：test 上刻意以非選定的 k 跑完整五組，作為 k 的敏感度分析，
+    輸出到 MAIN_EVAL_AUGV2_K{k}/，不取代主結果，也不回頭影響選 k。
+    """
+    if sensitivity and split != "test":
+        C.die("--sensitivity 只用於 test")
     if split == "val":
         if k not in K_CANDIDATES and not smoke:
             C.die(f"val 掃描的 k 必須是 {K_CANDIDATES} 之一")
@@ -475,8 +490,18 @@ def k_source(split: str, k: int, smoke: int | None) -> dict:
     selected = C.load_json(SELECTED_K)
     if not selected:
         C.die(f"尚未在 val 上選定 k：{SELECTED_K}（先跑 --select-k）")
+    if sensitivity:
+        if selected["selected_k"] == k:
+            C.die(f"k = {k} 就是選定的 k，主結果請不加 --sensitivity 執行")
+        return {
+            "role": "test_sensitivity_not_selected",
+            "selected_k": selected["selected_k"],
+            "selected_k_path": str(SELECTED_K.relative_to(BASE_OUT)).replace("\\", "/"),
+            "selected_k_sha256": C.sha256_file(SELECTED_K),
+        }
     if selected["selected_k"] != k:
-        C.die(f"--top-k {k} 與 selected_k.json 的 k = {selected['selected_k']} 不同")
+        C.die(f"--top-k {k} 與 selected_k.json 的 k = {selected['selected_k']} 不同"
+              "（敏感度分析請加 --sensitivity）")
     return {
         "role": "selected_on_val",
         "selected_k_path": str(SELECTED_K.relative_to(BASE_OUT)).replace("\\", "/"),
@@ -516,7 +541,8 @@ def write_manifest(out: Path, split: str, df: pd.DataFrame, k: int, conditions: 
     })
 
 
-def run_eval(split: str, k: int, condition: str, smoke: int | None) -> None:
+def run_eval(split: str, k: int, condition: str, smoke: int | None,
+             sensitivity: bool = False) -> None:
     if k < 1:
         C.die("--top-k 必須 ≥ 1")
     pool = RAG_CONDITIONS if split == "val" else CONDITIONS
@@ -527,11 +553,11 @@ def run_eval(split: str, k: int, condition: str, smoke: int | None) -> None:
     df = load_split(split)
     if smoke:
         df = df.head(smoke).reset_index(drop=True)
-    k_src = k_source(split, k, smoke)
+    k_src = k_source(split, k, smoke, sensitivity)
     prompts = check_prompts()
     model = check_model()
     corpora = {name: corpus_info(name) for name in CORPORA}
-    out = out_dir(split, k, smoke)
+    out = out_dir(split, k, smoke, sensitivity)
     out.mkdir(parents=True, exist_ok=True)
     write_manifest(out, split, df, k, pool, prompts, model, corpora, k_src, smoke)
     C.log(f"{split} k={k} → {out}（{len(df):,} 筆，Ollama {model.get('ollama_version')}）")
@@ -567,11 +593,11 @@ def run_eval(split: str, k: int, condition: str, smoke: int | None) -> None:
 
 # ---------------------------------------------------------------- 不呼叫 LLM 的檢查
 
-def rescore(split: str, k: int) -> None:
+def rescore(split: str, k: int, sensitivity: bool = False) -> None:
     """從既有逐筆預測重算 metrics／confusion／summary；不呼叫 LLM，不改 manifest 與逐筆紀錄。"""
     pool = RAG_CONDITIONS if split == "val" else CONDITIONS
     df = load_split(split)
-    out = out_dir(split, k, None)
+    out = out_dir(split, k, None, sensitivity)
     for cond in pool:
         records = M.check_complete(out / f"predictions_{cond[0]}.jsonl", df)
         save_metrics(out, split, k, cond, records)
@@ -743,10 +769,14 @@ def select_k() -> None:
     print(table.to_string(index=False, float_format=lambda v: f"{v:.4f}"))
 
 
-def compare_v1() -> None:
-    """test 上 v1（15_）與 v2 的對照；v1 的 macro-F1 以同一定義從逐筆預測重算。"""
+def compare_v1(sensitivity_k: int | None = None) -> None:
+    """test 上 v1（15_）與 v2 的對照；v1 的 macro-F1 以同一定義從逐筆預測重算。
+
+    sensitivity_k 指定時，對照的是 MAIN_EVAL_AUGV2_K{k}/ 的敏感度分析結果。
+    """
     test = load_split("test")
-    completion = C.load_json(TEST_OUT / "completion.json")
+    out = sensitivity_dir(sensitivity_k) if sensitivity_k else TEST_OUT
+    completion = C.load_json(out / "completion.json")
     if not completion or completion.get("smoke_n"):
         C.die("test 五組尚未完成")
     v1_metrics_note = []
@@ -762,7 +792,7 @@ def compare_v1() -> None:
                 or abs(v1["invalid_rate"] - v1_saved["invalid_rate"]) > 1e-12):
             C.die(f"v1 {v1_cond} 重算的 accuracy／invalid rate 與 15_ metrics 不同")
         v1_metrics_note.append(v1_cond)
-        v2_records = M.check_complete(TEST_OUT / f"predictions_{condition}.jsonl", test)
+        v2_records = M.check_complete(out / f"predictions_{condition}.jsonl", test)
         v2 = score(v2_records)
         v1_pred = {str(r["id"]): r["pred_label"] for r in v1_records}
         agree = np.mean([v1_pred[str(r["id"])] == r["pred_label"] for r in v2_records])
@@ -780,7 +810,7 @@ def compare_v1() -> None:
             "pred_agreement_v1_v2": float(agree),
         })
     table = pd.DataFrame(rows)
-    table.to_csv(TEST_OUT / "v1_v2_comparison.csv", index=False, encoding="utf-8-sig")
+    table.to_csv(out / "v1_v2_comparison.csv", index=False, encoding="utf-8-sig")
     C.log(f"v1 重算檢查通過：{', '.join(v1_metrics_note)}")
     print(table.to_string(index=False, float_format=lambda v: f"{v:.4f}"))
 
@@ -793,6 +823,8 @@ def main() -> None:
     parser.add_argument("--top-k", type=int)
     parser.add_argument("--condition", choices=["all"] + [c[0] for c in CONDITIONS], default="all")
     parser.add_argument("--smoke", type=int, metavar="N")
+    parser.add_argument("--sensitivity", action="store_true",
+                        help="test 上以非選定的 k 跑完整五組（輸出 MAIN_EVAL_AUGV2_K{k}/）")
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--parity-check", type=int, metavar="N")
     mode.add_argument("--retrieval-diagnostic", action="store_true")
@@ -808,16 +840,16 @@ def main() -> None:
     elif args.select_k:
         select_k()
     elif args.compare_v1:
-        compare_v1()
+        compare_v1(args.top_k if args.sensitivity else None)
     elif args.rescore:
         if args.split is None or args.top_k is None:
             parser.error("--rescore 需要 --split 與 --top-k")
-        rescore(args.split, args.top_k)
+        rescore(args.split, args.top_k, args.sensitivity)
     else:
         if args.split is None or args.top_k is None:
             parser.error("評估需要 --split 與 --top-k")
         C.single_instance("27_main_eval_augv2")
-        run_eval(args.split, args.top_k, args.condition, args.smoke)
+        run_eval(args.split, args.top_k, args.condition, args.smoke, args.sensitivity)
 
 
 if __name__ == "__main__":
