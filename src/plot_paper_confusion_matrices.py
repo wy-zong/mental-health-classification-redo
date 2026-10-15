@@ -2,14 +2,19 @@
 
 ``--set paper`` (default) reproduces the PAPER_* figures below unchanged;
 ``--set custom15`` draws the main-experiment C1-C5 results as one
-row-normalized five-panel figure (see ``plot_custom15``).  ``--profile`` picks
-the result set (see ``custom_eval_common``):
+row-normalized five-panel figure (see ``plot_custom15``);
+``--set custom15_paper`` draws C1-C5 as five separate count figures in the
+format of the paper's Fig. 5-10 (see ``plot_custom15_paper``).  ``--profile``
+picks the result set (see ``custom_eval_common``):
 
 * ``v1``: 15_ (CUSTOM_PROMPT_EVAL).  Its figures are a frozen record, so
   ``--output-dir`` is required and may not point inside CUSTOM_PROMPT_EVAL/.
 * ``v2``: 27_ (MAIN_EVAL_AUGV2, aug_v2 corpus, selected top-k).  Output defaults
   to MAIN_EVAL_AUGV2/figures/.  Panel titles are "code + display name" (the same
   code means a different condition in v1 and v2), drawn with a CJK font.
+  With ``--set custom15_paper``, ``--in-dir`` points v2 at another full 27_ test
+  run of the same conditions, e.g. MAIN_EVAL_AUGV2_K1 (top-k = 1); output then
+  defaults to <in-dir>/figures/.
 
 This is intentionally a standalone plotting program.  It reads the immutable
 prediction JSONL files produced by the experiment runners and does not call the
@@ -34,6 +39,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import dataclasses
 import hashlib
 import json
 from datetime import datetime, timezone
@@ -97,6 +103,28 @@ CUSTOM15_EXPERIMENTS = [
 CUSTOM15_N = 1998
 CJK_FONT = "Microsoft JhengHei"
 
+# The paper's Fig. 5-7, 9, 10 were drawn by the original project's
+# test.py::evaluate_and_plot_confusion_matrix: these rcParams, an 8 x 6 inch
+# ConfusionMatrixDisplay of the four valid labels only (empty or invalid
+# responses fall outside every column), integer counts, horizontal tick labels,
+# and the matplotlib default dpi.  Titles are the paper's figure titles.
+PAPER_STYLE_RC = {
+    "font.size": 14,
+    "axes.titlesize": 18,
+    "axes.labelsize": 16,
+    "xtick.labelsize": 14,
+    "ytick.labelsize": 14,
+    "legend.fontsize": 14,
+    "figure.titlesize": 20,
+}
+PAPER_STYLE_TITLES = {
+    "C1": "Only Llama",                                   # Fig. 5
+    "C2": "RAG",                                          # Fig. 6
+    "C3": "RAG with Data Augmented",                      # Fig. 7
+    "C4": "RAG(After Optimization)",                      # Fig. 9
+    "C5": "RAG with Data Augmented(After Optimization)",  # Fig. 10
+}
+
 
 def load_profile(name: str):
     """custom_eval_common is imported lazily so that ``--set paper`` stays standalone."""
@@ -108,6 +136,27 @@ def load_profile(name: str):
     import custom_eval_common as E
 
     return E, E.get_profile(name)
+
+
+def with_in_dir(E, profile, in_dir: Path):
+    """The v2 profile re-pointed at another full 27_ test run of the same conditions."""
+    if profile.name != "v2":
+        raise SystemExit("--in-dir is only supported with --profile v2")
+    path = in_dir / "manifest.json"
+    if not path.is_file():
+        raise SystemExit(f"manifest not found: {path}")
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    if manifest.get("experiment") != profile.experiment:
+        raise SystemExit(f"{path} is not a {profile.experiment} run")
+    if manifest["split"]["name"] != "test" or manifest.get("smoke_n") is not None:
+        raise SystemExit(f"{path} is not a full test run")
+    if manifest["split"]["sha256"] != profile.manifest["split"]["sha256"]:
+        raise SystemExit(f"{path} uses a different test split")
+    if manifest["conditions"] != profile.manifest["conditions"]:
+        raise SystemExit(f"{path} conditions differ from the v2 profile")
+    top_k = int(manifest["top_k"])
+    return dataclasses.replace(profile, in_dir=in_dir, top_k=top_k, manifest=manifest,
+                               descriptions=E.v2_descriptions(top_k))
 
 
 def custom_experiments(profile) -> list[dict[str, Any]]:
@@ -352,6 +401,89 @@ def plot_custom15(root: Path, output_dir: Path, show: bool, profile) -> dict[str
     return {"output_dir": str(output_dir), "experiments": summaries}
 
 
+def plot_custom15_paper(root: Path, output_dir: Path, show: bool, profile,
+                        command: str) -> dict[str, Any]:
+    """C1-C5 as five separate count figures in the paper's Fig. 5-10 format.
+
+    As in the paper, only the four valid labels are drawn, so invalid responses
+    appear in no column and a row sums to the class size minus its invalid count;
+    the manifest records those counts per class.
+    """
+
+    loaded = load_custom15(profile)
+    summaries = []
+    with plt.rc_context(PAPER_STYLE_RC):
+        for experiment, path, y_true, y_pred in loaded:
+            code, condition = experiment["code"], experiment["condition"]
+            title = PAPER_STYLE_TITLES[code]
+            cm = confusion_matrix(y_true, y_pred, labels=VALID_LABELS)
+
+            stem = f"confusion_paper_{code}_{condition}"
+            counts = pd.DataFrame(cm, index=VALID_LABELS, columns=VALID_LABELS)
+            counts.index.name = "True Label"
+            counts.to_csv(output_dir / f"{stem}.csv", encoding="utf-8-sig")
+
+            plt.figure(figsize=(8, 6))
+            disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=VALID_LABELS)
+            disp.plot(cmap="Blues", values_format="d", ax=plt.gca())
+            plt.title(title)
+            plt.xlabel("Predicted Label")
+            plt.ylabel("True Label")
+            plt.tight_layout()
+            plt.savefig(output_dir / f"{stem}.png", bbox_inches="tight")
+            if show:
+                plt.show()
+            plt.close()
+
+            invalid_by_class = {lab: int(sum(t == lab and p == "INVALID"
+                                             for t, p in zip(y_true, y_pred)))
+                                for lab in VALID_LABELS}
+            summaries.append({
+                "code": code,
+                "condition": condition,
+                "display_name": profile.display(code),
+                "title": title,
+                "prediction_file": str(path.relative_to(root)).replace("\\", "/"),
+                "prediction_file_sha256": sha256_file(path),
+                "n": len(y_true),
+                "strict_accuracy": float(accuracy_score(y_true, y_pred)),
+                "invalid": sum(invalid_by_class.values()),
+                "invalid_by_true_label": invalid_by_class,
+                "figure": f"{stem}.png",
+                "counts_csv": f"{stem}.csv",
+            })
+
+    manifest = {
+        "created_at_utc": datetime.now(timezone.utc).isoformat(),
+        "script": command,
+        "source_experiment": f"{profile.source_script} ({profile.in_dir.name})",
+        "profile": profile.name,
+        "top_k": profile.top_k,
+        "source_plot_function": "C:/Users/wuc120/Code/test.py::evaluate_and_plot_confusion_matrix",
+        "plot_method": {
+            "display": "sklearn.metrics.ConfusionMatrixDisplay",
+            "cmap": "Blues",
+            "values_format": "d",
+            "figure_size_inches": [8, 6],
+            "rcParams": PAPER_STYLE_RC,
+            "labels": VALID_LABELS,
+            "x_label": "Predicted Label",
+            "y_label": "True Label",
+            "x_tick_rotation": 0,
+            "dpi": "matplotlib default",
+            "titles": "paper Fig. 5, 6, 7, 9, 10 titles for C1-C5",
+            "invalid_policy": "Invalid responses are not drawn (four valid labels only, "
+                              "as in the paper); see invalid_by_true_label.",
+            "interactive_show": bool(show),
+        },
+        "experiments": summaries,
+    }
+    (output_dir / "plot_manifest_paper.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    return {"output_dir": str(output_dir), "experiments": summaries}
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -365,22 +497,31 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=None,
         help="Output directory (default: runs/PAPER_CONFUSION_MATRICES for --set paper, "
-             "MAIN_EVAL_AUGV2/figures for --set custom15 --profile v2; required for "
-             "--profile v1, whose CUSTOM_PROMPT_EVAL/figures is frozen)",
+             "<input dir>/figures for --set custom15/custom15_paper --profile v2; required "
+             "for --profile v1, whose CUSTOM_PROMPT_EVAL/figures is frozen)",
     )
     parser.add_argument(
         "--set",
         dest="experiment_set",
-        choices=["paper", "custom15"],
+        choices=["paper", "custom15", "custom15_paper"],
         default="paper",
         help="paper: the PAPER_* runs (original per-figure count plots); "
-             "custom15: main-experiment C1-C5 as one row-normalized five-panel figure",
+             "custom15: main-experiment C1-C5 as one row-normalized five-panel figure; "
+             "custom15_paper: C1-C5 as five count figures in the paper's Fig. 5-10 format",
     )
     parser.add_argument(
         "--profile",
         choices=["v1", "v2"],
         default="v1",
-        help="--set custom15 only: v1 = 15_ (CUSTOM_PROMPT_EVAL), v2 = 27_ (MAIN_EVAL_AUGV2)",
+        help="--set custom15/custom15_paper only: v1 = 15_ (CUSTOM_PROMPT_EVAL), "
+             "v2 = 27_ (MAIN_EVAL_AUGV2)",
+    )
+    parser.add_argument(
+        "--in-dir",
+        type=Path,
+        default=None,
+        help="--set custom15_paper --profile v2 only: another full 27_ test run of the same conditions, "
+             "e.g. runs/NESTED_70_10_20_INCREMENTAL/MAIN_EVAL_AUGV2_K1 (relative to --root)",
     )
     parser.add_argument(
         "--show",
@@ -393,8 +534,16 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     root = args.root.resolve()
-    if args.experiment_set == "custom15":
+    if args.experiment_set in ("custom15", "custom15_paper"):
         E, profile = load_profile(args.profile)
+        command = (f"src/plot_paper_confusion_matrices.py --set {args.experiment_set}"
+                   f" --profile {profile.name}")
+        if args.in_dir is not None:
+            if args.experiment_set != "custom15_paper":
+                raise SystemExit("--in-dir is only supported with --set custom15_paper")
+            in_dir = (root / args.in_dir).resolve()
+            profile = with_in_dir(E, profile, in_dir)
+            command += f" --in-dir {in_dir.relative_to(root).as_posix()}"
         frozen = E.V1_OUT.resolve()
         if args.output_dir is None:
             if profile.name == "v1":
@@ -406,7 +555,10 @@ def main() -> None:
         if profile.name == "v1" and (output_dir == frozen or frozen in output_dir.parents):
             raise SystemExit(f"--output-dir {output_dir} is inside the frozen v1 directory {frozen}")
         output_dir.mkdir(parents=True, exist_ok=True)
-        result = plot_custom15(root, output_dir, args.show, profile)
+        if args.experiment_set == "custom15_paper":
+            result = plot_custom15_paper(root, output_dir, args.show, profile, command)
+        else:
+            result = plot_custom15(root, output_dir, args.show, profile)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return
 
