@@ -2,13 +2,14 @@
 
 只讀兩邊已落地的輸出，不重算統計，也不呼叫 LLM：
 * v1：CUSTOM_PROMPT_EVAL/（凍結，唯讀）
-* v2：MAIN_EVAL_AUGV2/（17_、18_、23_ 以 --profile v2 產生）
+* v2：--profile v2＝MAIN_EVAL_AUGV2/（k = 5），--profile v2_k1＝MAIN_EVAL_AUGV2_K1/（k = 1）
+  （17_、18_、23_ 以同一個 --profile 產生）
 
 兩版的 C3／C5 條件 ID 不同（rag_aug_* vs rag_augv2_*），一律以代號 C1–C5 合併，
 配對比較以 first、second 合併；每列附兩版的條件 ID 與顯示名稱（兩版顯示名稱相同）。
 欄名慣例：<指標>_v1、<指標>_v2、delta_<指標>（v2 減 v1）。
 
-輸出到 --out-dir（預設 MAIN_EVAL_AUGV2/v1_v2_posthoc/）：
+輸出到 --out-dir（預設 v2 一側結果目錄下的 v1_v2_posthoc/）：
 
 統計（#7）
 * conditions.csv        各條件 accuracy、macro-F1、weighted-F1、invalid rate（含 CI）
@@ -35,7 +36,7 @@
 都必須等於來源檔的對應格。
 
 用法：
-    python 28_v1_v2_posthoc_compare.py [--out-dir 目錄]
+    python 28_v1_v2_posthoc_compare.py [--profile v2|v2_k1] [--out-dir 目錄]
 """
 from __future__ import annotations
 
@@ -52,8 +53,7 @@ import common as C  # noqa: E402
 import custom_eval_common as E  # noqa: E402
 
 V1 = E.get_profile("v1")
-V2 = E.get_profile("v2")
-DEFAULT_OUT = E.V2_OUT / "v1_v2_posthoc"
+V2 = E.get_profile("v2")                # main() 依 --profile 改為 v2_k1
 VERSIONS = (("v1", V1), ("v2", V2))
 INPUTS: dict[str, dict[str, str]] = {"v1": {}, "v2": {}}
 
@@ -399,9 +399,15 @@ def pair_list(df: pd.DataFrame, mask) -> list[str]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--out-dir", type=Path, default=DEFAULT_OUT)
+    ap.add_argument("--profile", choices=("v2", "v2_k1"), default="v2",
+                    help="v2 一側：v2＝k = 5（MAIN_EVAL_AUGV2/）；v2_k1＝k = 1（MAIN_EVAL_AUGV2_K1/）")
+    ap.add_argument("--out-dir", type=Path, default=None,
+                    help="預設為 v2 一側結果目錄下的 v1_v2_posthoc/")
     args = ap.parse_args()
-    out = Path(args.out_dir).resolve()
+    global V2, VERSIONS
+    V2 = E.get_profile(args.profile)
+    VERSIONS = (("v1", V1), ("v2", V2))
+    out = Path(args.out_dir or V2.in_dir / "v1_v2_posthoc").resolve()
     frozen = E.V1_OUT.resolve()
     if out == frozen or frozen in out.parents:
         C.die(f"--out-dir {out} 位於凍結的 v1 目錄 {frozen} 之內")
@@ -440,7 +446,7 @@ def main() -> None:
         "run": E.RUN,
         "script": "src/28_v1_v2_posthoc_compare.py",
         "issues": [7, 8, 10, 13],
-        "procedure": ("只讀 v1（CUSTOM_PROMPT_EVAL/，15_）與 v2（MAIN_EVAL_AUGV2/，27_）既有的 17_、"
+        "procedure": (f"只讀 v1（CUSTOM_PROMPT_EVAL/，15_）與 v2（{V2.in_dir.name}/，27_）既有的 17_、"
                       "18_、23_ 輸出，以代號 C1–C5（配對以 first、second）合併並列；不重算統計。"),
         "v1": {"experiment": V1.experiment, "top_k": V1.top_k, "corpora": list(V1.corpora)},
         "v2": {"experiment": V2.experiment, "top_k": V2.top_k, "corpora": list(V2.corpora)},

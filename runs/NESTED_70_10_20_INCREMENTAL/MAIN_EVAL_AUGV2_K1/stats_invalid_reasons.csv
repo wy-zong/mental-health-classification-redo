@@ -1,0 +1,11 @@
+﻿code,condition,invalid_reason,count,share_of_invalid,share_of_all,display_name
+C1,norag_base,no_label,528,0.9705882352941176,0.26426426426426425,無檢索・基礎 prompt
+C1,norag_base,multi_label,15,0.027573529411764705,0.0075075075075075074,無檢索・基礎 prompt
+C1,norag_base,out_of_range_number,1,0.001838235294117647,0.0005005005005005005,無檢索・基礎 prompt
+C2,rag_noaug_base,no_label,419,0.9632183908045977,0.2097097097097097,原文檢索・基礎 prompt
+C2,rag_noaug_base,multi_label,15,0.034482758620689655,0.0075075075075075074,原文檢索・基礎 prompt
+C2,rag_noaug_base,out_of_range_number,1,0.0022988505747126436,0.0005005005005005005,原文檢索・基礎 prompt
+C3,rag_augv2_base,no_label,386,0.965,0.1931931931931932,原文＋擴寫檢索・基礎 prompt
+C3,rag_augv2_base,multi_label,14,0.035,0.007007007007007007,原文＋擴寫檢索・基礎 prompt
+C4,rag_noaug_optimized,no_label,96,1.0,0.04804804804804805,原文檢索・最佳化 prompt
+C5,rag_augv2_optimized,no_label,76,1.0,0.03803803803803804,原文＋擴寫檢索・最佳化 prompt

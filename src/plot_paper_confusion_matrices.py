@@ -15,6 +15,8 @@ picks the result set (see ``custom_eval_common``):
   With ``--set custom15_paper``, ``--in-dir`` points v2 at another full 27_ test
   run of the same conditions, e.g. MAIN_EVAL_AUGV2_K1 (top-k = 1); output then
   defaults to <in-dir>/figures/.
+* ``v2_k1``: 27_ at top-k = 1 (MAIN_EVAL_AUGV2_K1, the paper's final version).
+  Same as v2 otherwise; output defaults to MAIN_EVAL_AUGV2_K1/figures/.
 
 This is intentionally a standalone plotting program.  It reads the immutable
 prediction JSONL files produced by the experiment runners and does not call the
@@ -380,7 +382,7 @@ def plot_custom15(root: Path, output_dir: Path, show: bool, profile) -> dict[str
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "script": "src/plot_paper_confusion_matrices.py --set custom15"
                   + ("" if profile.name == "v1" else f" --profile {profile.name}"),
-        "source_experiment": f"{profile.source_script} ({profile.experiment})",
+        "source_experiment": f"{profile.source_script} ({profile.in_dir.name})",
         "plot_method": {
             "normalization": "row (each true-label row sums to 1)",
             "color_scale": "Blues, shared vmin=0, vmax=1, one colorbar",
@@ -497,7 +499,7 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=None,
         help="Output directory (default: runs/PAPER_CONFUSION_MATRICES for --set paper, "
-             "<input dir>/figures for --set custom15/custom15_paper --profile v2; required "
+             "<input dir>/figures for --set custom15/custom15_paper --profile v2/v2_k1; required "
              "for --profile v1, whose CUSTOM_PROMPT_EVAL/figures is frozen)",
     )
     parser.add_argument(
@@ -511,10 +513,10 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--profile",
-        choices=["v1", "v2"],
+        choices=["v1", "v2", "v2_k1"],
         default="v1",
         help="--set custom15/custom15_paper only: v1 = 15_ (CUSTOM_PROMPT_EVAL), "
-             "v2 = 27_ (MAIN_EVAL_AUGV2)",
+             "v2 = 27_ top-k 5 (MAIN_EVAL_AUGV2), v2_k1 = 27_ top-k 1 (MAIN_EVAL_AUGV2_K1)",
     )
     parser.add_argument(
         "--in-dir",
