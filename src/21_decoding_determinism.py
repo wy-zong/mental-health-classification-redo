@@ -1,4 +1,4 @@
-"""主實驗（v1：15_；v2：27_）的解碼確定性驗證（issue #5，審稿意見 R3C13、R3C14）。
+"""主實驗（v1：15_；v2、v2_k1：27_）的解碼確定性驗證（issue #5，審稿意見 R3C13、R3C14）。
 
 從 test 依類別分層抽樣（預設每類 50 筆、共 200 筆，seed 42；與 profile 無關，v1、v2 同一批），
 把主實驗存下的 C4、C5 ``rendered_prompt`` 原封不動再送 Ollama（同 15_ 的 GEN_OPTIONS，
@@ -14,17 +14,17 @@
 開跑前確認目前 Ollama 的 model digest 與 profile manifest、逐筆預測記錄的 digest 相同，
 不同就停止。推論期間背景以 nvidia-smi 每 0.5 秒取樣 GPU 記憶體用量（供 issue #9）。
 
-輸出到 <輸出目錄>/determinism/（v2 預設 MAIN_EVAL_AUGV2/；v1 的 CUSTOM_PROMPT_EVAL/
-是凍結的存檔，必須以 --out-dir 另外指定）：
+輸出到 <輸出目錄>/determinism/（v2 預設 MAIN_EVAL_AUGV2/，v2_k1 預設 MAIN_EVAL_AUGV2_K1/；
+v1 的 CUSTOM_PROMPT_EVAL/是凍結的存檔，必須以 --out-dir 另外指定）：
     sample_ids.csv           抽樣的 id 與標籤
     rerun_C4.jsonl、rerun_C5.jsonl  第 1 次重跑的逐筆比對（可中斷續跑）
     rerun_C4_pass2.jsonl …   第 2 次起的重跑
     sessions.jsonl           每次執行的環境（Ollama 版本、GPU、VRAM 峰值、size_vram）
-    summary.json             一致率（Wilson 95% CI）、不一致清單、環境；v2 另附 v1 的一致率
+    summary.json             一致率（Wilson 95% CI）、不一致清單、環境；v2、v2_k1 另附 v1 的一致率
     cache_state_probe.jsonl  （--probe-cache-state）不一致樣本在不同 KV cache 狀態下的輸出
 
 用法：
-    python 21_decoding_determinism.py --profile v2 [--n 200] [--passes 2]
+    python 21_decoding_determinism.py --profile v2|v2_k1 [--n 200] [--passes 2]
     python 21_decoding_determinism.py --profile v1 --out-dir 目錄
     python 21_decoding_determinism.py --profile v2 --probe-cache-state
 """
@@ -48,8 +48,7 @@ import common as C  # noqa: E402
 import custom_eval_common as E  # noqa: E402
 
 CODES = ("C4", "C5")
-MANIFEST_FILES = {"v1": E.V1_OUT / "custom_prompt_eval_manifest.json",
-                  "v2": E.V2_OUT / "manifest.json"}
+V1_MANIFEST = E.V1_OUT / "custom_prompt_eval_manifest.json"
 V1_SUMMARY = E.V1_OUT / "determinism" / "summary.json"
 NVSMI_POLL_S = 0.5
 TRUNC_CHARS_PER_TOKEN = 6.0            # 同 27_：超過 num_ctx 被截斷時 prompt_eval_count 偏小
@@ -358,8 +357,13 @@ def summarize(P: E.Profile, sample: pd.DataFrame, out: Path, passes: int) -> dic
     return result
 
 
+def manifest_path(P: E.Profile) -> Path:
+    """v1 是 15_ 的 manifest；v2、v2_k1 是各自結果目錄下 27_ 的 manifest。"""
+    return V1_MANIFEST if P.name == "v1" else P.in_dir / "manifest.json"
+
+
 def v1_reference() -> dict:
-    """v1（15_，k = 1）的一致率，供 v2 並列。"""
+    """v1（15_，k = 1）的一致率，供 v2、v2_k1 並列。"""
     v1 = C.load_json(V1_SUMMARY)
     if not v1:
         C.die(f"找不到 v1 的確定性結果：{V1_SUMMARY}")
@@ -506,8 +510,8 @@ def main() -> None:
             "（15_ 的 GEN_OPTIONS，每次先卸載模型），以 15_ 的 parse_label 解析；另以 "
             f"{'／'.join(P.corpora)} 的 FAISS 索引重新檢索 top-{P.top_k}，依 15_ 的 render 規則"
             "（k 篇依相似度遞減以 \\n 串接）重組 prompt"),
-        "inputs": {"manifest_sha256": C.sha256_file(MANIFEST_FILES[P.name]),
-                   "test_sha256": C.sha256_file(E.TEST_PATH),
+        "inputs": {"manifest_sha256": C.sha256_file(manifest_path(P)),
+                   "test_sha256": E.test_split_sha256(),
                    **{f"predictions_{code}_sha256":
                       C.sha256_file(P.in_dir / f"predictions_{P.condition(code)}.jsonl")
                       for code in CODES}},
@@ -517,7 +521,7 @@ def main() -> None:
         "results": summarize(P, sample, out, args.passes),
         "sessions": list(C.read_jsonl(out / "sessions.jsonl")),
     }
-    if P.name == "v2":
+    if P.name != "v1":
         summary["v1_reference"] = v1_reference()
     C.save_json(out / "summary.json", summary)
     C.log(f"已寫入 {out / 'summary.json'}")
