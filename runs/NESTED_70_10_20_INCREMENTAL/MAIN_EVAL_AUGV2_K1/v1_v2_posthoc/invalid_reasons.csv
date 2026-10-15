@@ -1,0 +1,11 @@
+﻿code,display_name,condition_v1,condition_v2,invalid_reason,count_v1,share_of_invalid_v1,share_of_all_v1,count_v2,share_of_invalid_v2,share_of_all_v2,delta_count
+C1,無檢索・基礎 prompt,norag_base,norag_base,no_label,536,0.9727767695099818,0.2682682682682683,528,0.9705882352941176,0.2642642642642642,-8
+C1,無檢索・基礎 prompt,norag_base,norag_base,multi_label,14,0.0254083484573502,0.007007007007007,15,0.0275735294117647,0.0075075075075075,1
+C1,無檢索・基礎 prompt,norag_base,norag_base,out_of_range_number,1,0.0018148820326678,0.0005005005005005,1,0.0018382352941176,0.0005005005005005,0
+C2,原文檢索・基礎 prompt,rag_noaug_base,rag_noaug_base,no_label,426,0.9748283752860412,0.2132132132132132,419,0.9632183908045976,0.2097097097097097,-7
+C2,原文檢索・基礎 prompt,rag_noaug_base,rag_noaug_base,multi_label,11,0.0251716247139588,0.0055055055055055,15,0.0344827586206896,0.0075075075075075,4
+C2,原文檢索・基礎 prompt,rag_noaug_base,rag_noaug_base,out_of_range_number,0,0.0,0.0,1,0.0022988505747126,0.0005005005005005,1
+C3,原文＋擴寫檢索・基礎 prompt,rag_aug_base,rag_augv2_base,no_label,385,0.9722222222222222,0.1926926926926926,386,0.965,0.1931931931931932,1
+C3,原文＋擴寫檢索・基礎 prompt,rag_aug_base,rag_augv2_base,multi_label,11,0.0277777777777777,0.0055055055055055,14,0.035,0.007007007007007,3
+C4,原文檢索・最佳化 prompt,rag_noaug_optimized,rag_noaug_optimized,no_label,100,1.0,0.05005005005005,96,1.0,0.048048048048048,-4
+C5,原文＋擴寫檢索・最佳化 prompt,rag_aug_optimized,rag_augv2_optimized,no_label,89,1.0,0.0445445445445445,76,1.0,0.038038038038038,-13

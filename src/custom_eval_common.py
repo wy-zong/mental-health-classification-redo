@@ -3,7 +3,9 @@
 17_～20_、23_ 與混淆矩陣繪圖都讀同一批逐筆預測。這裡集中處理四件事：
 
 * profile：v1 與 v2 各自的結果目錄、C1–C5 代號與條件 ID 的對照、語料、top-k
-  （``--profile {v1,v2}``，預設 v1；v1 是凍結的存檔，只能輸出到 ``--out-dir``）；
+  （``--profile {v1,v2,v2_k1}``，預設 v1；v1 是凍結的存檔，只能輸出到 ``--out-dir``）。
+  v2 是 val 上選定的 k = 5（MAIN_EVAL_AUGV2）；v2_k1 是同條件的 k = 1
+  （MAIN_EVAL_AUGV2_K1，論文最終版本，#30）；
 * 載入預測檔時的來源檢查：experiment 欄、prompt sha256（對照現行 15_ 原始碼）、
   test split sha256、筆數與 id 集合，任何一項不符就停止；
 * 向量化的 accuracy / macro-F1 / weighted-F1 與 paired bootstrap；
@@ -38,7 +40,9 @@ RUN = "NESTED_70_10_20_INCREMENTAL"
 BASE_OUT = C.RUNS / RUN
 V1_OUT = BASE_OUT / "CUSTOM_PROMPT_EVAL"
 V2_OUT = BASE_OUT / "MAIN_EVAL_AUGV2"
-OUT = V1_OUT                           # v1；21_、22_、24_ 直接使用
+V2_K1_OUT = BASE_OUT / "MAIN_EVAL_AUGV2_K1"
+OUT = V1_OUT                           # v1；22_、24_ 直接使用
+PROFILES = ("v1", "v2", "v2_k1")
 TEST_PATH = BASE_OUT / "splits" / "test.csv"
 # test.csv 的 sha256。原檔以 CRLF 分隔記錄、statement 欄內另有裸 LF，換行混用：
 # git blob 是 CRLF→LF 正規化後的內容，乾淨 checkout 的位元組因此隨 core.autocrlf 而不同
@@ -62,7 +66,7 @@ DISPLAY_NAMES = {
 }
 
 # v1 的代號（論文 Table VI）。模組層級的 CODES／DESCRIPTIONS／PAIRS 都是 v1 的值，
-# 供尚未參數化的 21_、22_、24_ 使用；17_～20_、23_ 一律從 profile 取。
+# 供尚未參數化的 22_、24_ 使用；17_～21_、23_ 一律從 profile 取。
 CODES = {
     "C1": "norag_base",
     "C2": "rag_noaug_base",
@@ -119,7 +123,7 @@ def source_27() -> tuple:
 
 @dataclass(frozen=True)
 class Profile:
-    name: str                                   # v1 / v2
+    name: str                                   # v1 / v2 / v2_k1
     experiment: str                             # 逐筆預測的 experiment 欄
     in_dir: Path                                # 逐筆預測所在目錄
     codes: dict                                 # 代號 → 條件 ID
@@ -198,7 +202,11 @@ def v2_descriptions(k: int) -> dict:
     }
 
 
-def _v2_profile() -> Profile:
+# v2_k1 的 manifest 與 v2 相比只能有這些欄位不同（27_ --top-k 1 --sensitivity 的另一次 test 執行）。
+V2_K1_MANIFEST_DIFF = {"created_at", "git_revision", "top_k", "top_k_source"}
+
+
+def _v2_profile(name: str = "v2", in_dir: Path = V2_OUT) -> Profile:
     conditions = source_27()
     cond_map = {cond: (prompt, corpus) for cond, prompt, corpus, _ in conditions}
     if [c[0] for c in conditions] != list(V2_CODES.values()):
@@ -206,20 +214,31 @@ def _v2_profile() -> Profile:
     for cond, _, _, display in conditions:
         if DISPLAY_NAMES[cond] != display:
             C.die(f"{cond} 的顯示名稱與 27_ 不同：{DISPLAY_NAMES[cond]} vs {display}")
-    manifest = C.load_json(V2_OUT / "manifest.json")
+    manifest = C.load_json(in_dir / "manifest.json")
     if not manifest:
-        C.die(f"找不到 v2 manifest：{V2_OUT / 'manifest.json'}")
+        C.die(f"找不到 {name} manifest：{in_dir / 'manifest.json'}")
     recorded = [(c["condition"], c["prompt"], c["corpus"], c["display_name"])
                 for c in manifest["conditions"]]
     if recorded != [tuple(c) for c in conditions]:
-        C.die("v2 manifest 的 conditions 與 27_ 的 CONDITIONS 不同")
+        C.die(f"{name} manifest 的 conditions 與 27_ 的 CONDITIONS 不同")
     if manifest["split"]["name"] != "test" or manifest.get("smoke_n") is not None:
-        C.die("v2 manifest 不是 test 的完整執行")
+        C.die(f"{name} manifest 不是 test 的完整執行")
+    if name == "v2_k1":
+        # 與 v2 同模型、同 prompt、同語料、同 test，只有 k 不同。
+        ref = get_profile("v2").manifest
+        if manifest.get("top_k") != 1:
+            C.die(f"v2_k1 manifest 的 top_k 是 {manifest.get('top_k')}，不是 1")
+        if (manifest.get("top_k_source") or {}).get("role") != "test_sensitivity_not_selected":
+            C.die("v2_k1 manifest 的 top_k_source.role 不是 test_sensitivity_not_selected")
+        differ = sorted(k for k in set(manifest) | set(ref) if manifest.get(k) != ref.get(k))
+        if set(differ) - V2_K1_MANIFEST_DIFF:
+            C.die(f"v2_k1 與 v2 的 manifest 在預期以外的欄位不同：{differ}")
+    top_k = int(manifest["top_k"])
     return Profile(
-        name="v2", experiment="MAIN_EVAL_AUGV2", in_dir=V2_OUT, codes=dict(V2_CODES),
-        conditions=cond_map, corpora=("noaug", "aug_v2"), top_k=int(manifest["top_k"]),
+        name=name, experiment="MAIN_EVAL_AUGV2", in_dir=in_dir, codes=dict(V2_CODES),
+        conditions=cond_map, corpora=("noaug", "aug_v2"), top_k=top_k,
         paper_check=False, source_script="src/27_main_eval_augv2.py",
-        metrics_split_sha_key="split_sha256", descriptions=v2_descriptions(int(manifest["top_k"])),
+        metrics_split_sha_key="split_sha256", descriptions=v2_descriptions(top_k),
         manifest=manifest,
     )
 
@@ -230,14 +249,17 @@ def get_profile(name: str = "v1") -> Profile:
         return _v1_profile()
     if name == "v2":
         return _v2_profile()
+    if name == "v2_k1":
+        return _v2_profile("v2_k1", V2_K1_OUT)
     C.die(f"未知的 profile：{name}")
 
 
 def add_profile_args(ap: argparse.ArgumentParser) -> None:
-    ap.add_argument("--profile", choices=("v1", "v2"), default="v1",
-                    help="v1＝15_（CUSTOM_PROMPT_EVAL/，凍結）；v2＝27_（MAIN_EVAL_AUGV2/）")
+    ap.add_argument("--profile", choices=PROFILES, default="v1",
+                    help="v1＝15_（CUSTOM_PROMPT_EVAL/，凍結）；v2＝27_ k = 5（MAIN_EVAL_AUGV2/）；"
+                         "v2_k1＝27_ k = 1（MAIN_EVAL_AUGV2_K1/）")
     ap.add_argument("--out-dir", type=Path, default=None,
-                    help="輸出目錄（v2 預設 MAIN_EVAL_AUGV2/；v1 必須指定，且不能在 "
+                    help="輸出目錄（v2、v2_k1 預設為各自的結果目錄；v1 必須指定，且不能在 "
                          "CUSTOM_PROMPT_EVAL/ 之內）")
 
 
@@ -285,7 +307,7 @@ def load_predictions(profile: Profile | None = None) -> dict[str, list[dict]]:
     order = [str(x) for x in test["id"]]
     truth = dict(zip(order, test["status"]))
 
-    if profile.name == "v2":
+    if profile.name != "v1":                 # v2、v2_k1（27_）
         completion = C.load_json(profile.in_dir / "completion.json")
         if (completion.get("n") != N_TEST or completion.get("smoke_n") is not None
                 or completion.get("split") != "test"
@@ -313,9 +335,9 @@ def load_predictions(profile: Profile | None = None) -> dict[str, list[dict]]:
             problems.append(f"corpus 欄與 {Path(profile.source_script).name} 的設定不符")
         if len({r.get("model_digest") for r in records}) != 1:
             problems.append("model_digest 不只一種")
-        if profile.name == "v2":
+        if profile.name != "v1":
             if profile.manifest["prompts"][prompt_name]["sha256"] != expected_sha:
-                problems.append("v2 manifest 記錄的 prompt sha256 與 15_ 的 template 不符")
+                problems.append(f"{profile.name} manifest 記錄的 prompt sha256 與 15_ 的 template 不符")
             if any(r.get("split") != "test" for r in records):
                 problems.append("split 欄不是 test")
             expected_k = profile.top_k if corpus else None
