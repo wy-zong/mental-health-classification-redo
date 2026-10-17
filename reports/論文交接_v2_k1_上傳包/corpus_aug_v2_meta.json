@@ -1,0 +1,36 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "name": "aug_v2",
+  "source": "exp15_noaug_train_originals_plus_augment_v2_train_paraphrases",
+  "n_docs": 19495,
+  "n_original_docs": 6994,
+  "n_paraphrase_docs": 12501,
+  "paraphrases_by_label": {
+    "Bipolar": 3433,
+    "Anxiety": 3280,
+    "Depression": 3115,
+    "Normal": 2673
+  },
+  "embedding_model": "all-MiniLM-L6-v2",
+  "max_seq_length": 512,
+  "normalized": true,
+  "metric": "cosine (IndexFlatIP on normalized vectors)",
+  "top_k": 1,
+  "doc_format": "{statement} true_label is {status}（R.corpus_entry）",
+  "original_vectors_from": "corpus/noaug.index（reconstruct_n，與 15_ C2／C4 的語料逐位元相同）",
+  "exact_overlap_with_eval_splits": {
+    "val": 0,
+    "test": 0
+  },
+  "paraphrase_source_splits": {
+    "train": 12501
+  },
+  "sbert_min": 0.5,
+  "accepted_sha256": "c9863f7610555c1ea24fb646c2b20093c91212562963e3a5f8df4f0123480919",
+  "noaug_index_sha256": "361c4c4b981fff9e5bec980de7080160357234588ad89fa3a22440d199dd21e6",
+  "noaug_docs_sha256": "ddb8ed73bf2348e3c130f08990580d98f1c5dd29ddf919d5cc68dae8e8b38037",
+  "index_sha256": "50a02525ea2461082b5f90b341a775c10263de7c4a58da68e5415e70881612d0",
+  "docs_sha256": "784296d2e24126f0ac6d0994d31f83097b79b2f81eb186dbd85345d905f6cc25",
+  "usage_rule": "任何切分的 RAG 語料 = 該切分 train 的原文 + accepted.csv 中 source_id 屬於該切分 train 的改寫；val／test 原文的改寫在該切分中一律不用（select_for_split）。val 原文沒有改寫，重複切分時 val 固定，只重新切分 train＋test。改寫只依賴自己的原文，所以結果與切分無關。",
+  "created_at": "2026-10-04T15:39:24+0800"
+}

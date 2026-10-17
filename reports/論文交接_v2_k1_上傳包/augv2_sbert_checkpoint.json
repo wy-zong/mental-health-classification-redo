@@ -1,0 +1,447 @@
+{
+  "created_at": "2026-10-04T03:52:53+0800",
+  "started_at": "2026-10-04T03:41:33+0800",
+  "rule": "每類抽 50 筆原文，以 SBERT ≥ 0.6 跑完（新生成上限 5 次）；任一類別補不滿 2 筆的原文比例 > 5% 就改用 0.5（底線，不再往下調）。只檢查一次。",
+  "pilot_seed": 2026,
+  "pilot_sources": [
+    "test_00940",
+    "test_00784",
+    "test_02303",
+    "test_00233",
+    "train_02378",
+    "train_02802",
+    "train_02820",
+    "test_00249",
+    "train_01915",
+    "test_01669",
+    "train_04489",
+    "test_02471",
+    "train_02323",
+    "train_00446",
+    "train_01059",
+    "test_01154",
+    "test_01515",
+    "test_00330",
+    "train_01179",
+    "train_03678",
+    "train_00796",
+    "train_05491",
+    "train_01718",
+    "train_03055",
+    "train_00939",
+    "train_05520",
+    "test_02319",
+    "train_00940",
+    "train_00114",
+    "train_01704",
+    "train_05740",
+    "train_03539",
+    "val_search_00370",
+    "train_01890",
+    "train_00674",
+    "train_05818",
+    "train_02045",
+    "train_03653",
+    "test_00846",
+    "train_03837",
+    "train_01571",
+    "train_02280",
+    "train_02057",
+    "train_02014",
+    "test_02474",
+    "test_02098",
+    "train_04406",
+    "train_00651",
+    "test_00123",
+    "train_04727",
+    "train_00916",
+    "train_00929",
+    "train_04503",
+    "train_03614",
+    "train_04869",
+    "test_02417",
+    "test_01466",
+    "train_02340",
+    "train_01970",
+    "train_04714",
+    "train_02144",
+    "train_01709",
+    "train_05733",
+    "train_01094",
+    "train_02610",
+    "train_01171",
+    "train_03465",
+    "train_03003",
+    "train_04776",
+    "test_00687",
+    "val_confirm_00920",
+    "train_05404",
+    "train_01362",
+    "train_00399",
+    "train_00768",
+    "train_05666",
+    "train_00070",
+    "train_05701",
+    "test_02397",
+    "train_05353",
+    "train_05498",
+    "train_05913",
+    "val_confirm_01025",
+    "train_01966",
+    "train_00330",
+    "train_01626",
+    "test_00733",
+    "train_00285",
+    "train_05074",
+    "train_00164",
+    "test_00546",
+    "test_00917",
+    "train_01324",
+    "test_02057",
+    "test_00299",
+    "test_00355",
+    "train_04498",
+    "train_05309",
+    "train_03489",
+    "train_05751",
+    "train_01523",
+    "train_04183",
+    "test_02379",
+    "train_03562",
+    "train_00658",
+    "train_04748",
+    "train_01519",
+    "train_01210",
+    "train_04029",
+    "val_confirm_00670",
+    "train_05355",
+    "train_00215",
+    "train_05057",
+    "test_01416",
+    "train_03661",
+    "train_04372",
+    "train_05694",
+    "train_03231",
+    "train_01496",
+    "train_01777",
+    "test_00620",
+    "train_01829",
+    "train_01969",
+    "test_02221",
+    "test_01707",
+    "test_01181",
+    "train_05273",
+    "train_01699",
+    "train_04223",
+    "test_01755",
+    "train_00537",
+    "val_search_00289",
+    "train_04351",
+    "train_03873",
+    "test_01011",
+    "train_04991",
+    "train_00245",
+    "train_02963",
+    "train_01978",
+    "train_01122",
+    "test_00093",
+    "train_01451",
+    "train_03403",
+    "train_05581",
+    "train_00193",
+    "train_02899",
+    "train_02423",
+    "train_00269",
+    "val_confirm_01099",
+    "train_00292",
+    "test_00877",
+    "train_01765",
+    "train_03688",
+    "train_03415",
+    "train_04070",
+    "train_01817",
+    "train_04801",
+    "train_00004",
+    "train_01390",
+    "train_01792",
+    "test_01878",
+    "train_03852",
+    "train_04681",
+    "train_05036",
+    "test_01637",
+    "train_03807",
+    "test_00279",
+    "test_00115",
+    "train_02456",
+    "train_03521",
+    "test_01989",
+    "train_00024",
+    "test_02182",
+    "train_03402",
+    "test_00766",
+    "train_04924",
+    "train_03062",
+    "train_00431",
+    "test_00843",
+    "test_01948",
+    "test_02456",
+    "test_01871",
+    "test_00703",
+    "train_04693",
+    "test_00071",
+    "train_00638",
+    "train_05548",
+    "train_02214",
+    "test_00833",
+    "test_01916",
+    "test_00294",
+    "train_04899",
+    "train_00455",
+    "test_00411",
+    "test_02256",
+    "test_01822",
+    "train_05596",
+    "test_01401",
+    "train_03786",
+    "train_03039"
+  ],
+  "pilot_sources_sha256": "9a0b1e2e385e107535887b1fe223ae38175834063be7484e014ac95d9197dc03",
+  "stats_by_threshold": {
+    "0.60": {
+      "Normal": {
+        "sources": 50,
+        "unfilled": 27,
+        "shortfall_rate": 0.54,
+        "by_exp15_split": {
+          "train": {
+            "sources": 39,
+            "unfilled": 18
+          },
+          "test": {
+            "sources": 11,
+            "unfilled": 9
+          }
+        },
+        "unfilled_sources": [
+          "test_00784",
+          "test_02303",
+          "test_00330",
+          "train_05491",
+          "train_02280",
+          "train_04503",
+          "test_01466",
+          "train_03465",
+          "train_04776",
+          "train_00768",
+          "train_00285",
+          "train_00164",
+          "train_01324",
+          "test_02057",
+          "test_00299",
+          "train_04748",
+          "train_01829",
+          "test_01755",
+          "train_00537",
+          "val_search_00289",
+          "train_04351",
+          "test_00093",
+          "train_01817",
+          "test_01989",
+          "train_03402",
+          "test_00843",
+          "train_00638"
+        ],
+        "new_generations": 167
+      },
+      "Depression": {
+        "sources": 50,
+        "unfilled": 7,
+        "shortfall_rate": 0.14,
+        "by_exp15_split": {
+          "train": {
+            "sources": 38,
+            "unfilled": 7
+          },
+          "test": {
+            "sources": 12,
+            "unfilled": 0
+          }
+        },
+        "unfilled_sources": [
+          "train_02045",
+          "train_05666",
+          "train_05701",
+          "train_05353",
+          "train_04991",
+          "train_03403",
+          "test_01878"
+        ],
+        "new_generations": 71
+      },
+      "Anxiety": {
+        "sources": 50,
+        "unfilled": 6,
+        "shortfall_rate": 0.12,
+        "by_exp15_split": {
+          "train": {
+            "sources": 38,
+            "unfilled": 5
+          },
+          "test": {
+            "sources": 12,
+            "unfilled": 1
+          }
+        },
+        "unfilled_sources": [
+          "test_01154",
+          "train_00114",
+          "train_04869",
+          "train_05498",
+          "train_00269",
+          "test_01916"
+        ],
+        "new_generations": 64
+      },
+      "Bipolar": {
+        "sources": 50,
+        "unfilled": 5,
+        "shortfall_rate": 0.1,
+        "by_exp15_split": {
+          "train": {
+            "sources": 38,
+            "unfilled": 3
+          },
+          "test": {
+            "sources": 12,
+            "unfilled": 2
+          }
+        },
+        "unfilled_sources": [
+          "train_01718",
+          "train_03653",
+          "test_00123",
+          "test_02417",
+          "train_01451"
+        ],
+        "new_generations": 55
+      }
+    },
+    "0.50": {
+      "Normal": {
+        "sources": 50,
+        "unfilled": 20,
+        "shortfall_rate": 0.4,
+        "by_exp15_split": {
+          "train": {
+            "sources": 39,
+            "unfilled": 12
+          },
+          "test": {
+            "sources": 11,
+            "unfilled": 8
+          }
+        },
+        "unfilled_sources": [
+          "test_00784",
+          "test_02303",
+          "test_00330",
+          "train_02280",
+          "train_04503",
+          "test_01466",
+          "train_00768",
+          "train_00285",
+          "train_00164",
+          "train_01324",
+          "test_02057",
+          "test_00299",
+          "train_04748",
+          "test_01755",
+          "train_00537",
+          "val_search_00289",
+          "test_00093",
+          "train_01817",
+          "train_03402",
+          "train_00638"
+        ],
+        "new_generations": 167
+      },
+      "Depression": {
+        "sources": 50,
+        "unfilled": 6,
+        "shortfall_rate": 0.12,
+        "by_exp15_split": {
+          "train": {
+            "sources": 38,
+            "unfilled": 6
+          },
+          "test": {
+            "sources": 12,
+            "unfilled": 0
+          }
+        },
+        "unfilled_sources": [
+          "train_02045",
+          "train_05666",
+          "train_05701",
+          "train_05353",
+          "train_03403",
+          "test_01878"
+        ],
+        "new_generations": 71
+      },
+      "Anxiety": {
+        "sources": 50,
+        "unfilled": 4,
+        "shortfall_rate": 0.08,
+        "by_exp15_split": {
+          "train": {
+            "sources": 38,
+            "unfilled": 3
+          },
+          "test": {
+            "sources": 12,
+            "unfilled": 1
+          }
+        },
+        "unfilled_sources": [
+          "test_01154",
+          "train_00114",
+          "train_05498",
+          "test_01916"
+        ],
+        "new_generations": 64
+      },
+      "Bipolar": {
+        "sources": 50,
+        "unfilled": 4,
+        "shortfall_rate": 0.08,
+        "by_exp15_split": {
+          "train": {
+            "sources": 38,
+            "unfilled": 3
+          },
+          "test": {
+            "sources": 12,
+            "unfilled": 1
+          }
+        },
+        "unfilled_sources": [
+          "train_01718",
+          "train_03653",
+          "test_02417",
+          "train_01451"
+        ],
+        "new_generations": 55
+      }
+    }
+  },
+  "labels_over_limit_at_primary": {
+    "Normal": 0.54,
+    "Depression": 0.14,
+    "Anxiety": 0.12,
+    "Bipolar": 0.1
+  },
+  "decision": "switch_to_floor",
+  "locked_sbert_min": 0.5,
+  "note": "pilot 的候選就是正式候選（candidate_id 與 seed 相同）；生成與門檻無關，改用 0.5 只需重新套用門檻"
+}
