@@ -1,0 +1,68 @@
+{
+  "n_target": 2,
+  "max_new_attempts": 10,
+  "target_splits": [
+    "train",
+    "test"
+  ],
+  "new_seed_rule": "seed = 20000 + j（j = 0..max_new_attempts-1，與原文和切分無關）",
+  "rewrite_instruction": "Rewrite the following text in different words while preserving its original meaning, tone, and emotional content. Output only the rewritten text.",
+  "rewrite_instruction_sha256": "1c4c36cf95c8a47bd4409407a13071d2fd556b10908c6231ab19aaa78ba34e8f",
+  "rewrite_prompt_format": "{instruction}\\n\\nText:\\n{statement.strip()}",
+  "rewrite_options": {
+    "temperature": 0.7,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 1024
+  },
+  "rewrite_options_effective": {
+    "temperature": 0.7,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 1024,
+    "top_p": 1.0
+  },
+  "clean_rule": "只去頭尾空白與包住整段的成對引號／反引號；不刪任何句子",
+  "rule_order": [
+    "empty",
+    "refusal",
+    "meta_commentary",
+    "identical_to_source",
+    "length_ratio",
+    "sbert",
+    "duplicate"
+  ],
+  "refusal_opening_regex": "^(?:(?:i['’]?m sorry|i apologize|i['’]?m afraid),?\\s*(?:but\\s*)?)?(?:i['’]?m not sure\\s+)?i\\s*(?:can['’]?t|cannot|can not|am unable to|['’]m unable to|am not able to|['’]m not able to|won['’]?t be able to)\\s+(?:write|rewrite|fulfill|provide|create|generate|process|rephrase|paraphrase|carry out|support|complete|engage|comply|accommodate|produce|reproduce|modify|edit|translate|respond|answer|(?:help|assist)\\s+(?:with|you))\\b",
+  "safety_message_regex": "(suicide prevention|suicide (?:and|&) crisis|crisis (?:text )?line|crisis hotline|crisis lifeline|1-800-273|741741|\\b988\\b|text home to|samaritans|qualified mental health professional|seek help from a|is there (?:anything|something) else i can help)",
+  "meta_word_regex": "(re-?writ|rephras|paraphras|re-?word|version of (?:the|this|your) (?:text|post|passage|poem|message|statement)|another way to (?:say|put|phrase)|in different words)",
+  "meta_inline_regex": "^(?:[^\\n]{0,100}?[.!]\\s+)?(?:here['’]?s|here is|below is)\\b[^:\\n]{0,120}?(?:re-?writ|rephras|paraphras|re-?word|version)[^:\\n]{0,80}:\\s*\\S",
+  "meta_trailing_lead_regex": "^[(\\[*_\\s]*(?:note\\b|please note|let me know|i hope (?:this|that|you)|feel free|i['’]?ve (?:tried|aimed|attempted|kept|maintained|preserved|rewritten|rephrased|changed|made|used|removed|added|replaced|condensed)|i (?:tried|aimed|attempted|kept|maintained|preserved|rewrote|rephrased|changed|made|used|removed|added|replaced|condensed)|in (?:this|the|my) (?:rewritten|revised|rephrased)|th(?:is|e) (?:rewritten|revised|rephrased) (?:text|version))",
+  "meta_trailing_word_regex": "(re-?writ|rephras|paraphras|re-?word|original (?:text|tone|meaning|message|content|post|wording|intent)|emotional (?:tone|content)|the (?:same )?(?:tone|meaning) of the)",
+  "meta_task_regex": "((?:re-?writ\\w*|rephras\\w*|paraphras\\w*|re-?word\\w*) (?:the|this|your|that) (?:original |provided |given )?(?:text|statement|passage|message)\\b|\\b(?:a|the|my) (?:rewritten|rephrased|revised|paraphrased) (?:text|version)\\b|\\b(?:original|provided|given) text\\b|\\btext (?:you(?:['’]ve| have)? provided|to re-?write|for me to)\\b|\\bme to (?:re-?write|rephrase|paraphrase)\\b|^rewritten (?:text|version)\\s*:)",
+  "meta_opening_max_len": 160,
+  "length_ratio": [
+    0.5,
+    2.0
+  ],
+  "sbert_threshold_rule": {
+    "primary": 0.6,
+    "floor": 0.5,
+    "pilot_per_label": 50,
+    "pilot_seed": 2026,
+    "switch_if_any_label_shortfall_rate_gt": 0.05
+  },
+  "llm_reclassification": false,
+  "embed_model": "all-MiniLM-L6-v2",
+  "embed_max_seq": 512,
+  "embed_device": "cpu",
+  "model_digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+  "targets_sha256": "6f3a00e7ff268f5cc5b6abda74457371548531fce874552d1a1c0807dd6a4d33",
+  "n_targets": 8992,
+  "max_new_attempts_history": [
+    {
+      "from": 5,
+      "to": 10,
+      "changed_at": "2026-10-04T12:57:29+0800"
+    }
+  ]
+}
