@@ -1,2 +1,7 @@
 # 論文交接上傳包：位元組原樣保存，00_MANIFEST.csv 的 sha256 在任何 checkout 都成立
 reports/論文交接_v2_k1_上傳包/** -text
+
+# 實驗資料與產出：位元組原樣保存。腳本會以 sha256 核對這些檔案，換行轉換會讓核對失敗，
+# 混用換行的 CSV（CRLF 分隔記錄、欄內裸 LF）也無法還原；core.autocrlf 不得改動它們
+runs/** -text
+data/** -text
