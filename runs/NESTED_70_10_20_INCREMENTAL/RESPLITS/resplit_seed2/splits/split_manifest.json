@@ -1,0 +1,104 @@
+{
+ "run": "NESTED_70_10_20_INCREMENTAL",
+ "resplit": "resplit_seed2",
+ "assignment_sha256": "47a2e29989f41dadb5180369d9c484f741e6f82b8d16ebbd8afb95230b316e56",
+ "rule": "26_ resplits()：val 固定；train／test 依主切分各類別筆數分層重切（np.random.default_rng(seed)）",
+ "files": {
+  "train": {
+   "rows": 6994,
+   "sha256": "5767e43c5dc75de7e138df8346379376c6aa3e10e41ec3fb6791aeb17660af64",
+   "sha256_lf": "5767e43c5dc75de7e138df8346379376c6aa3e10e41ec3fb6791aeb17660af64"
+  },
+  "val": {
+   "rows": 1000,
+   "sha256": "ec974cacf7f4e5772ccf1e8a9d341749dfd8f7ce93ad892e510a81297768cd18",
+   "sha256_lf": "ec974cacf7f4e5772ccf1e8a9d341749dfd8f7ce93ad892e510a81297768cd18"
+  },
+  "test": {
+   "rows": 1998,
+   "sha256": "93787ef56ff2678a3efdcc82cd0a5d2f8a5e5b4bc1a6ce02fa692f89cc0f4b85",
+   "sha256_lf": "93787ef56ff2678a3efdcc82cd0a5d2f8a5e5b4bc1a6ce02fa692f89cc0f4b85"
+  }
+ },
+ "counts_by_label": {
+  "train": {
+   "Depression": 1749,
+   "Normal": 1749,
+   "Anxiety": 1748,
+   "Bipolar": 1748
+  },
+  "val": {
+   "Bipolar": 250,
+   "Normal": 250,
+   "Anxiety": 250,
+   "Depression": 250
+  },
+  "test": {
+   "Bipolar": 500,
+   "Anxiety": 500,
+   "Depression": 499,
+   "Normal": 499
+  }
+ },
+ "n_moved_from_exp15": {
+  "train": 1564,
+  "val": 0,
+  "test": 1564
+ },
+ "corpus": {
+  "noaug": {
+   "n_docs": 6994,
+   "index_sha256": "28db0750aabe352198fca0ac6eae07ccbaa9a56639e123b2bef8c027bc92130b",
+   "docs_sha256": "b60a12acda73cf40fc9054bf2f9f9c01ac1e5141b18bf2e85d1a24cddce51c59"
+  },
+  "aug_v2": {
+   "n_docs": 19501,
+   "index_sha256": "f5ec259b21615c7ae99ff759f805729c022858c60b8e82c5a20eebece355da2b",
+   "docs_sha256": "ee82889d5178fecba2fedcb6439bd6bc0f3e07094967a8b0e05fa75048564404"
+  }
+ },
+ "leakage": {
+  "paraphrases_from_eval_sources": 0,
+  "exact_overlap_corpus_vs_eval": 0
+ },
+ "retrieval_top1": {
+  "noaug_val": {
+   "n": 1000,
+   "max": 0.892619788646698,
+   "mean": 0.6064992547035217,
+   "p99": 0.8328824639320374,
+   "n_ge_0_90": 0,
+   "share_paraphrase": 0.0,
+   "same_source_as_query": 0
+  },
+  "aug_v2_val": {
+   "n": 1000,
+   "max": 0.8972941040992737,
+   "mean": 0.623318612575531,
+   "p99": 0.8424468040466309,
+   "n_ge_0_90": 0,
+   "share_paraphrase": 0.53,
+   "same_source_as_query": 0
+  },
+  "noaug_test": {
+   "n": 1998,
+   "max": 0.8645607233047485,
+   "mean": 0.6082497835159302,
+   "p99": 0.8324572443962097,
+   "n_ge_0_90": 0,
+   "share_paraphrase": 0.0,
+   "same_source_as_query": 0
+  },
+  "aug_v2_test": {
+   "n": 1998,
+   "max": 0.8769170045852661,
+   "mean": 0.6245028972625732,
+   "p99": 0.8445510864257812,
+   "n_ge_0_90": 0,
+   "share_paraphrase": 0.5230230230230231,
+   "same_source_as_query": 0
+  }
+ },
+ "created_at": "2026-11-01T03:36:20+0800",
+ "git_revision": "84f25e5b4443348fef766af7f6be34cea385db6b"
+}

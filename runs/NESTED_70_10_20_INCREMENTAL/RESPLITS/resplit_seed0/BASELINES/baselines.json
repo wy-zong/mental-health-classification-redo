@@ -1,0 +1,149 @@
+{
+  "variants": {
+    "noaug": {
+      "train_rows": 6994,
+      "test_rows": 1998,
+      "split_dir": "runs/NESTED_70_10_20_INCREMENTAL/RESPLITS/resplit_seed0/splits",
+      "split_manifest_sha256": "86d4159928c95ecbaedf6b8b63999095850b0d458c4d7e74da91c0ded1ab1394",
+      "resplit": "resplit_seed0",
+      "n_train_originals": 6994,
+      "tfidf": {
+        "accuracy_mean": 0.8699,
+        "accuracy_sd": 0.0,
+        "macro_f1_mean": 0.8695,
+        "macro_f1_sd": 0.0,
+        "runs": [
+          {
+            "accuracy": 0.8699,
+            "macro_f1": 0.8695,
+            "train_seconds": 2.94,
+            "inference_seconds": 0.29,
+            "seed": 42,
+            "predictions": "predictions/tfidf_noaug_seed42.jsonl"
+          }
+        ]
+      },
+      "minilm": {
+        "accuracy_mean": 0.8614,
+        "accuracy_sd": 0.0,
+        "macro_f1_mean": 0.8609,
+        "macro_f1_sd": 0.0,
+        "runs": [
+          {
+            "accuracy": 0.8614,
+            "macro_f1": 0.8609,
+            "train_seconds": 24.01,
+            "inference_seconds": 2.48,
+            "seed": 42,
+            "device": "cuda:0",
+            "predictions": "predictions/minilm_noaug_seed42.jsonl"
+          }
+        ]
+      },
+      "distilbert": {
+        "accuracy_mean": 0.9304,
+        "accuracy_sd": 0.0,
+        "macro_f1_mean": 0.9307,
+        "macro_f1_sd": 0.0,
+        "runs": [
+          {
+            "accuracy": 0.9304,
+            "macro_f1": 0.9307,
+            "train_seconds": 323.5,
+            "inference_seconds": 9.3,
+            "device": "cuda",
+            "epochs": 3,
+            "batch_size": 16,
+            "max_length": 256,
+            "seed": 42,
+            "peak_gpu_memory_allocated_mib": 2097.8,
+            "gpu_name": "NVIDIA GeForce RTX 2070",
+            "predictions": "predictions/distilbert_noaug_seed42.jsonl"
+          }
+        ]
+      }
+    },
+    "aug_v2": {
+      "train_rows": 19504,
+      "test_rows": 1998,
+      "split_dir": "runs/NESTED_70_10_20_INCREMENTAL/RESPLITS/resplit_seed0/splits",
+      "split_manifest_sha256": "86d4159928c95ecbaedf6b8b63999095850b0d458c4d7e74da91c0ded1ab1394",
+      "resplit": "resplit_seed0",
+      "n_train_originals": 6994,
+      "n_paraphrases": 12510,
+      "accepted_sha256_lf": "c9863f7610555c1ea24fb646c2b20093c91212562963e3a5f8df4f0123480919",
+      "tfidf": {
+        "accuracy_mean": 0.8589,
+        "accuracy_sd": 0.0,
+        "macro_f1_mean": 0.8587,
+        "macro_f1_sd": 0.0,
+        "runs": [
+          {
+            "accuracy": 0.8589,
+            "macro_f1": 0.8587,
+            "train_seconds": 6.89,
+            "inference_seconds": 0.31,
+            "seed": 42,
+            "predictions": "predictions/tfidf_aug_v2_seed42.jsonl"
+          }
+        ]
+      },
+      "minilm": {
+        "accuracy_mean": 0.8498,
+        "accuracy_sd": 0.0,
+        "macro_f1_mean": 0.8494,
+        "macro_f1_sd": 0.0,
+        "runs": [
+          {
+            "accuracy": 0.8498,
+            "macro_f1": 0.8494,
+            "train_seconds": 34.3,
+            "inference_seconds": 2.58,
+            "seed": 42,
+            "device": "cuda:0",
+            "predictions": "predictions/minilm_aug_v2_seed42.jsonl"
+          }
+        ]
+      },
+      "distilbert": {
+        "accuracy_mean": 0.9119,
+        "accuracy_sd": 0.0,
+        "macro_f1_mean": 0.9121,
+        "macro_f1_sd": 0.0,
+        "runs": [
+          {
+            "accuracy": 0.9119,
+            "macro_f1": 0.9121,
+            "train_seconds": 908.2,
+            "inference_seconds": 9.5,
+            "device": "cuda",
+            "epochs": 3,
+            "batch_size": 16,
+            "max_length": 256,
+            "seed": 42,
+            "peak_gpu_memory_allocated_mib": 2105.5,
+            "gpu_name": "NVIDIA GeForce RTX 2070",
+            "predictions": "predictions/distilbert_aug_v2_seed42.jsonl"
+          }
+        ]
+      }
+    }
+  },
+  "split_dir": "runs/NESTED_70_10_20_INCREMENTAL/RESPLITS/resplit_seed0/splits",
+  "seeds": [
+    42
+  ],
+  "python": "3.10.18",
+  "hyperparameters": {
+    "tfidf": "TfidfVectorizer(max_features=50000, ngram_range=(1,2), sublinear_tf=True) + LogisticRegression(max_iter=2000)",
+    "minilm": "all-MiniLM-L6-v2 (max_seq 512, normalized) + LogisticRegression(max_iter=2000)",
+    "distilbert": {
+      "model": "distilbert-base-uncased",
+      "epochs": 3,
+      "batch_size": 16,
+      "max_length": 256,
+      "lr": 5e-05,
+      "tuning": "none (fixed; val not used)"
+    }
+  }
+}

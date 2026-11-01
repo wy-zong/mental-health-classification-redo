@@ -27,8 +27,11 @@
   --split test --top-k K --sensitivity    test 上以非選定的 k 跑完整五組（MAIN_EVAL_AUGV2_K{K}/）
   --compare-v1 [--top-k K --sensitivity]  test 的 v1→v2 對照表
   --rescore --split S --top-k K           不呼叫 LLM：從既有逐筆預測重算指標
+  --split test --top-k 1 --resplit NAME   #4：在重切 NAME（30_ 建立）上跑五組，k = 1 沿用 #30
+                                          （切分與語料讀 RESPLITS/NAME/，輸出 RESPLITS/NAME/MAIN_EVAL_K1/）
 
-輸出：runs/NESTED_70_10_20_INCREMENTAL/TOPK_VAL_AUGV2/、MAIN_EVAL_AUGV2/、MAIN_EVAL_AUGV2_K{k}/
+輸出：runs/NESTED_70_10_20_INCREMENTAL/TOPK_VAL_AUGV2/、MAIN_EVAL_AUGV2/、MAIN_EVAL_AUGV2_K{k}/、
+      RESPLITS/<resplit>/MAIN_EVAL_K1/
 """
 from __future__ import annotations
 
@@ -76,6 +79,10 @@ V1_OUT = M.OUT                # CUSTOM_PROMPT_EVAL/（v1，唯讀）
 V1_MANIFEST = V1_OUT / "custom_prompt_eval_manifest.json"
 SPLIT_MANIFEST = BASE_OUT / "splits" / "split_manifest.json"
 SELECTED_K = VAL_OUT / "selected_k.json"
+RESPLITS_DIR = BASE_OUT / "RESPLITS"
+RESPLIT_NAMES = ("resplit_seed0", "resplit_seed1", "resplit_seed2")
+RESPLIT_K = 1                 # #30：論文採 k = 1；重切上不重新選 k
+RESPLIT: str | None = None    # --resplit 時設定；None 時所有路徑與原本相同
 
 K_CANDIDATES = (1, 3, 5)
 CORPORA = ("noaug", "aug_v2")
@@ -158,16 +165,33 @@ def check_model() -> dict:
     return {**identity, "ollama_version": ollama_version()}
 
 
+def data_dir() -> Path:
+    """切分與語料的上層目錄：主切分是 BASE_OUT，重切是 RESPLITS/<name>/。"""
+    return RESPLITS_DIR / RESPLIT if RESPLIT else BASE_OUT
+
+
+def split_manifest_path() -> Path:
+    return data_dir() / "splits" / "split_manifest.json" if RESPLIT else SPLIT_MANIFEST
+
+
 def split_path(split: str) -> Path:
-    return BASE_OUT / "splits" / f"{split}.csv"
+    return data_dir() / "splits" / f"{split}.csv"
 
 
 def load_split(split: str) -> pd.DataFrame:
-    """讀 val／test，筆數與 sha256 必須與 split_manifest.json 相同。"""
-    expected = C.load_json(SPLIT_MANIFEST)["files"][split]
+    """讀 val／test，筆數與 sha256 必須與 split_manifest.json 相同。
+
+    重切的切分檔以 LF 寫出，manifest 另記 LF 正規化 sha（sha256_lf）；autocrlf 的 checkout
+    會轉成 CRLF，因此兩者其一相符即可。主切分維持原本的嚴格比對。
+    """
+    expected = C.load_json(split_manifest_path())["files"][split]
     path = split_path(split)
     sha = C.sha256_file(path)
-    if sha != expected["sha256"]:
+    ok = {expected["sha256"]}
+    if RESPLIT:
+        ok.add(expected["sha256_lf"])
+        sha = sha if sha in ok else _sha256_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
+    if sha not in ok:
         C.die(f"{split}.csv 的 sha256 {sha} 與 split_manifest 不符")
     df = pd.read_csv(path)
     missing = {"id", "statement", "label_id", "status"} - set(df.columns)
@@ -181,7 +205,7 @@ def load_split(split: str) -> pd.DataFrame:
 def split_info(split: str, df: pd.DataFrame) -> dict:
     return {
         "name": split,
-        "path": f"splits/{split}.csv",
+        "path": str(split_path(split).relative_to(BASE_OUT)).replace("\\", "/"),
         "n": int(len(df)),
         "sha256": C.sha256_file(split_path(split)),
         "label_counts": df["status"].value_counts().to_dict(),
@@ -195,7 +219,7 @@ def corpus_info(name: str) -> dict:
     因此 docs 接受「磁碟 sha」或「LF 正規化 sha」其一相符，兩個都記錄。CRLF 只出現在 JSON
     的縮排換行，不影響解析出來的文件字串。
     """
-    d = BASE_OUT / "corpus"
+    d = data_dir() / "corpus"
     meta_path = d / f"{name}_meta.json"
     meta = C.load_json(meta_path)
     if not meta:
@@ -239,7 +263,7 @@ def source_of(doc_id: str) -> str:
 
 
 def load_rag(name: str):
-    rag = R.RebuildRagIndex(RUN, name)
+    rag = R.RebuildRagIndex(RUN, name, directory=data_dir() / "corpus" if RESPLIT else None)
     if name == "aug_v2":
         originals = {i for i in rag.doc_ids if not str(i).startswith("aug_")}
         orphans = {source_of(i) for i in rag.doc_ids if str(i).startswith("aug_")} - originals
@@ -279,6 +303,9 @@ def sensitivity_dir(k: int) -> Path:
 
 
 def out_dir(split: str, k: int, smoke: int | None, sensitivity: bool = False) -> Path:
+    if RESPLIT:
+        base = data_dir() / "MAIN_EVAL_K1"
+        return base / "_smoke" / f"{split}_k{k}" if smoke else base
     if split == "val":
         base = VAL_OUT / f"k{k}"
     else:
@@ -479,6 +506,14 @@ def k_source(split: str, k: int, smoke: int | None, sensitivity: bool = False) -
     --sensitivity：test 上刻意以非選定的 k 跑完整五組，作為 k 的敏感度分析，
     輸出到 MAIN_EVAL_AUGV2_K{k}/，不取代主結果，也不回頭影響選 k。
     """
+    if RESPLIT:
+        if split != "test" or k != RESPLIT_K or sensitivity:
+            C.die(f"--resplit 只用於 --split test --top-k {RESPLIT_K}（不加 --sensitivity）")
+        return {
+            "role": "resplit_robustness",
+            "resplit": RESPLIT,
+            "k_decision": "#30：v2 論文採 k = 1（主切分 val 上只看 C4、C5）；重切上不重新選 k",
+        }
     if sensitivity and split != "test":
         C.die("--sensitivity 只用於 test")
     if split == "val":
@@ -538,6 +573,12 @@ def write_manifest(out: Path, split: str, df: pd.DataFrame, k: int, conditions: 
         ],
         "corpora": corpora,
         "v1_manifest_sha256": C.sha256_file(V1_MANIFEST),
+        "resplit": None if not RESPLIT else {
+            "name": RESPLIT,
+            "split_manifest": str(split_manifest_path().relative_to(BASE_OUT)).replace("\\", "/"),
+            "split_manifest_sha256": C.sha256_file(split_manifest_path()),
+            "assignment_sha256": C.load_json(split_manifest_path())["assignment_sha256"],
+        },
     })
 
 
@@ -825,6 +866,8 @@ def main() -> None:
     parser.add_argument("--smoke", type=int, metavar="N")
     parser.add_argument("--sensitivity", action="store_true",
                         help="test 上以非選定的 k 跑完整五組（輸出 MAIN_EVAL_AUGV2_K{k}/）")
+    parser.add_argument("--resplit", choices=RESPLIT_NAMES,
+                        help="#4：在 30_ 建立的重切上跑 test 五組（k = 1）")
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--parity-check", type=int, metavar="N")
     mode.add_argument("--retrieval-diagnostic", action="store_true")
@@ -832,6 +875,14 @@ def main() -> None:
     mode.add_argument("--compare-v1", action="store_true")
     mode.add_argument("--rescore", action="store_true")
     args = parser.parse_args()
+
+    if args.resplit:
+        if args.parity_check or args.retrieval_diagnostic or args.select_k or args.compare_v1:
+            parser.error("--resplit 只能搭配評估或 --rescore")
+        global RESPLIT
+        RESPLIT = args.resplit
+        if not split_manifest_path().exists():
+            C.die(f"找不到 {split_manifest_path()}（先跑 30_build_resplits.py）")
 
     if args.parity_check:
         parity_check(args.parity_check)

@@ -23,3 +23,8 @@ tmp_*.log
 # 27_main_eval_augv2.py 的 smoke 輸出
 runs/*/MAIN_EVAL_AUGV2/_smoke/
 runs/*/TOPK_VAL_AUGV2/_smoke/
+
+# 30_／27_ --resplit／07_ 的重切 smoke 輸出與執行 log
+runs/*/RESPLITS/*/MAIN_EVAL_K1/_smoke/
+runs/*/RESPLITS/*/*.log
+runs/*/baselines_*.log

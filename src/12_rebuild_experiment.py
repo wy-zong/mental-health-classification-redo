@@ -1184,10 +1184,11 @@ def label_from_corpus_doc(doc: str) -> str | None:
 
 
 class RebuildRagIndex:
-    def __init__(self, run: str, name: str):
+    def __init__(self, run: str, name: str, directory: Path | None = None):
+        """directory：語料所在目錄；None 時為 corpus_dir(run)（#4 的重切另有目錄）。"""
         self.run = run
         self.name = name
-        self.dir = corpus_dir(run)
+        self.dir = corpus_dir(run) if directory is None else directory
         meta_path = self.dir / f"{name}_meta.json"
         if not meta_path.exists():
             C.die(f"新版RAG語料庫尚未建立：{meta_path}")

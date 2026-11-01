@@ -1,0 +1,104 @@
+{
+ "run": "NESTED_70_10_20_INCREMENTAL",
+ "resplit": "resplit_seed1",
+ "assignment_sha256": "e783f96b88136f9084b522768667fe7ae5785f1f38cf22ee35d0eabe1b725e01",
+ "rule": "26_ resplits()：val 固定；train／test 依主切分各類別筆數分層重切（np.random.default_rng(seed)）",
+ "files": {
+  "train": {
+   "rows": 6994,
+   "sha256": "796e0e781ebc75115ac71e3ebd937e5104b67c48125230701bf8b07c637d427f",
+   "sha256_lf": "796e0e781ebc75115ac71e3ebd937e5104b67c48125230701bf8b07c637d427f"
+  },
+  "val": {
+   "rows": 1000,
+   "sha256": "ec974cacf7f4e5772ccf1e8a9d341749dfd8f7ce93ad892e510a81297768cd18",
+   "sha256_lf": "ec974cacf7f4e5772ccf1e8a9d341749dfd8f7ce93ad892e510a81297768cd18"
+  },
+  "test": {
+   "rows": 1998,
+   "sha256": "8dd6d8e7e3e740f448402e6ff4bf851069e3e86bf0d901d06002d450100657a2",
+   "sha256_lf": "8dd6d8e7e3e740f448402e6ff4bf851069e3e86bf0d901d06002d450100657a2"
+  }
+ },
+ "counts_by_label": {
+  "train": {
+   "Depression": 1749,
+   "Normal": 1749,
+   "Bipolar": 1748,
+   "Anxiety": 1748
+  },
+  "val": {
+   "Bipolar": 250,
+   "Normal": 250,
+   "Anxiety": 250,
+   "Depression": 250
+  },
+  "test": {
+   "Bipolar": 500,
+   "Anxiety": 500,
+   "Normal": 499,
+   "Depression": 499
+  }
+ },
+ "n_moved_from_exp15": {
+  "train": 1550,
+  "val": 0,
+  "test": 1550
+ },
+ "corpus": {
+  "noaug": {
+   "n_docs": 6994,
+   "index_sha256": "d74d12156e16e394682a8d95254e46bba1915510db9e3c85890fdc0b77e8a3b5",
+   "docs_sha256": "c3ca9697166cae63e57f0ebd74ce90781d81465e85f7d13a4af0ed65d3ac5fb6"
+  },
+  "aug_v2": {
+   "n_docs": 19485,
+   "index_sha256": "2fa944788489eb6a89928b0ad0d08f0df7b576c6a0dd91fa521f53eb304fa336",
+   "docs_sha256": "6130a4f8f03446b4ae1cfe34c61f8f3b44b3f3215974b3f77df4b62da4c1610d"
+  }
+ },
+ "leakage": {
+  "paraphrases_from_eval_sources": 0,
+  "exact_overlap_corpus_vs_eval": 0
+ },
+ "retrieval_top1": {
+  "noaug_val": {
+   "n": 1000,
+   "max": 0.892619788646698,
+   "mean": 0.6060535907745361,
+   "p99": 0.8341938257217407,
+   "n_ge_0_90": 0,
+   "share_paraphrase": 0.0,
+   "same_source_as_query": 0
+  },
+  "aug_v2_val": {
+   "n": 1000,
+   "max": 0.8972941040992737,
+   "mean": 0.6223413348197937,
+   "p99": 0.8461810350418091,
+   "n_ge_0_90": 0,
+   "share_paraphrase": 0.542,
+   "same_source_as_query": 0
+  },
+  "noaug_test": {
+   "n": 1998,
+   "max": 0.8714553117752075,
+   "mean": 0.6083340048789978,
+   "p99": 0.8351242542266846,
+   "n_ge_0_90": 0,
+   "share_paraphrase": 0.0,
+   "same_source_as_query": 0
+  },
+  "aug_v2_test": {
+   "n": 1998,
+   "max": 0.8714553117752075,
+   "mean": 0.6239028573036194,
+   "p99": 0.8396015763282776,
+   "n_ge_0_90": 0,
+   "share_paraphrase": 0.5115115115115115,
+   "same_source_as_query": 0
+  }
+ },
+ "created_at": "2026-11-01T03:36:18+0800",
+ "git_revision": "84f25e5b4443348fef766af7f6be34cea385db6b"
+}

@@ -1,0 +1,30 @@
+{
+ "run": "NESTED_70_10_20_INCREMENTAL",
+ "name": "aug_v2",
+ "n_docs": 19504,
+ "embedding_model": "all-MiniLM-L6-v2",
+ "max_seq_length": 512,
+ "normalized": true,
+ "metric": "cosine (IndexFlatIP on normalized vectors)",
+ "top_k": 1,
+ "doc_format": "{statement} true_label is {status}（R.corpus_entry）",
+ "encoding": "全部以 R.embedder 重新編碼（30_build_resplits.py）",
+ "resplit": "resplit_seed0",
+ "assignment_sha256": "903c01377c58d04b932417d5e4d5bcc32e863e5751eea9819483cc98bdd03b8e",
+ "source": "train originals + augment_v2 train-source paraphrases",
+ "n_original_docs": 6994,
+ "n_paraphrase_docs": 12510,
+ "paraphrases_by_label": {
+  "Bipolar": 3428,
+  "Anxiety": 3289,
+  "Depression": 3152,
+  "Normal": 2641
+ },
+ "accepted_sha256_lf": "c9863f7610555c1ea24fb646c2b20093c91212562963e3a5f8df4f0123480919",
+ "usage_rule": "任何切分的 RAG 語料 = 該切分 train 的原文 + accepted.csv 中 source_id 屬於該切分 train 的改寫；val／test 原文的改寫在該切分中一律不用（select_for_split）。val 原文沒有改寫，重複切分時 val 固定，只重新切分 train＋test。改寫只依賴自己的原文，所以結果與切分無關。",
+ "exact_overlap_with_eval_splits": 0,
+ "paraphrases_from_eval_sources": 0,
+ "index_sha256": "140f7a5bc21a12a762439055a85a61d3a8d5cec271899da854a94556d5bfdbf2",
+ "docs_sha256": "95c2bc57d915a392a8ade1c233cbc19e21ba9d31ff5db1355ef4afcecebeee8a",
+ "created_at": "2026-11-01T03:36:15+0800"
+}
