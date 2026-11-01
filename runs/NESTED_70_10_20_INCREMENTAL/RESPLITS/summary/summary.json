@@ -1,0 +1,30 @@
+{
+  "created_at": "2026-11-01T09:52:47+0800",
+  "llm_splits_done": [
+    "exp15",
+    "resplit_seed0",
+    "resplit_seed1",
+    "resplit_seed2"
+  ],
+  "conventions": {
+    "invalid": "counted as incorrect",
+    "f1": "mean over the four valid labels",
+    "delta": "second minus first",
+    "mcnemar": "exact (09_stats.mcnemar)",
+    "holm": "within each split: 10 LLM pairs; baseline-vs-LLM pairs as a separate family",
+    "sd": "sample SD (ddof = 1) across splits"
+  },
+  "exp15_matches_17_stats": true,
+  "problems": [],
+  "notes": [],
+  "tables": {
+    "llm_conditions_by_split": "llm_conditions_by_split.csv",
+    "llm_conditions_aggregate": "llm_conditions_aggregate.csv",
+    "llm_paired_by_split": "llm_paired_by_split.csv",
+    "llm_paired_aggregate": "llm_paired_aggregate.csv",
+    "baseline_by_split": "baseline_by_split.csv",
+    "baseline_aggregate": "baseline_aggregate.csv",
+    "baseline_vs_llm": "baseline_vs_llm.csv",
+    "baseline_cost": "baseline_cost.csv"
+  }
+}

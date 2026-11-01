@@ -1,0 +1,179 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "MAIN_EVAL_AUGV2",
+  "created_at": "2026-11-01 08:32:21+0800",
+  "python": "3.10.18",
+  "platform": "Windows-10-10.0.26100-SP0",
+  "git_revision": "84f25e5b4443348fef766af7f6be34cea385db6b",
+  "model": {
+    "model_name": "llama3.1",
+    "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "weights_blob_digest": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+    "size_bytes": 4920753328,
+    "ollama_version": "0.35.0"
+  },
+  "ollama_version": "0.35.0",
+  "llm_generation_options": {
+    "temperature": 0.0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 16,
+    "top_p": 1.0
+  },
+  "split": {
+    "name": "test",
+    "path": "RESPLITS/resplit_seed2/splits/test.csv",
+    "n": 1998,
+    "sha256": "93787ef56ff2678a3efdcc82cd0a5d2f8a5e5b4bc1a6ce02fa692f89cc0f4b85",
+    "label_counts": {
+      "Bipolar": 500,
+      "Anxiety": 500,
+      "Depression": 499,
+      "Normal": 499
+    }
+  },
+  "smoke_n": null,
+  "top_k": 1,
+  "top_k_source": {
+    "role": "resplit_robustness",
+    "resplit": "resplit_seed2",
+    "k_decision": "#30：v2 論文採 k = 1（主切分 val 上只看 C4、C5）；重切上不重新選 k"
+  },
+  "reference_context_format": "top-k docs by descending similarity joined with '\\n'",
+  "truncation_check": {
+    "num_ctx": 4096,
+    "near_ctx": 3686,
+    "truncated_if_chars_per_token_above": 6.0
+  },
+  "prompt_source": "15_nested_custom_prompt_eval.py PROMPTS (sha256 checked against 15_ manifest)",
+  "prompts": {
+    "optimized_rag": {
+      "prompt_id": "user_optimized_rag_prompt_exact",
+      "sha256": "c2700aeb895c635e0e4e608e4ec45ba2155afc5e15cbaa2cd1d5f8573caabe6a",
+      "template": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar].\nBelow is some related reference content that might help you classify the new text: {reference_context}.\nNow classify this text: {text}.\nPlease only output one of the following labels: [Normal, Depression, Anxiety, Bipolar]. Do not output anything else.r",
+      "uses_rag": true
+    },
+    "base_rag": {
+      "prompt_id": "user_base_rag_prompt",
+      "sha256": "b4db1632c9247a2ead8e9f90487050b6dcedadc38b66e483c580804da3555f03",
+      "template": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar].\nYou can refer to the following reference content for categorization: {reference_context}.\nNow classify this text: {text}.\noutput only one of the following labels: [Normal, Depression, Anxiety, Bipolar].",
+      "uses_rag": true
+    },
+    "base_norag": {
+      "prompt_id": "user_base_llm_only_prompt",
+      "sha256": "139f899aa7797d948fa0eaf92b02305c6e092f0a1c9a8fc4c72eb24f52843a1a",
+      "template": "Classify the text into one of [Normal, Depression, Anxiety, Bipolar].\nNow classify this text: {text}.\noutput only one of the following labels: [Normal, Depression, Anxiety, Bipolar].",
+      "uses_rag": false
+    }
+  },
+  "conditions": [
+    {
+      "condition": "norag_base",
+      "display_name": "無檢索・基礎 prompt",
+      "prompt": "base_norag",
+      "corpus": null,
+      "v1_condition": "norag_base"
+    },
+    {
+      "condition": "rag_noaug_base",
+      "display_name": "原文檢索・基礎 prompt",
+      "prompt": "base_rag",
+      "corpus": "noaug",
+      "v1_condition": "rag_noaug_base"
+    },
+    {
+      "condition": "rag_augv2_base",
+      "display_name": "原文＋擴寫檢索・基礎 prompt",
+      "prompt": "base_rag",
+      "corpus": "aug_v2",
+      "v1_condition": "rag_aug_base"
+    },
+    {
+      "condition": "rag_noaug_optimized",
+      "display_name": "原文檢索・最佳化 prompt",
+      "prompt": "optimized_rag",
+      "corpus": "noaug",
+      "v1_condition": "rag_noaug_optimized"
+    },
+    {
+      "condition": "rag_augv2_optimized",
+      "display_name": "原文＋擴寫檢索・最佳化 prompt",
+      "prompt": "optimized_rag",
+      "corpus": "aug_v2",
+      "v1_condition": "rag_aug_optimized"
+    }
+  ],
+  "corpora": {
+    "noaug": {
+      "meta": {
+        "run": "NESTED_70_10_20_INCREMENTAL",
+        "name": "noaug",
+        "n_docs": 6994,
+        "embedding_model": "all-MiniLM-L6-v2",
+        "max_seq_length": 512,
+        "normalized": true,
+        "metric": "cosine (IndexFlatIP on normalized vectors)",
+        "top_k": 1,
+        "doc_format": "{statement} true_label is {status}（R.corpus_entry）",
+        "encoding": "全部以 R.embedder 重新編碼（30_build_resplits.py）",
+        "resplit": "resplit_seed2",
+        "assignment_sha256": "47a2e29989f41dadb5180369d9c484f741e6f82b8d16ebbd8afb95230b316e56",
+        "source": "train originals",
+        "n_original_docs": 6994,
+        "exact_overlap_with_eval_splits": 0,
+        "index_sha256": "28db0750aabe352198fca0ac6eae07ccbaa9a56639e123b2bef8c027bc92130b",
+        "docs_sha256": "b60a12acda73cf40fc9054bf2f9f9c01ac1e5141b18bf2e85d1a24cddce51c59",
+        "created_at": "2026-11-01T03:36:20+0800"
+      },
+      "meta_sha256": "f6228d9eda21666c818a2bf274a75ddab15c5e45ca89d4e3ea7682478f714855",
+      "index_sha256_actual": "28db0750aabe352198fca0ac6eae07ccbaa9a56639e123b2bef8c027bc92130b",
+      "docs_sha256_disk": "b60a12acda73cf40fc9054bf2f9f9c01ac1e5141b18bf2e85d1a24cddce51c59",
+      "docs_sha256_lf_normalized": "b60a12acda73cf40fc9054bf2f9f9c01ac1e5141b18bf2e85d1a24cddce51c59",
+      "docs_sha256_match": "disk"
+    },
+    "aug_v2": {
+      "meta": {
+        "run": "NESTED_70_10_20_INCREMENTAL",
+        "name": "aug_v2",
+        "n_docs": 19501,
+        "embedding_model": "all-MiniLM-L6-v2",
+        "max_seq_length": 512,
+        "normalized": true,
+        "metric": "cosine (IndexFlatIP on normalized vectors)",
+        "top_k": 1,
+        "doc_format": "{statement} true_label is {status}（R.corpus_entry）",
+        "encoding": "全部以 R.embedder 重新編碼（30_build_resplits.py）",
+        "resplit": "resplit_seed2",
+        "assignment_sha256": "47a2e29989f41dadb5180369d9c484f741e6f82b8d16ebbd8afb95230b316e56",
+        "source": "train originals + augment_v2 train-source paraphrases",
+        "n_original_docs": 6994,
+        "n_paraphrase_docs": 12507,
+        "paraphrases_by_label": {
+          "Bipolar": 3448,
+          "Anxiety": 3274,
+          "Depression": 3121,
+          "Normal": 2664
+        },
+        "accepted_sha256_lf": "c9863f7610555c1ea24fb646c2b20093c91212562963e3a5f8df4f0123480919",
+        "usage_rule": "任何切分的 RAG 語料 = 該切分 train 的原文 + accepted.csv 中 source_id 屬於該切分 train 的改寫；val／test 原文的改寫在該切分中一律不用（select_for_split）。val 原文沒有改寫，重複切分時 val 固定，只重新切分 train＋test。改寫只依賴自己的原文，所以結果與切分無關。",
+        "exact_overlap_with_eval_splits": 0,
+        "paraphrases_from_eval_sources": 0,
+        "index_sha256": "f5ec259b21615c7ae99ff759f805729c022858c60b8e82c5a20eebece355da2b",
+        "docs_sha256": "ee82889d5178fecba2fedcb6439bd6bc0f3e07094967a8b0e05fa75048564404",
+        "created_at": "2026-11-01T03:36:20+0800"
+      },
+      "meta_sha256": "735e9acedd1d7eb6c6df280ff491a1fa99da3846f4c0bdfbe0759d85aa36f461",
+      "index_sha256_actual": "f5ec259b21615c7ae99ff759f805729c022858c60b8e82c5a20eebece355da2b",
+      "docs_sha256_disk": "ee82889d5178fecba2fedcb6439bd6bc0f3e07094967a8b0e05fa75048564404",
+      "docs_sha256_lf_normalized": "ee82889d5178fecba2fedcb6439bd6bc0f3e07094967a8b0e05fa75048564404",
+      "docs_sha256_match": "disk"
+    }
+  },
+  "v1_manifest_sha256": "a826f1a195e2009e86c5cb8d892a6acf6b83e3945ea1361c63a908f73990b56f",
+  "resplit": {
+    "name": "resplit_seed2",
+    "split_manifest": "RESPLITS/resplit_seed2/splits/split_manifest.json",
+    "split_manifest_sha256": "441539b729d778dc40de1851091d5e0a8c0a038d0fcc79677685b1375141bc6e",
+    "assignment_sha256": "47a2e29989f41dadb5180369d9c484f741e6f82b8d16ebbd8afb95230b316e56"
+  }
+}

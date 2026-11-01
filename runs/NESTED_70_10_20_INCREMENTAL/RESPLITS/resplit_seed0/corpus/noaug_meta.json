@@ -1,0 +1,20 @@
+{
+ "run": "NESTED_70_10_20_INCREMENTAL",
+ "name": "noaug",
+ "n_docs": 6994,
+ "embedding_model": "all-MiniLM-L6-v2",
+ "max_seq_length": 512,
+ "normalized": true,
+ "metric": "cosine (IndexFlatIP on normalized vectors)",
+ "top_k": 1,
+ "doc_format": "{statement} true_label is {status}（R.corpus_entry）",
+ "encoding": "全部以 R.embedder 重新編碼（30_build_resplits.py）",
+ "resplit": "resplit_seed0",
+ "assignment_sha256": "903c01377c58d04b932417d5e4d5bcc32e863e5751eea9819483cc98bdd03b8e",
+ "source": "train originals",
+ "n_original_docs": 6994,
+ "exact_overlap_with_eval_splits": 0,
+ "index_sha256": "09f04d4e2cc5cc0717bdd9c3832513c363042b66ce5ce2fbbed8fcd036f526a8",
+ "docs_sha256": "df9e9d93f7c289d260c17dd7d16b31f8f66edab572073661467ae2b4e8e64d84",
+ "created_at": "2026-11-01T03:36:14+0800"
+}
