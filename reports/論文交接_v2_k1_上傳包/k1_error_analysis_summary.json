@@ -1,0 +1,260 @@
+{
+  "run": "NESTED_70_10_20_INCREMENTAL",
+  "experiment": "MAIN_EVAL_AUGV2",
+  "script": "src/18_custom_prompt_error_analysis.py",
+  "seed": 42,
+  "rag_helped_C1wrong_C2right": {
+    "n": 374,
+    "C1_invalid": 232,
+    "C2_invalid": 0,
+    "C2_pred_equals_retrieved": 346,
+    "retrieved_label_correct": 346
+  },
+  "rag_hurt_C1right_C2wrong": {
+    "n": 215,
+    "C1_invalid": 0,
+    "C2_invalid": 151,
+    "C2_pred_equals_retrieved": 43,
+    "retrieved_label_correct": 135
+  },
+  "top_confusions": {
+    "C4": [
+      {
+        "code": "C4",
+        "condition": "rag_noaug_optimized",
+        "true_label": "Depression",
+        "pred_label": "INVALID",
+        "count": 61,
+        "share_of_errors": 0.12629399585921325,
+        "share_of_true_class": 0.12224448897795591,
+        "display_name": "原文檢索・最佳化 prompt"
+      },
+      {
+        "code": "C4",
+        "condition": "rag_noaug_optimized",
+        "true_label": "Depression",
+        "pred_label": "Bipolar",
+        "count": 59,
+        "share_of_errors": 0.12215320910973085,
+        "share_of_true_class": 0.11823647294589178,
+        "display_name": "原文檢索・最佳化 prompt"
+      },
+      {
+        "code": "C4",
+        "condition": "rag_noaug_optimized",
+        "true_label": "Normal",
+        "pred_label": "Anxiety",
+        "count": 57,
+        "share_of_errors": 0.11801242236024845,
+        "share_of_true_class": 0.11422845691382766,
+        "display_name": "原文檢索・最佳化 prompt"
+      },
+      {
+        "code": "C4",
+        "condition": "rag_noaug_optimized",
+        "true_label": "Depression",
+        "pred_label": "Anxiety",
+        "count": 57,
+        "share_of_errors": 0.11801242236024845,
+        "share_of_true_class": 0.11422845691382766,
+        "display_name": "原文檢索・最佳化 prompt"
+      },
+      {
+        "code": "C4",
+        "condition": "rag_noaug_optimized",
+        "true_label": "Normal",
+        "pred_label": "Depression",
+        "count": 41,
+        "share_of_errors": 0.08488612836438923,
+        "share_of_true_class": 0.08216432865731463,
+        "display_name": "原文檢索・最佳化 prompt"
+      }
+    ],
+    "C5": [
+      {
+        "code": "C5",
+        "condition": "rag_augv2_optimized",
+        "true_label": "Depression",
+        "pred_label": "Anxiety",
+        "count": 72,
+        "share_of_errors": 0.14937759336099585,
+        "share_of_true_class": 0.14428857715430862,
+        "display_name": "原文＋擴寫檢索・最佳化 prompt"
+      },
+      {
+        "code": "C5",
+        "condition": "rag_augv2_optimized",
+        "true_label": "Normal",
+        "pred_label": "Anxiety",
+        "count": 59,
+        "share_of_errors": 0.12240663900414937,
+        "share_of_true_class": 0.11823647294589178,
+        "display_name": "原文＋擴寫檢索・最佳化 prompt"
+      },
+      {
+        "code": "C5",
+        "condition": "rag_augv2_optimized",
+        "true_label": "Depression",
+        "pred_label": "Bipolar",
+        "count": 57,
+        "share_of_errors": 0.11825726141078838,
+        "share_of_true_class": 0.11422845691382766,
+        "display_name": "原文＋擴寫檢索・最佳化 prompt"
+      },
+      {
+        "code": "C5",
+        "condition": "rag_augv2_optimized",
+        "true_label": "Depression",
+        "pred_label": "INVALID",
+        "count": 50,
+        "share_of_errors": 0.1037344398340249,
+        "share_of_true_class": 0.10020040080160321,
+        "display_name": "原文＋擴寫檢索・最佳化 prompt"
+      },
+      {
+        "code": "C5",
+        "condition": "rag_augv2_optimized",
+        "true_label": "Bipolar",
+        "pred_label": "Depression",
+        "count": 44,
+        "share_of_errors": 0.0912863070539419,
+        "share_of_true_class": 0.088,
+        "display_name": "原文＋擴寫檢索・最佳化 prompt"
+      }
+    ]
+  },
+  "retrieval_copy_stats": [
+    {
+      "code": "C2",
+      "condition": "rag_noaug_base",
+      "n": 1998,
+      "retrieved_label_correct_rate": 0.7872872872872873,
+      "copy_rate_all": 0.6516516516516516,
+      "copy_rate_valid_only": 0.8330134357005758,
+      "accuracy": 0.6221221221221221,
+      "accuracy_when_retrieved_correct": 0.7183725365543547,
+      "accuracy_when_retrieved_wrong": 0.26588235294117646,
+      "n_retrieved_correct": 1573,
+      "n_retrieved_wrong": 425,
+      "copied_wrong_label_rate_when_retrieved_wrong": 0.4047058823529412,
+      "invalid_rate_when_retrieved_correct": 0.2129688493324857,
+      "invalid_rate_when_retrieved_wrong": 0.23529411764705882,
+      "median_top1_similarity": 0.633416473865509,
+      "median_top1_similarity_when_correct": 0.6692018508911133,
+      "median_top1_similarity_when_wrong": 0.5702401399612427,
+      "top_k": 1,
+      "majority_tie_rate": 0.0,
+      "majority_label_correct_rate": 0.7872872872872873,
+      "copy_rate_majority_all": 0.6516516516516516,
+      "copy_rate_majority_valid_only": 0.8330134357005758,
+      "accuracy_when_majority_correct": 0.7183725365543547,
+      "accuracy_when_majority_wrong_or_tie": 0.26588235294117646,
+      "display_name": "原文檢索・基礎 prompt"
+    },
+    {
+      "code": "C3",
+      "condition": "rag_augv2_base",
+      "n": 1998,
+      "retrieved_label_correct_rate": 0.7737737737737738,
+      "copy_rate_all": 0.6376376376376376,
+      "copy_rate_valid_only": 0.7972465581977471,
+      "accuracy": 0.6166166166166166,
+      "accuracy_when_retrieved_correct": 0.7141009055627425,
+      "accuracy_when_retrieved_wrong": 0.2831858407079646,
+      "n_retrieved_correct": 1546,
+      "n_retrieved_wrong": 452,
+      "copied_wrong_label_rate_when_retrieved_wrong": 0.37610619469026546,
+      "invalid_rate_when_retrieved_correct": 0.19534282018111254,
+      "invalid_rate_when_retrieved_wrong": 0.2168141592920354,
+      "median_top1_similarity": 0.6517724394798279,
+      "median_top1_similarity_when_correct": 0.6830242574214935,
+      "median_top1_similarity_when_wrong": 0.597033679485321,
+      "top_k": 1,
+      "majority_tie_rate": 0.0,
+      "majority_label_correct_rate": 0.7737737737737738,
+      "copy_rate_majority_all": 0.6376376376376376,
+      "copy_rate_majority_valid_only": 0.7972465581977471,
+      "accuracy_when_majority_correct": 0.7141009055627425,
+      "accuracy_when_majority_wrong_or_tie": 0.2831858407079646,
+      "display_name": "原文＋擴寫檢索・基礎 prompt"
+    },
+    {
+      "code": "C4",
+      "condition": "rag_noaug_optimized",
+      "n": 1998,
+      "retrieved_label_correct_rate": 0.7872872872872873,
+      "copy_rate_all": 0.8838838838838838,
+      "copy_rate_valid_only": 0.9284963196635121,
+      "accuracy": 0.7582582582582582,
+      "accuracy_when_retrieved_correct": 0.919262555626192,
+      "accuracy_when_retrieved_wrong": 0.1623529411764706,
+      "n_retrieved_correct": 1573,
+      "n_retrieved_wrong": 425,
+      "copied_wrong_label_rate_when_retrieved_wrong": 0.7529411764705882,
+      "invalid_rate_when_retrieved_correct": 0.04767959313413859,
+      "invalid_rate_when_retrieved_wrong": 0.04941176470588235,
+      "median_top1_similarity": 0.633416473865509,
+      "median_top1_similarity_when_correct": 0.6510154008865356,
+      "median_top1_similarity_when_wrong": 0.5791341662406921,
+      "top_k": 1,
+      "majority_tie_rate": 0.0,
+      "majority_label_correct_rate": 0.7872872872872873,
+      "copy_rate_majority_all": 0.8838838838838838,
+      "copy_rate_majority_valid_only": 0.9284963196635121,
+      "accuracy_when_majority_correct": 0.919262555626192,
+      "accuracy_when_majority_wrong_or_tie": 0.1623529411764706,
+      "display_name": "原文檢索・最佳化 prompt"
+    },
+    {
+      "code": "C5",
+      "condition": "rag_augv2_optimized",
+      "n": 1998,
+      "retrieved_label_correct_rate": 0.7737737737737738,
+      "copy_rate_all": 0.8848848848848849,
+      "copy_rate_valid_only": 0.9198751300728408,
+      "accuracy": 0.7587587587587588,
+      "accuracy_when_retrieved_correct": 0.9301423027166882,
+      "accuracy_when_retrieved_wrong": 0.17256637168141592,
+      "n_retrieved_correct": 1546,
+      "n_retrieved_wrong": 452,
+      "copied_wrong_label_rate_when_retrieved_wrong": 0.7300884955752213,
+      "invalid_rate_when_retrieved_correct": 0.03686934023285899,
+      "invalid_rate_when_retrieved_wrong": 0.0420353982300885,
+      "median_top1_similarity": 0.6517724394798279,
+      "median_top1_similarity_when_correct": 0.6686094701290131,
+      "median_top1_similarity_when_wrong": 0.6056624054908752,
+      "top_k": 1,
+      "majority_tie_rate": 0.0,
+      "majority_label_correct_rate": 0.7737737737737738,
+      "copy_rate_majority_all": 0.8848848848848849,
+      "copy_rate_majority_valid_only": 0.9198751300728408,
+      "accuracy_when_majority_correct": 0.9301423027166882,
+      "accuracy_when_majority_wrong_or_tie": 0.17256637168141592,
+      "display_name": "原文＋擴寫檢索・最佳化 prompt"
+    }
+  ],
+  "profile": "v2_k1",
+  "top_k": 1,
+  "display_names": {
+    "C1": {
+      "condition": "norag_base",
+      "display_name": "無檢索・基礎 prompt"
+    },
+    "C2": {
+      "condition": "rag_noaug_base",
+      "display_name": "原文檢索・基礎 prompt"
+    },
+    "C3": {
+      "condition": "rag_augv2_base",
+      "display_name": "原文＋擴寫檢索・基礎 prompt"
+    },
+    "C4": {
+      "condition": "rag_noaug_optimized",
+      "display_name": "原文檢索・最佳化 prompt"
+    },
+    "C5": {
+      "condition": "rag_augv2_optimized",
+      "display_name": "原文＋擴寫檢索・最佳化 prompt"
+    }
+  }
+}
