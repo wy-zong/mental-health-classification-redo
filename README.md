@@ -2,6 +2,10 @@
 
 從零重做的實驗流程。**與舊 repo（`../Code`）完全切開，不沿用任何舊產物或舊程式碼。**
 
+> 本 README 的流程說明寫於 2026-09 的早期階段。論文最終版本（v2、top-k = 1）的流程、結果與檔案索引見
+> `reports/論文交接_v2_k1_20261017.md`；交付版本是標籤 `lab-handoff-20261102`。資料檔的換行與
+> 受影響的結果見文末「資料換行與受影響的結果」。
+
 ## 為什麼從零重做
 
 舊 repo 裡有兩套東西：原始實驗腳本，以及為了趕期刊死線做的 `revision/` 修訂流程。
@@ -136,3 +140,29 @@ PID_B | anaconda3\envs\new_mj\python.exe <script>   真正執行程式碼的程�
 且同一張卡上 `03_build_corpus` 能成功 encode 15,101 筆。
 該步驟整輪僅執行一次且非瓶頸，改用 CPU 換取穩定（約 8 分鐘），
 輸出與 GPU 版完全一致。
+
+## 資料換行與受影響的結果
+
+### 換行轉換（已修正）
+
+repo 原本沒有 `.gitattributes`，Git for Windows 預設 `core.autocrlf=true`：資料檔存進 git 時被轉成 LF，
+取出時又被轉成 CRLF。混用換行的切分 CSV（CRLF 分隔記錄、欄內裸 LF）因此無法還原，腳本記錄的
+sha256 在任何 clone 上都對不上；以 LF 寫出的檔案（`26_`、`30_`、`07_` 的預測檔）在本機則被改成 CRLF。
+
+現在 `runs/`、`data/` 設為 `-text`，git 存的是腳本寫出的原始位元組，任何作業系統的 clone 或 ZIP
+下載都相同，所有 sha256 核對都會通過。標籤 `lab-handoff-20261102` 之前的 commit 沒有這個設定。
+
+### 用到被改過檔案的結果（未重跑）
+
+本機的 `runs/NESTED_70_10_20_INCREMENTAL/AUGMENT_V2/accepted.csv` 自 2026-10-05 起被 checkout 改成 CRLF；
+其中 4,935 筆改寫的文字本身含換行，讀進來後多了 `\r`。2026-11-01 有兩個腳本讀到這份檔案：
+
+| 結果 | 受影響的部分 | 不受影響 |
+|---|---|---|
+| #2 傳統 baseline（`07_baselines.py`） | `aug_v2` 的 MiniLM、DistilBERT：主切分 seed 42–44（`BASELINES/`）與 3 組重切 seed 42（`RESPLITS/*/BASELINES/`） | TF-IDF、所有 `noaug` |
+| #4 重複切分（`30_build_resplits.py` 建的語料） | 3 組重切的 `aug_v2` 語料分別有 3,839／3,790／3,862 筆文件含 `\r`（檢索嵌入與 prompt 參考文字都受影響），用到它的是重切的 C3、C5 | 重切的 C1、C2、C4 |
+
+- **論文主結果不受影響**：主切分的 `aug_v2` 語料在 2026-10-04 由原檔建立（0 筆含 `\r`）；主實驗 C1–C5（k = 1、k = 5）、val 選 k、v1 與所有事後分析都沒有讀 `accepted.csv`。
+- **影響大小**：主切分 MiniLM `aug_v2` seed 42 用正確檔案重跑，1,998 筆中有 12 筆預測不同（accuracy 0.8569 → 0.8554）；TF-IDF 的預測逐位元相同；DistilBERT 與重切的 C3、C5 沒有重跑。baseline 不在論文中呈現；重複切分的結論與主結果的趨勢一致。
+- **紀錄欄位**：`baselines.json`、`RESPLITS/build_summary.json` 的 `accepted_sha256_lf` 與正確的 `accepted.csv` 相符，因為核對雜湊前先把換行正規化，讀進來的文字卻沒有正規化。
+- **重現已提交的數字**：把 `accepted.csv` 的每個 `\n` 暫時換成 `\r\n` 再執行 `07_`，即可得到逐位元相同的預測（主切分 MiniLM seed 42 已驗證），跑完後還原（`26_ --stage verify` 需要原檔）。重切的 C3、C5 直接使用 repo 中已提交的語料；若以正確的 `accepted.csv` 重跑 `30_`，建出的語料不含 `\r`，與已提交的不同。
