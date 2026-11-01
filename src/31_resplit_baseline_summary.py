@@ -2,23 +2,18 @@
 
 LLM（v2、k = 1）
   4 組切分：主切分（MAIN_EVAL_AUGV2_K1/）＋ RESPLITS/resplit_seed{0,1,2}/MAIN_EVAL_K1/。
-  * 各切分 C1–C5 的 accuracy、macro-F1、weighted-F1、無效率（含 bootstrap 95% CI），
-    以及 4 組的平均 ± SD、最小、最大
-  * 各切分 10 組配對：Δ（含 CI）、n01／n10、exact McNemar、Holm（每組切分內 10 組校正，與 17_ 相同）
+  * 各切分 C1–C5 的 accuracy、macro-F1、weighted-F1、無效率，以及 4 組的平均 ± SD、最小、最大
+  * 各切分 10 組配對：Δ、n01／n10、exact McNemar、Holm（每組切分內 10 組校正，與 17_ 相同）
   * 各配對跨切分：Δ accuracy 的平均 ± SD、Δ > 0 的切分數、Holm 後顯著的切分數
 baseline（07_ --split-dir）
   主切分 BASELINES/（seed 42–44）、各重切 RESPLITS/<name>/BASELINES/（seed 42）
-  * 各切分、模型、版本、seed 的指標（含 bootstrap 95% CI）
   * 各模型 × 版本：主切分 3 seed 的平均 ± SD；4 組切分（seed 42）的平均 ± SD
-  * 各切分 baseline（seed 42）vs C4、C5：Δ（含 CI）與 exact McNemar（LLM 的 INVALID 算錯；每組切分內 Holm）
+  * 各切分 baseline（seed 42）vs C4、C5 的 exact McNemar（LLM 的 INVALID 算錯；每組切分內 Holm）
   * 成本：訓練／推論時間、DistilBERT 峰值 GPU 記憶體，對照 LLM 的 cost_latency.csv
 
 數字慣例同 17_：無效回覆算錯、F1 只平均四個有效類別、Δ = 後者 − 前者、
-相對錯誤率下降 = (err_前 − err_後) / err_前 × 100。
-bootstrap 95% CI 也同 17_：每組切分各自 10,000 次重抽（seed 42，percentile 2.5／97.5），
-同一切分內所有 LLM 條件與 baseline 共用同一組重抽索引，配對的 Δ CI 用同一組索引。
-主切分的點估計、CI、McNemar 必須與 MAIN_EVAL_AUGV2_K1/stats_conditions.csv、
-stats_paired.csv 相同（本腳本會檢查）。
+相對錯誤率下降 = (err_前 − err_後) / err_前 × 100。主切分的數字必須與 MAIN_EVAL_AUGV2_K1/
+stats_conditions.csv、stats_paired.csv 相同（本腳本會檢查）。
 
 輸出：runs/NESTED_70_10_20_INCREMENTAL/RESPLITS/summary/
 
@@ -100,47 +95,33 @@ def load_llm(split: str, truth: pd.Series) -> dict[str, tuple[np.ndarray, np.nda
     return out
 
 
-def boot_metrics(enc: dict, idx: np.ndarray) -> dict[str, dict]:
-    """每個條件（或 baseline）在同一組重抽索引下的 bootstrap 指標陣列。"""
-    return {key: E.metrics_from_confusion(E.boot_confusions(y, p, idx)) for key, (y, p) in enc.items()}
-
-
-def with_ci(point: dict, boot: dict, keys: tuple[str, ...]) -> dict:
-    row = {}
-    for k in keys:
-        lo, hi = E.ci95(boot[k])
-        row.update({k: float(point[k]), f"{k}_ci_low": lo, f"{k}_ci_high": hi})
-    return row
-
-
-def llm_conditions(split: str, enc: dict, bm: dict) -> list[dict]:
+def llm_conditions(split: str, enc: dict) -> list[dict]:
     rows = []
     for code, (y, p) in enc.items():
         m = E.metrics_from_confusion(E.confusion(y, p))
         rows.append({"split": split, "code": code, "condition": CODES[code], "n": int(len(y)),
                      "invalid_count": int((p == E.INVALID).sum()),
-                     **with_ci(m, bm[code], METRICS)})
+                     **{k: float(m[k]) for k in METRICS}})
     return rows
 
 
-def paired_rows(split: str, enc: dict, bm: dict, pairs: list[tuple[str, str]],
+def paired_rows(split: str, enc_a: dict, enc_b: dict, pairs: list[tuple[str, str]],
                 family: str) -> list[dict]:
-    """pairs 的每組 (a, b)：Δ = b − a 與配對 bootstrap CI、exact McNemar；同一 family 內 Holm。"""
+    """pairs 的每組 (a, b)：Δ = b − a、exact McNemar；同一 family 內 Holm。"""
     rows = []
     for a, b in pairs:
-        (ya, pa), (yb, pb) = enc[a], enc[b]
+        (ya, pa), (yb, pb) = enc_a[a], enc_b[b]
         ma, mb = E.metrics_from_confusion(E.confusion(ya, pa)), E.metrics_from_confusion(E.confusion(yb, pb))
         ca, cb = pa == ya, pb == yb
         mc = STATS09.mcnemar(ca, cb)
         err_a, err_b = 1 - float(ma["accuracy"]), 1 - float(mb["accuracy"])
-        row = {"split": split, "family": family, "first": a, "second": b,
-               "accuracy_first": float(ma["accuracy"]), "accuracy_second": float(mb["accuracy"])}
-        for k in ("accuracy", "macro_f1", "weighted_f1"):
-            lo, hi = E.ci95(bm[b][k] - bm[a][k])
-            row.update({f"delta_{k}": float(mb[k] - ma[k]), f"delta_{k}_ci_low": lo, f"delta_{k}_ci_high": hi})
-        row.update({"n01": mc["n01"], "n10": mc["n10"], "mcnemar_p": mc["p_value"],
-                    "relative_error_reduction_pct": (err_a - err_b) / err_a * 100 if err_a else float("nan")})
-        rows.append(row)
+        rows.append({"split": split, "family": family, "first": a, "second": b,
+                     "accuracy_first": float(ma["accuracy"]), "accuracy_second": float(mb["accuracy"]),
+                     "delta_accuracy": float(mb["accuracy"] - ma["accuracy"]),
+                     "delta_macro_f1": float(mb["macro_f1"] - ma["macro_f1"]),
+                     "delta_weighted_f1": float(mb["weighted_f1"] - ma["weighted_f1"]),
+                     "n01": mc["n01"], "n10": mc["n10"], "mcnemar_p": mc["p_value"],
+                     "relative_error_reduction_pct": (err_a - err_b) / err_a * 100 if err_a else float("nan")})
     adj = E.holm({f"{r['first']}|{r['second']}": r["mcnemar_p"] for r in rows})
     for r in rows:
         r["mcnemar_p_holm"] = adj[f"{r['first']}|{r['second']}"]
@@ -149,18 +130,17 @@ def paired_rows(split: str, enc: dict, bm: dict, pairs: list[tuple[str, str]],
 
 
 def check_exp15(cond_rows: list[dict], pair_rows: list[dict]) -> list[str]:
-    """主切分必須與 17_ 的 stats_conditions.csv／stats_paired.csv 相同（含 bootstrap CI）。"""
+    """主切分必須與 17_ 的 stats_conditions.csv／stats_paired.csv 相同。"""
     problems = []
     ref = pd.read_csv(K1 / "stats_conditions.csv", encoding="utf-8-sig").set_index("code")
     for r in cond_rows:
-        for k in [f"{m}{s}" for m in METRICS for s in ("", "_ci_low", "_ci_high")]:
+        for k in METRICS:
             if abs(r[k] - ref.loc[r["code"], k]) > 1e-12:
                 problems.append(f"exp15 {r['code']} {k}：{r[k]} vs 17_ {ref.loc[r['code'], k]}")
     refp = pd.read_csv(K1 / "stats_paired.csv", encoding="utf-8-sig").set_index(["first", "second"])
     for r in pair_rows:
         x = refp.loc[(r["first"], r["second"])]
-        for k in [f"delta_{m}{s}" for m in ("accuracy", "macro_f1", "weighted_f1")
-                  for s in ("", "_ci_low", "_ci_high")] + ["mcnemar_p", "mcnemar_p_holm"]:
+        for k in ("delta_accuracy", "delta_macro_f1", "mcnemar_p", "mcnemar_p_holm"):
             if abs(r[k] - x[k]) > 1e-12 * max(1.0, abs(x[k])):
                 problems.append(f"exp15 {r['first']}→{r['second']} {k}：{r[k]} vs 17_ {x[k]}")
         if int(r["n01"]) != int(x["n01"]) or int(r["n10"]) != int(x["n10"]):
@@ -258,7 +238,6 @@ def markdown(llm_agg: pd.DataFrame, pair_agg: pd.DataFrame, base_agg: pd.DataFra
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--partial", action="store_true", help="跳過尚未完成的切分或 baseline")
-    ap.add_argument("--bootstrap", type=int, default=E.N_BOOT, help="bootstrap 次數（同 17_）")
     args = ap.parse_args()
 
     truths = {s: test_truth(s) for s in SPLITS if (split_dir(s) / "test.csv").exists()}
@@ -267,8 +246,7 @@ def main() -> None:
         C.die(f"缺少切分（先跑 30_）：{missing}")
 
     problems, notes = [], []
-    boot_idx = {s: E.bootstrap_indices(len(t), args.bootstrap, E.SEED) for s, t in truths.items()}
-    cond_rows, pair_rows, llm_enc, llm_bm = [], [], {}, {}
+    cond_rows, pair_rows, llm_enc = [], [], {}
     for split, truth in truths.items():
         enc = load_llm(split, truth)
         if enc is None:
@@ -276,9 +254,8 @@ def main() -> None:
                 C.die(f"{split} 的 LLM 結果尚未完成：{llm_dir(split)}")
             notes.append(f"{split}：LLM 未完成，略過")
             continue
-        llm_enc[split], llm_bm[split] = enc, boot_metrics(enc, boot_idx[split])
-        c = llm_conditions(split, enc, llm_bm[split])
-        p = paired_rows(split, enc, llm_bm[split], PAIRS, "llm_10_pairs")
+        llm_enc[split] = enc
+        c, p = llm_conditions(split, enc), paired_rows(split, enc, enc, PAIRS, "llm_10_pairs")
         if split == "exp15":
             problems += check_exp15(c, p)
         cond_rows += c
@@ -301,7 +278,7 @@ def main() -> None:
     for split, truth in truths.items():
         runs = baseline_runs(split)
         seeds = MAIN_SEEDS if split == "exp15" else (CMP_SEED,)
-        enc_b, bm_b = {}, {}
+        enc_b = {}
         for model in MODELS:
             for variant in VARIANTS:
                 for seed in seeds:
@@ -310,10 +287,9 @@ def main() -> None:
                         notes.append(f"{split}：缺 {model} {variant} seed {seed}")
                         continue
                     m = E.metrics_from_confusion(E.confusion(*got))
-                    bmb = boot_metrics({"b": got}, boot_idx[split])["b"]
                     r = runs.get((model, variant, seed), {})
                     base_rows.append({"split": split, "model": model, "variant": variant, "seed": seed,
-                                      **with_ci(m, bmb, ("accuracy", "macro_f1", "weighted_f1"))})
+                                      **{k: float(m[k]) for k in ("accuracy", "macro_f1", "weighted_f1")}})
                     cost_rows.append({"split": split, "model": model, "variant": variant, "seed": seed,
                                       "train_rows": r.get("train_rows"), "train_seconds": r.get("train_seconds"),
                                       "inference_seconds": r.get("inference_seconds"),
@@ -323,11 +299,9 @@ def main() -> None:
                                       "peak_gpu_memory_allocated_mib": r.get("peak_gpu_memory_allocated_mib")})
                     if seed == CMP_SEED:
                         enc_b[f"{model}:{variant}"] = got
-                        bm_b[f"{model}:{variant}"] = bmb
         if split in llm_enc and enc_b:
             both = {**enc_b, **{c: llm_enc[split][c] for c in COMPARE_LLM}}
-            bm_both = {**bm_b, **{c: llm_bm[split][c] for c in COMPARE_LLM}}
-            vs_rows += paired_rows(split, both, bm_both, [(b, c) for b in enc_b for c in COMPARE_LLM],
+            vs_rows += paired_rows(split, both, both, [(b, c) for b in enc_b for c in COMPARE_LLM],
                                    "baseline_vs_llm")
     if any(n.startswith(tuple(SPLITS)) and "缺" in n for n in notes) and not args.partial:
         C.die("baseline 結果不完整：" + "；".join(n for n in notes if "缺" in n))
@@ -367,10 +341,7 @@ def main() -> None:
         "conventions": {"invalid": "counted as incorrect", "f1": "mean over the four valid labels",
                         "delta": "second minus first", "mcnemar": "exact (09_stats.mcnemar)",
                         "holm": "within each split: 10 LLM pairs; baseline-vs-LLM pairs as a separate family",
-                        "sd": "sample SD (ddof = 1) across splits",
-                        "bootstrap": {"n_boot": args.bootstrap, "seed": E.SEED, "ci": "percentile 2.5/97.5",
-                                      "scheme": "per split; indices shared by all LLM conditions and "
-                                                "baselines in that split (same as 17_)"}},
+                        "sd": "sample SD (ddof = 1) across splits"},
         "exp15_matches_17_stats": not problems,
         "problems": problems, "notes": notes,
         "tables": {k: f"{k}.csv" for k in tables},
