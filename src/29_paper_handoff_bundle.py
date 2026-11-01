@@ -5,7 +5,7 @@
 
 * 只收 claude.ai 讀得到的格式（md、csv、json、png），不收逐筆 jsonl、FAISS 索引與大檔
 * 檔名加前綴避免撞名：fig_ 圖、k1_ 主結果、k5_ k = 5、v1_ v1、val_ val 選 k、augv2_ 擴寫、
-  corpus_ 語料、suicidal_ Suicidal、splits_ 切分
+  corpus_ 語料、suicidal_ Suicidal、splits_ 切分、resplit_ 重複切分（#4）、baseline_ 傳統 baseline（#2）
 * 位元組原樣複製，複製後逐檔核對 sha256；00_MANIFEST.csv 記錄來源路徑、大小與 sha256
 * 每個上傳包檔名都必須出現在交接文件裡，確保文件的路徑索引沒有漏列
 * 每次重建前清空輸出資料夾（只清本腳本產生過的資料夾，也就是含 00_MANIFEST.csv 或為空）
@@ -31,6 +31,7 @@ MANIFEST_NAME = "00_MANIFEST.csv"
 
 RUN = "runs/NESTED_70_10_20_INCREMENTAL"
 K1 = f"{RUN}/MAIN_EVAL_AUGV2_K1"
+RS = f"{RUN}/RESPLITS/summary"
 CONDITIONS = (
     ("C1", "norag_base", "Fig. 5"),
     ("C2", "rag_noaug_base", "Fig. 6"),
@@ -87,6 +88,17 @@ BUNDLE: list[tuple[str, str, str]] = [
     ("suicidal_rates.csv", f"{RUN}/SUICIDAL_SAFETY/rates.csv", "Suicidal 與對照組的比率"),
     ("splits_split_manifest.json", f"{RUN}/splits/split_manifest.json", "巢狀切分的筆數與 sha"),
     ("splits_near_duplicate_audit.json", f"{RUN}/splits/near_duplicate_audit.json", "切分之間的近似重複掃描"),
+    ("resplit_build_summary.json", f"{RUN}/RESPLITS/build_summary.json", "重複切分的切分 sha、語料組成與洩漏檢查"),
+    ("resplit_llm_conditions_by_split.csv", f"{RS}/llm_conditions_by_split.csv", "各切分各條件的指標（#4）"),
+    ("resplit_llm_conditions_aggregate.csv", f"{RS}/llm_conditions_aggregate.csv", "各條件跨切分的平均 ± SD（#4）"),
+    ("resplit_llm_paired_by_split.csv", f"{RS}/llm_paired_by_split.csv", "各切分 10 組配對（#4）"),
+    ("resplit_llm_paired_aggregate.csv", f"{RS}/llm_paired_aggregate.csv", "10 組配對跨切分彙整（#4）"),
+    ("resplit_summary.json", f"{RS}/summary.json", "重複切分與 baseline 彙整的統計慣例"),
+    ("baseline_main_run.json", f"{RUN}/BASELINES/baselines.json", "主切分 baseline 的超參數與每個 seed 的結果（#2）"),
+    ("baseline_by_split.csv", f"{RS}/baseline_by_split.csv", "各切分 baseline 結果（#2）"),
+    ("baseline_aggregate.csv", f"{RS}/baseline_aggregate.csv", "baseline 主切分 3 seed 與跨切分的平均 ± SD（#2）"),
+    ("baseline_vs_llm.csv", f"{RS}/baseline_vs_llm.csv", "baseline vs C4、C5 的 McNemar（#2）"),
+    ("baseline_cost.csv", f"{RS}/baseline_cost.csv", "baseline 的訓練與推論時間、峰值 GPU 記憶體（#2、#9）"),
 ]
 
 
